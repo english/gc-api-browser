@@ -1,0 +1,25 @@
+.load-test-form {
+  margin-bottom: 10px;
+}
+
+.load-test-form--field {
+  display: block;
+  float: left;
+  padding: 0px 5px;
+}
+
+.load-test-form--field__endpoint {
+  width: 30%;
+}
+
+.load-test-form--field__resource {
+  width: 25%;
+}
+
+.load-test-form--field__action {
+  width: 25%;
+}
+
+.load-test-form--field__button {
+  width: 20%;
+}

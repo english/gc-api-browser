@@ -1,0 +1,25 @@
+.live-chart--container {
+  float: left;
+  padding: 0px 5px;
+}
+
+.live-chart--container .chart {
+  font-size: 10px;
+}
+
+.live-chart--container .axis path,
+.live-chart--container .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.live-chart--container .x.axis path {
+  display: none;
+}
+
+.live-chart--container .line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}

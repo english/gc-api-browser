@@ -1,0 +1,33 @@
+.input {
+  width: 100%;
+  height: 34px;
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: normal;
+  border-radius: 3px;
+  border: 1px solid #D2D6DB;
+  display: block;
+  margin-bottom: 18px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #539bca;
+}
+
+.input[disabled],
+.input.is-disabled {
+  background-color: #F1F1F1;
+  color: #444;
+  border-color: #CFCFCF;
+}
+
+.input--textarea {
+  height: auto;
+  min-height: 34px;
+}
+
+/* Angular form validity */
+.input.ng-dirty.ng-invalid {
+  border-color: #E14E3D;
+}

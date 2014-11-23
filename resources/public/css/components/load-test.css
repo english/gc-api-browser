@@ -1,0 +1,71 @@
+.load-test {
+  margin: 10px 0px;
+}
+
+.load-test h2 {
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 5px;
+}
+
+.load-test h2 small{
+  margin-left: 10px;
+  font-size:15px;
+  color: #ccc;
+}
+
+.capitalize {
+  text-transform: uppercase;
+}
+
+.load-test table {
+  margin: 5px;
+}
+
+.minimised-view {
+  display: none;
+}
+
+.minimised .detail-view {
+  display: none;
+}
+
+.minimised .minimised-view {
+  display: block;
+}
+
+.minimised h2 {
+  border-bottom: none;
+  margin-bottom: 0px;
+}
+
+.minimised .summary {
+  font-weight: normal;
+}
+
+.size-toggle-btn {
+  width: 25px;
+  text-align: center;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  margin-left: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  width: 25px;
+  text-align: center;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  margin-left: 0;
+  margin-right: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.size-toggle-btn:hover {
+  background: #eeeeee;
+}
