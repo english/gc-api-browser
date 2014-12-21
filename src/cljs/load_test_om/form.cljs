@@ -20,7 +20,7 @@
                     :className "input"
                     :disabled "true"})))
 
-(defn resource-selection [form]
+(defn resource-selection [{:keys [selected-resource resources] :as form}]
   (dom/div #js {:className "load-test-form--field load-test-form--field__resource"}
            (dom/div #js {:className "label"} "Resource:")
            (apply dom/select #js {:className "input"
@@ -29,7 +29,7 @@
                   (map #(dom/option #js {:value %} %)
                        (keys (:resources form))))))
 
-(defn action-selection [{:keys [selected-resource resources]}]
+(defn action-selection [{:keys [selected-resource resources] :as form}]
   (dom/div #js {:className "load-test-form--field load-test-form--field__action"}
            (dom/div #js {:className "label"} "Action:")
            (apply dom/select #js {:className "input"

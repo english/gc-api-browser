@@ -16,10 +16,14 @@
                             "Payments"               ["Create" "Index" "Show" "Update" "Cancel"]
                             "Payouts"                ["Index"]
                             "Subscriptions"          ["Create" "Index" "Show" "Update" "Cancel"]}}
-         :load-tests {:url ""
-                      :items []}}))
+         :load-tests {:items []}}))
 
 (enable-console-print!)
+
+(comment
+  (count (get-in @app-state [:load-tests :items]))
+  (count (get-in @app-state [:load-tests :items 0 :data-points]))
+  (get-in @app-state [:load-tests :items 0 :data-points]))
 
 (comment
   (identity @app-state))
