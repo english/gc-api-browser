@@ -3,7 +3,8 @@
             [om.dom :as dom :include-macros true]
             [load-test-om.summary :as summary]
             [load-test-om.freq :as freq]
-            [load-test-om.utils :as utils]))
+            [load-test-om.utils :as utils]
+            [load-test-om.hit-table :as hit-table]))
 
 (def firebase-url "https://flickering-heat-5516.firebaseio.com/loadTests")
 
@@ -86,10 +87,11 @@
                              (dom/h2 nil "Response Time")
                              "response-time-chart")
                     (dom/div #js {:className "clearfix"}))
+
            (dom/hr nil)
 
            (dom/div #js {:className "third"} (detailed-summary load-test))
-           (dom/div #js {:className "third"} "hit-table")
+           (dom/div #js {:className "third"} (hit-table/hit-table data-points))
            (dom/div #js {:className "third"}
                     (dom/table #js {:className "extra-details"}
                                (dom/tr nil
@@ -101,6 +103,7 @@
                                (dom/tr nil
                                        (dom/th nil "Run length")
                                        (dom/td nil (str (/ (run-length data-points) 1000) "seconds")))))
+
            (dom/div #js {:className "clearfix"})))
 
 (defn load-test [load-test owner]
@@ -110,9 +113,11 @@
       (let [fb-ref (js/Firebase. (str firebase-url "/" (:id load-test) "/dataPoints"))]
         (om/set-state! owner :firebase-ref fb-ref)
         (.on fb-ref "child_added" (partial handle-new-data-point load-test))))
+
     om/IWillUnmount
     (will-unmount [_]
       (.off (om/get-state owner :firebase-ref)))
+
     om/IRender
     (render [_]
       (dom/li #js {:className (str "well load-test "
@@ -128,10 +133,12 @@
       (let [fb-ref (js/Firebase. firebase-url)]
         (om/set-state! owner :firebase-ref fb-ref)
         (.on fb-ref "child_added" (partial handle-new-load-test load-tests))))
+
     om/IWillUnmount
     (will-unmount [_]
       (.off (om/get-state owner :firebase-ref))
       (om/update! load-tests :items []))
+
     om/IRender
     (render [_]
       (apply dom/ul nil (om/build-all load-test (:items load-tests))))))

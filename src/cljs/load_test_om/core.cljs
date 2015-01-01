@@ -23,7 +23,9 @@
 (comment
   (count (get-in @app-state [:load-tests :items]))
   (count (get-in @app-state [:load-tests :items 0 :data-points]))
-  (get-in @app-state [:load-tests :items 0 :data-points]))
+  (->> (get-in @app-state [:load-tests :items 2 :data-points])
+       (group-by :status)
+       (type)))
 
 (comment
   (identity @app-state))
