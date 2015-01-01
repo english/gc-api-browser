@@ -112,7 +112,8 @@
     (will-mount [_]
       (let [fb-ref (js/Firebase. (str firebase-url "/" (:id load-test) "/dataPoints"))]
         (om/set-state! owner :firebase-ref fb-ref)
-        (.on fb-ref "child_added" (partial handle-new-data-point load-test))))
+        (.on fb-ref "child_added" (partial handle-new-data-point load-test))
+        (om/set-state! owner :minimised? true)))
 
     om/IWillUnmount
     (will-unmount [_]
