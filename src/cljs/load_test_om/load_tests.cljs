@@ -14,7 +14,7 @@
                    :resource (.-resource v)
                    :action (.-action v)
                    :data-points []}]
-    (om/transact! load-tests :items #(conj % load-test))))
+    (om/transact! load-tests :items (partial into [load-test]))))
 
 (defn handle-new-data-point [load-test snapshot]
   (let [v (.val snapshot)
@@ -133,7 +133,9 @@
     (will-mount [_]
       (let [fb-ref (js/Firebase. firebase-url)]
         (om/set-state! owner :firebase-ref fb-ref)
-        (.on fb-ref "child_added" (partial handle-new-load-test load-tests))))
+        (-> fb-ref
+            (.limitToLast 10)
+            (.on "child_added" (partial handle-new-load-test load-tests)))))
 
     om/IWillUnmount
     (will-unmount [_]
