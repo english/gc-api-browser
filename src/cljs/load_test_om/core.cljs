@@ -21,11 +21,14 @@
 (enable-console-print!)
 
 (comment
+  ;; how many load-tests
   (count (get-in @app-state [:load-tests :items]))
+  ;; how many data points in first load test
   (count (get-in @app-state [:load-tests :items 0 :data-points]))
-  (->> (get-in @app-state [:load-tests :items 2 :data-points])
-       (group-by :status)
-       (type)))
+  ;; Correct order?
+  (apply > (->> (get-in @app-state [:load-tests :items])
+                (map (fn [load-test]
+                       (get-in load-test [:data-points 0 :time]))))))
 
 (comment
   (identity @app-state))
