@@ -24,7 +24,7 @@
                     :time (.-time v)}]
     (om/transact! load-test :data-points #(conj % data-point))))
 
-(defn minimized-view [{:keys [resource action id] :as load-test} owner]
+(defn minimized-view [{:keys [resource action id data-points] :as load-test} owner]
   (dom/div #js {:className "minimised-view"}
            (dom/h2 nil
                    (dom/div #js {:className "delete-btn"
@@ -35,8 +35,7 @@
                    (dom/small #js {:className "capitalize"} id)
                    (dom/div #js {:className "size-toggle-btn u-pull-end"
                                  :onClick #(om/set-state! owner :minimised? false)} "+")
-                   (dom/div #js {:className "u-pull-end"}
-                            (summary/summary load-test (om/get-state owner :minimised?))))))
+                   (dom/div #js {:className "u-pull-end"} (summary/summary data-points)))))
 
 (defn start-date [data-points]
   (js/Date. (apply min (map :time data-points))))
