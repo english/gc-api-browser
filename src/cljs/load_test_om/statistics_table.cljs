@@ -1,9 +1,8 @@
-(ns load-test-om.load-test-statistics
+(ns load-test-om.statistics-table
   (:require [om.dom :as dom :include-macros true]
-            [load-test-om.utils :as utils]
-            [load-test-om.freq :as freq]))
+            [load-test-om.utils :as utils]))
 
-(defn load-test-statistics [{:keys [data-points stats] :as load-test}]
+(defn statistics-table [{:keys [data-points stats]}]
   (let [[_ median seventy-fifth _ ninety-fifth] (vals (:percentiles stats))]
     (dom/div #js {:className "summary"}
              (dom/table nil
