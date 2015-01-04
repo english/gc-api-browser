@@ -1,28 +1,29 @@
 (ns load-test-om.load-tests
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [clojure.set :as clj-set]
             [load-test-om.summary :as summary]
             [load-test-om.freq :as freq]
             [load-test-om.utils :as utils]
-            [load-test-om.hit-table :as hit-table]))
+            [load-test-om.hit-table :as hit-table]
+            [load-test-om.load-test-statistics :as load-test-statistics]))
 
 (def firebase-url "https://flickering-heat-5516.firebaseio.com/loadTests")
 
 (defn handle-new-load-test [load-tests snapshot]
   (let [v (.val snapshot)
+        data-points (-> (.-dataPoints v)
+                        (js->clj :keywordize-keys true)
+                        vals
+                        (->> (map #(select-keys % [:status :time :responseTime])))
+                        (clj-set/rename {:responseTime :response-time})
+                        vec)
         load-test {:id (.key snapshot)
                    :resource (.-resource v)
                    :action (.-action v)
-                   :data-points []}]
+                   :data-points data-points
+                   :stats (freq/stats (frequencies (map :response-time data-points)))}]
     (om/transact! load-tests :items (partial into [load-test]))))
-
-(defn handle-new-data-point [load-test snapshot]
-  (let [v (.val snapshot)
-        data-point {:id (.key snapshot)
-                    :response-time (.-responseTime v)
-                    :status (.-status v)
-                    :time (.-time v)}]
-    (om/transact! load-test :data-points #(conj % data-point))))
 
 (defn minimized-view [{:keys [resource action id data-points] :as load-test} owner]
   (dom/div #js {:className "minimised-view"}
@@ -35,7 +36,7 @@
                    (dom/small #js {:className "capitalize"} id)
                    (dom/div #js {:className "size-toggle-btn u-pull-end"
                                  :onClick #(om/set-state! owner :minimised? false)} "+")
-                   (dom/div #js {:className "u-pull-end"} (summary/summary data-points)))))
+                   (dom/div #js {:className "u-pull-end"} (summary/summary load-test)))))
 
 (defn start-date [data-points]
   (js/Date. (apply min (map :time data-points))))
@@ -45,9 +46,8 @@
     (Math/round (- (apply max times)
                    (apply min times)))))
 
-(defn detailed-summary [load-test]
-  (let [response-times (map :response-time (:data-points load-test))
-        freq-map (frequencies response-times)]
+(defn detailed-summary [{:keys [data-points stats] :as load-test}]
+  (let [[_ median seventy-fifth _ ninety-fifth] (vals (:percentiles stats))]
     (dom/div #js {:className "summary"}
              (dom/table nil
                         (dom/tr nil
@@ -58,13 +58,13 @@
                                 (dom/th nil "95th"))
                         (dom/tr nil
                                 (dom/td nil "Response Time")
-                                (dom/td nil (Math/round (freq/mean freq-map)))
-                                (dom/td nil (freq/quantile freq-map 50 100))
-                                (dom/td nil (freq/quantile freq-map 75 100))
-                                (dom/td nil (freq/quantile freq-map 95 100)))
+                                (dom/td nil (Math/round (:mean stats)))
+                                (dom/td nil median)
+                                (dom/td nil seventy-fifth)
+                                (dom/td nil ninety-fifth))
                         (dom/tr nil
                                 (dom/td nil "Hit Rate")
-                                (dom/td nil (str (utils/avg-hit-rate (:data-points load-test)) "/s")))))))
+                                (dom/td nil (str (utils/avg-hit-rate data-points) "/s")))))))
 
 (defn detail-view [{:keys [resource action id data-points] :as load-test} owner]
   (dom/div #js {:className "detail-view"}
@@ -89,7 +89,7 @@
 
            (dom/hr nil)
 
-           (dom/div #js {:className "third"} (detailed-summary load-test))
+           (dom/div #js {:className "third"} (load-test-statistics/load-test-statistics load-test))
            (dom/div #js {:className "third"} (hit-table/hit-table data-points))
            (dom/div #js {:className "third"}
                     (dom/table #js {:className "extra-details"}
@@ -109,14 +109,7 @@
   (reify
     om/IWillMount
     (will-mount [_]
-      (let [fb-ref (js/Firebase. (str firebase-url "/" (:id load-test) "/dataPoints"))]
-        (om/set-state! owner :firebase-ref fb-ref)
-        (.on fb-ref "child_added" (partial handle-new-data-point load-test))
-        (om/set-state! owner :minimised? true)))
-
-    om/IWillUnmount
-    (will-unmount [_]
-      (.off (om/get-state owner :firebase-ref)))
+      (om/set-state! owner :minimised? true))
 
     om/IRender
     (render [_]
