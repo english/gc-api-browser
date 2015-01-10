@@ -1,8 +1,8 @@
 (ns load-test-om.load-test
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [load-test-om.summary :as summary]
-            [load-test-om.hit-table :as hit-table]
+            [load-test-om.summary :refer [summary]]
+            [load-test-om.hit-table :refer [hit-table]]
             [load-test-om.statistics-table :refer [statistics-table]]))
 
 (defn start-date [data-points]
@@ -12,18 +12,6 @@
   (let [times (map :time data-points)]
     (Math/round (- (apply max times)
                    (apply min times)))))
-
-(defn hit-table [data-points]
-  (let [rows (->> (group-by :status data-points)
-                  (map (fn [[status values]]
-                         (dom/tr #js {:key status}
-                                 (dom/td nil status)
-                                 (dom/td nil (count values))))))]
-    (apply dom/table nil
-               (dom/tr nil
-                       (dom/th nil "Status Code")
-                       (dom/th nil "Hits"))
-               rows)))
 
 (defn minimized-view [{:keys [resource action id data-points] :as load-test} owner]
   (dom/div #js {:className "minimised-view"}
@@ -36,7 +24,7 @@
                    (dom/small #js {:className "capitalize"} id)
                    (dom/div #js {:className "size-toggle-btn u-pull-end"
                                  :onClick #(om/set-state! owner :minimised? false)} "+")
-                   (dom/div #js {:className "u-pull-end"} (summary/summary load-test)))))
+                   (dom/div #js {:className "u-pull-end"} (summary load-test)))))
 
 (defn load-test-detailed [{:keys [resource action id data-points] :as load-test} owner]
   (dom/div #js {:className "detail-view"}
@@ -62,7 +50,7 @@
            (dom/hr nil)
 
            (dom/div #js {:className "third"} (statistics-table load-test))
-           (dom/div #js {:className "third"} (hit-table/hit-table data-points))
+           (dom/div #js {:className "third"} (hit-table data-points))
            (dom/div #js {:className "third"}
                     (dom/table #js {:className "extra-details"}
                                (dom/tr nil
