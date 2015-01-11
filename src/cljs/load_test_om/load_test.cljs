@@ -3,7 +3,8 @@
             [om.dom :as dom :include-macros true]
             [load-test-om.summary :refer [summary]]
             [load-test-om.hit-table :refer [hit-table]]
-            [load-test-om.statistics-table :refer [statistics-table]]))
+            [load-test-om.statistics-table :refer [statistics-table]]
+            [load-test-om.response-time-chart :refer [response-time-chart]]))
 
 (defn start-date [data-points]
   (js/Date. (apply min (map :time data-points))))
@@ -44,7 +45,7 @@
                              "hit-rate-chart")
                     (dom/div #js {:className "live-chart--container half"}
                              (dom/h2 nil "Response Time")
-                             "response-time-chart")
+                             (om/build response-time-chart load-test))
                     (dom/div #js {:className "clearfix"}))
 
            (dom/hr nil)
