@@ -55,16 +55,19 @@
 
 (def min-max (juxt (partial apply min) (partial apply max)))
 
-(defn domain [{:keys [data-points]}]
+(defn domain [{:keys [data-points] :as load-test}]
+  {:pre [(contains? load-test :stats)]
+   :post [#(= 2 (count (:x %)))
+          #(= 2 (count (:y %)))]}
   {:x (min-max (map :time data-points))
-   :y (min-max (map :response-time data-points))})
+   :y (map (:stats load-test) [:min :max])})
 
-(defn update-d3-chart [el width height load-test]
+(defn update-chart [el width height load-test]
   (let [scales (get-scales (domain load-test) width height)
         axes   (get-axes scales)]
     (draw-points el scales axes (:data-points load-test))))
 
-(defn create-d3-chart [el load-test]
+(defn create-chart [el load-test]
   (let [width 446
         height 150
         top 20
@@ -94,13 +97,13 @@
         (.append "path")
         (.attr "class" "line"))
 
-    (update-d3-chart el width height load-test)))
+    (update-chart el width height load-test)))
 
 (defn response-time-chart [load-test owner]
   (reify
     om/IDidMount
     (did-mount [_]
-      (create-d3-chart (om/get-node owner) load-test))
+      (create-chart (om/get-node owner) load-test))
 
     om/IRender
     (render [_]
