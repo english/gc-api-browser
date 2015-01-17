@@ -107,4 +107,4 @@
 
     om/IRender
     (render [_]
-      (dom/div #js {:className "chart hit-rate-chart"}))))
+      (dom/div #js {:className "chart response-time-chart"}))))
