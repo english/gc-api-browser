@@ -4,7 +4,7 @@
             [load-test-om.summary :refer [summary]]
             [load-test-om.hit-table :refer [hit-table]]
             [load-test-om.statistics-table :refer [statistics-table]]
-            [load-test-om.response-time-chart :refer [response-time-chart]]
+            [load-test-om.hit-rate-chart :refer [hit-rate-chart]]
             [load-test-om.histogram :refer [histogram]]))
 
 (defn start-date [data-points]
@@ -42,11 +42,11 @@
 
            (dom/div #js {:className "charts"}
                     (dom/div #js {:className "live-chart--container half"}
-                             (dom/h2 nil "Hit Rate")
+                             (dom/h2 nil "Response times")
                              (om/build histogram load-test))
                     (dom/div #js {:className "live-chart--container half"}
-                             (dom/h2 nil "Response Time")
-                             (om/build response-time-chart load-test))
+                             (dom/h2 nil "Hit rate")
+                             (om/build hit-rate-chart load-test))
                     (dom/div #js {:className "clearfix"}))
 
            (dom/hr nil)

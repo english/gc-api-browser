@@ -2,6 +2,22 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]))
 
+(defn x-axis [x-scale]
+  (-> (.-svg js/d3)
+      .axis
+      (.scale x-scale)
+      (.orient "bottom")))
+
+(defn get-y-scale [height domain]
+  (-> (.. js/d3 -scale linear)
+      (.domain (apply array domain))
+      (.range #js [height 0])))
+
+(defn get-x-scale [width domain]
+  (-> (.. js/d3 -scale linear)
+      (.domain (apply array domain))
+      (.range #js [0 width])))
+
 (defn create-chart [el load-test]
   (let [width 446
         height 150
@@ -12,28 +28,23 @@
 
         format-count-fn (.format js/d3 ",.0f")
 
-        svg (-> (d3/select el)
+        values (apply array (map :response-time (:data-points load-test)))
+
+        x-scale (get-x-scale width [0 (apply max values)])
+
+        data-fn (-> (.. js/d3 -layout histogram)
+                    (.bins (.ticks x-scale 20)))
+
+        data (data-fn values)
+
+        y-scale (get-y-scale height [0 (.max js/d3 data #(.-y %))])
+
+        svg (-> (.select js/d3 el)
                 (.append "svg")
                 (.attr "width" (+ width left right))
                 (.attr "height" (+ height top bottom))
                 (.append "g")
                 (.attr "transform" (str "translate(" left "," top ")")))
-
-        values (apply array (map :response-time (:data-points load-test)))
-        x-scale (-> (.. js/d3 -scale linear)
-                    (.domain #js [0 (apply Math/max values)])
-                    (.range #js [0 width]))
-
-        data ((-> (.. js/d3 -layout histogram)
-                  (.bins (.ticks x-scale 20))) values)
-
-        y-scale (-> (.. js/d3 -scale linear)
-                    (.domain #js [0 (.max js/d3 data #(.-y %))])
-                    (.range #js [height 0]))
-
-        x-axis (-> (.. js/d3 -svg axis)
-                   (.scale x-scale)
-                   (.orient "bottom"))
 
         bar (-> svg
                 (.selectAll ".bar")
@@ -63,7 +74,7 @@
         (.append "g")
         (.attr "class" "x axis")
         (.attr "transform" (str "translate(0," height ")"))
-        (.call x-axis))))
+        (.call (x-axis x-scale)))))
 
 (defn histogram [load-test owner]
   (reify

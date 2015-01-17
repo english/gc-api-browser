@@ -29,7 +29,7 @@
       (let [fb-ref (js/Firebase. firebase-url)]
         (om/set-state! owner :firebase-ref fb-ref)
         (-> fb-ref
-            (.limitToLast 20)
+            (.limitToLast 10)
             (.on "child_added" (partial handle-new-load-test load-tests)))))
 
     om/IWillUnmount
