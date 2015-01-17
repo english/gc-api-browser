@@ -16,11 +16,11 @@
   (let [v (reduce (fn [{:keys [bucket coll] :as acc} item]
                     (let [elapsed-time (max-min-difference :time (conj bucket item))]
                       (if (> elapsed-time 1000)
-                        {:bucket [item] :coll (conj coll bucket)}
+                        {:bucket [item]             :coll (conj coll bucket)}
                         {:bucket (conj bucket item) :coll coll})))
                   {:bucket [] :coll []}
                   data-points)]
-    (concat (:coll v) (:bucket v))))
+    (conj (:coll v) (:bucket v))))
 
 (defn avg-hit-rate [data-points]
   (let [bucketed (bucket-into-seconds data-points)

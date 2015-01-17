@@ -1,6 +1,7 @@
 (ns load-test-om.hit-rate-chart
   (:require [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]))
+            [om.dom :as dom :include-macros true]
+            [load-test-om.utils :as utils]))
 
 (defn draw-points [el scales axes data]
   (let [svg (-> (.select js/d3 el)
@@ -80,39 +81,11 @@
         (.attr "class" "line"))
     (update-chart el width height data)))
 
-(defn bucket-into-seconds [data-points]
-  (let [bucket (atom [])
-        bucketed (reduce (fn [buckets data-point]
-                           (let [times (map :time (conj @bucket data-point))
-                                 elapsed-time (- (apply max times)
-                                                 (apply min times))]
-                             (if (> elapsed-time 1000)
-                               (do
-                                 (let [new-buckets (conj buckets @bucket)]
-                                   (reset! bucket [data-point])
-                                   new-buckets))
-                               (do
-                                 (swap! bucket #(conj % data-point))
-                                 buckets))))
-                         [] data-points)]
-    (if (empty? @bucket)
-      bucketed
-      (conj bucketed @bucket))))
-
-(defn mean [xs]
-  (/ (apply + xs) (count xs)))
-
-(defn hit-rate [bucket]
-  {:x (if (empty? bucket)
-        0
-        (-> (map :time bucket) mean Math/round))
-   :y (count bucket)})
-
 (defn load-test->data [load-test]
   (->> (:data-points load-test)
        (sort-by :time)
-       bucket-into-seconds
-       (map hit-rate)))
+       utils/bucket-into-seconds
+       (map utils/hit-rate)))
 
 (defn hit-rate-chart [load-test owner]
   (reify
