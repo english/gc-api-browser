@@ -15,9 +15,7 @@
       (nth values (dec rounded-index)))))
 
 (defn statistics-table [{:keys [data-points stats]}]
-  (let [response-times (map :response-time data-points)
-        mean-response-time (/ (apply + response-times) (count response-times))
-        median-response-time (percentile response-times 0.5)]
+  (let [response-times (map :response-time data-points)]
     (dom/div #js {:className "summary"}
              (dom/table nil
                         (dom/tr nil
@@ -28,7 +26,7 @@
                                 (dom/th nil "95th"))
                         (dom/tr nil
                                 (dom/td nil "Response Time")
-                                (dom/td nil (Math/round mean-response-time))
+                                (dom/td nil (Math/round (utils/mean response-times)))
                                 (dom/td nil (percentile response-times 0.5))
                                 (dom/td nil (percentile response-times 0.75))
                                 (dom/td nil (percentile response-times 0.95)))

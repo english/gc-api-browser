@@ -34,5 +34,7 @@
 (defn -main [& [port]]
   (run port))
 
-(comment (run)
-         (browser-repl))
+(comment
+  (do
+    (run)
+    (browser-repl)))

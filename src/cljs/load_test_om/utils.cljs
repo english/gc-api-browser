@@ -1,15 +1,19 @@
 (ns load-test-om.utils)
 
 (defn max-min-difference [f coll]
-  (- (apply max (map f coll))
-     (apply min (map f coll))))
+  (let [new-coll (map f coll)]
+    (- (apply max new-coll)
+       (apply min new-coll))))
 
-; TODO: return a tuple
+(defn mean [xs]
+  {:pre [(seq xs)]}
+  (/ (apply + xs)
+     (count xs)))
+
 (defn hit-rate [bucket]
   {:x (if (= (count bucket) 0)
         0
-        (Math/round (/ (apply + (map :time bucket))
-                       (count bucket))))
+        (-> (map :time bucket) mean Math/round))
    :y (count bucket)})
 
 (defn bucket-into-seconds [data-points]
@@ -23,6 +27,10 @@
     (conj (:coll v) (:bucket v))))
 
 (defn avg-hit-rate [data-points]
-  (let [bucketed (bucket-into-seconds data-points)
-        total (apply + (map (comp :y hit-rate) bucketed))]
-    (Math/round (/ total (count bucketed)))))
+  {:pre [(seq data-points)
+         (contains? (first data-points) :time)]}
+  (let [bucketed (bucket-into-seconds data-points)]
+    (->> (bucket-into-seconds data-points)
+         (map (comp :y hit-rate))
+         mean
+         Math/round)))
