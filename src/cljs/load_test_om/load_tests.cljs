@@ -2,8 +2,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [clojure.set :refer [rename]]
-            [load-test-om.load-test :as load-test]
-            [load-test-om.freq :as freq]))
+            [load-test-om.load-test :as load-test]))
 
 (def firebase-url "https://flickering-heat-5516.firebaseio.com/loadTests")
 
@@ -18,8 +17,7 @@
         load-test {:id (.key snapshot)
                    :resource (.-resource v)
                    :action (.-action v)
-                   :data-points data-points
-                   :stats (freq/stats (frequencies (map :response-time data-points)))}]
+                   :data-points data-points}]
     (om/transact! load-tests :items (partial into [load-test]))))
 
 (defn load-tests [load-tests owner]
@@ -29,7 +27,7 @@
       (let [fb-ref (js/Firebase. firebase-url)]
         (om/set-state! owner :firebase-ref fb-ref)
         (-> fb-ref
-            (.limitToLast 10)
+            (.limitToLast 20)
             (.on "child_added" (partial handle-new-load-test load-tests)))))
 
     om/IWillUnmount

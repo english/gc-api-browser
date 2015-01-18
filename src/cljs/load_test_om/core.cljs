@@ -3,7 +3,6 @@
             [om.dom :as dom :include-macros true]
             [cljs.repl :as repl :include-macros true]
             [load-test-om.form :as form]
-            [load-test-om.freq :as freq]
             [load-test-om.load-tests :as load-tests]))
 
 (defonce app-state
@@ -21,15 +20,6 @@
          :load-tests {:items []}}))
 
 (enable-console-print!)
-
-(comment
-  (let [data-points (->> (get-in @app-state [:load-tests :items])
-                         (filter #(= (:id %) "-Ja0lD2RbXJy58FPW4Kh"))
-                         first
-                         :data-points)]
-    (.time js/console "freq")
-    (doall (freq/stats (frequencies (map :response-time data-points))))
-    (.timeEnd js/console "freq")))
 
 (comment
   ;; how many load-tests
