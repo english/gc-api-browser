@@ -4,8 +4,7 @@
             [load-test-om.utils :as utils]))
 
 (defn draw-points [el scales axes data]
-  (let [svg (-> (.select js/d3 el)
-                (.select "svg"))
+  (let [svg (.select (.select js/d3 el) "svg")
         line (-> (.. js/d3 -svg line)
                  (.x #((:x scales) (.-x %)))
                  (.y #((:y scales) (.-y %))))

@@ -31,9 +31,9 @@
   ;; look at the first load-test's stats
   (get-in @app-state [:load-tests :items 0 :stats])
   ;; Correct order?
-  (apply > (->> (get-in @app-state [:load-tests :items])
-                (map (fn [load-test]
-                       (get-in load-test [:data-points 0 :time])))))
+  (apply > (map
+             (fn [load-test] (get-in load-test [:data-points 0 :time]))
+             (get-in @app-state [:load-tests :items])))
   ;; which has the most data-points
   (->> (get-in @app-state [:load-tests :items])
        (sort-by (comp count :data-points) >)

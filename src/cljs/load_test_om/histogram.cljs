@@ -32,8 +32,7 @@
 
         x-scale (get-x-scale width [0 (apply max values)])
 
-        data-fn (-> (.. js/d3 -layout histogram)
-                    (.bins (.ticks x-scale 20)))
+        data-fn (.bins (.. js/d3 -layout histogram) (.ticks x-scale 20))
 
         data (data-fn values)
 
