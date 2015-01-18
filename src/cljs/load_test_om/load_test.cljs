@@ -18,7 +18,8 @@
                    (apply min times)))))
 
 (defn handle-delete [id]
-  (.remove (js/Firebase. (str firebase-url "/" id))))
+  (when (.confirm js/window "Are you sure?")
+    (.remove (js/Firebase. (str firebase-url "/" id)))))
 
 (defn minimized-view [{:keys [resource action id data-points] :as load-test} owner]
   (dom/div #js {:className "minimised-view"}
