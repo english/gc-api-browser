@@ -6,6 +6,11 @@
 
 (def firebase-url "https://flickering-heat-5516.firebaseio.com/loadTests")
 
+(defn handle-removed-load-test [load-tests snapshot]
+  (let [snapshot-id (.key snapshot)]
+    (om/transact! load-tests :items (fn [items]
+                                      (remove #(= (:id %) snapshot-id) items)))))
+
 (defn handle-new-load-test [load-tests snapshot]
   (let [v (.val snapshot)
         data-points (-> (.-dataPoints v)
@@ -28,7 +33,8 @@
         (om/set-state! owner :firebase-ref fb-ref)
         (-> fb-ref
             (.limitToLast 20)
-            (.on "child_added" (partial handle-new-load-test load-tests)))))
+            (.on "child_added" (partial handle-new-load-test load-tests)))
+        (.on fb-ref "child_removed" (partial handle-removed-load-test load-tests))))
 
     om/IWillUnmount
     (will-unmount [_]
@@ -37,4 +43,8 @@
 
     om/IRender
     (render [_]
-      (apply dom/ul nil (om/build-all load-test/load-test (:items load-tests))))))
+      (->> (:items load-tests)
+           (sort-by :id)
+           reverse
+           (om/build-all load-test/load-test)
+           (apply dom/ul nil)))))

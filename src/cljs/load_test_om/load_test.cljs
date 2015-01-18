@@ -7,6 +7,8 @@
             [load-test-om.hit-rate-chart :refer [hit-rate-chart]]
             [load-test-om.histogram :refer [histogram]]))
 
+(def firebase-url "https://flickering-heat-5516.firebaseio.com/loadTests")
+
 (defn start-date [data-points]
   (js/Date. (apply min (map :time data-points))))
 
@@ -15,11 +17,14 @@
     (Math/round (- (apply max times)
                    (apply min times)))))
 
+(defn handle-delete [id]
+  (.remove (js/Firebase. (str firebase-url "/" id))))
+
 (defn minimized-view [{:keys [resource action id data-points] :as load-test} owner]
   (dom/div #js {:className "minimised-view"}
            (dom/h2 nil
                    (dom/div #js {:className "delete-btn"
-                                 :onClick (partial println "handle-delete")} "x")
+                                 :onClick (partial handle-delete id)} "x")
                    (dom/span #js {:className "capitalize"} resource)
                    "/"
                    (dom/span #js {:className "capitalize"} action)
@@ -32,7 +37,7 @@
   (dom/div #js {:className "detail-view"}
            (dom/h2 nil
                    (dom/div #js {:className "delete-btn"
-                                 :onClick (partial println "handle-delete")}, "x")
+                                 :onClick (partial handle-delete id)}, "x")
                    (dom/span #js {:className "capitalize"} resource)
                    "/"
                    (dom/span #js {:className "capitalize"} action)
