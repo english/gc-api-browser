@@ -1,12 +1,14 @@
 (ns load-test-om.form
   (:require [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]))
+            [om.dom :as dom :include-macros true]
+            [goog.events :as events])
+  (:import [goog.net XhrIo EventType]))
 
-(defn handle-input-change [app e]
-  (om/transact! app [:selected-resource 0] #(.. e -target -value))
-  (om/transact! app [:selected-resource 1]
-                #(first (get (:resources @app)
-                             (first (:selected-resource @app))))))
+(defn handle-input-change [form e]
+  (om/transact! form [:selected-resource 0] #(.. e -target -value))
+  (om/transact! form [:selected-resource 1]
+                #(first (get (:resources form)
+                             (first (:selected-resource form))))))
 
 (defn handle-action-change [form e]
   (om/transact! form [:selected-resource 1] #(.. e -target -value)))
@@ -38,11 +40,19 @@
                   (map #(dom/option #js {:value %} %)
                        (get resources (first selected-resource))))))
 
+(defn handle-submit [form]
+  (let [[resource action] (:selected-resource form)]
+    (.log js/console (str "submitting with " resource " and " action))
+    (let [xhr (XhrIo.)]
+      (events/listen xhr EventType.SUCCESS #(.log js/console "SUCCESS" %))
+      (events/listen xhr EventType.ERROR #(.log js/console "ERROR" %))
+      (.send xhr (str "http://localhost:3000/run?" resource "&" action)))))
+
 (defn submit-form [form]
   (dom/div #js {:className "load-test-form--field load-test-form--field__button"}
            (dom/div #js {:className "label"} "\u00A0")
            (dom/div #js {:className "btn btn-block"
-                         :onClick (partial println "handlesubmit-form")}
+                         :onClick (partial handle-submit form)}
                     "Start")))
 
 (defn load-test-form [form owner]
