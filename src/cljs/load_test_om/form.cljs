@@ -2,7 +2,8 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [goog.events :as events])
-  (:import [goog.net XhrIo EventType]))
+  (:import [goog.net XhrIo EventType]
+           [goog json]))
 
 (defn handle-input-change [form e]
   (om/transact! form [:selected-resource 0] #(.. e -target -value))
@@ -46,7 +47,9 @@
     (let [xhr (XhrIo.)]
       (events/listen xhr EventType.SUCCESS #(.log js/console "SUCCESS" %))
       (events/listen xhr EventType.ERROR #(.log js/console "ERROR" %))
-      (.send xhr (str "http://localhost:3000/run?" resource "&" action)))))
+      (.send xhr "http://localhost:8080/run" "POST"
+             (.serialize json (clj->js {:resource resource :action action}))
+             #js {"Content-Type" "application/json"}))))
 
 (defn submit-form [form]
   (dom/div #js {:className "load-test-form--field load-test-form--field__button"}
