@@ -43,11 +43,10 @@
 
 (defn handle-submit [form]
   (let [[resource action] (:selected-resource form)]
-    (.log js/console (str "submitting with " resource " and " action))
-    (let [xhr (XhrIo.)]
-      (events/listen xhr EventType.SUCCESS #(.log js/console "SUCCESS" %))
-      (events/listen xhr EventType.ERROR #(.log js/console "ERROR" %))
-      (.send xhr "http://localhost:8080/run" "POST"
+    (doto (XhrIo.)
+      (events/listen EventType.SUCCESS #(.log js/console "SUCCESS" %))
+      (events/listen EventType.ERROR #(.log js/console "ERROR" %))
+      (.send "http://localhost:3000/load-tests" "POST"
              (.serialize json (clj->js {:resource resource :action action}))
              #js {"Content-Type" "application/json"}))))
 

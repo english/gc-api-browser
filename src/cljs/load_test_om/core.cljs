@@ -56,7 +56,7 @@
       (reify
         om/IDidMount
         (did-mount [_]
-          (.send XhrIo "http://localhost:8080/presets" (partial handle-preset-response app)))
+          (.send XhrIo "http://localhost:3000/presets" (partial handle-preset-response app)))
         om/IRender
         (render [_]
           (dom/div nil
