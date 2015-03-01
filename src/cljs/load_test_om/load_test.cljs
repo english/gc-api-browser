@@ -80,25 +80,6 @@
 
 (defn load-test [load-test owner]
   (reify
-    om/IWillMount
-    (will-mount [_]
-      (om/set-state! owner :minimised? true)
-
-      (let [ws (WebSocket.)
-            lt (clj->js load-test)]
-        (.log js/console lt)
-        ;; => {:id 0 ...} wtf?
-        ;; I'm always getting the same load test here!
-        ;; Though, only when new load tests are created after the initial render
-        (events/listen ws WebSocket.EventType.MESSAGE #(handle-new-data-point load-test (.-message %)))
-        (.open ws (str "ws://localhost:3000/data-points?load-test-id=" (:id load-test)))
-        (om/set-state! owner :ws ws)))
-
-    om/IWillUnmount
-    (will-unmount [_]
-      (.close (om/get-state owner :ws))
-      (om/update! load-test :data-points []))
-
     om/IRender
     (render [_]
       (when (pos? (count (:data-points load-test)))
