@@ -1,13 +1,14 @@
 (ns load-test-om.load-test
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [goog.events :as events]
+            [goog.json :as gjson]
             [load-test-om.summary :refer [summary]]
             [load-test-om.hit-table :refer [hit-table]]
             [load-test-om.statistics-table :refer [statistics-table]]
             [load-test-om.hit-rate-chart :refer [hit-rate-chart]]
-            [load-test-om.histogram :refer [histogram]]))
-
-(def firebase-url "https://flickering-heat-5516.firebaseio.com/loadTests")
+            [load-test-om.histogram :refer [histogram]])
+  (:import (goog.net WebSocket EventType)))
 
 (defn start-date [data-points]
   (js/Date. (apply min (map :time data-points))))
@@ -18,7 +19,7 @@
                    (apply min times)))))
 
 (defn handle-delete [id]
-  (when (.confirm js/window "Are you sure?")
+  #_(when (.confirm js/window "Are you sure?")
     (.remove (js/Firebase. (str firebase-url "/" id)))))
 
 (defn minimized-view [{:keys [resource action id data-points] :as load-test} owner]
@@ -73,16 +74,36 @@
 
            (dom/div #js {:className "clearfix"})))
 
+(defn handle-new-data-point [load-test data]
+  (let [data-point (-> (gjson/parse data) (js->clj :keywordize-keys true))]
+    (om/transact! load-test :data-points #(conj % data-point))))
+
 (defn load-test [load-test owner]
   (reify
     om/IWillMount
     (will-mount [_]
-      (om/set-state! owner :minimised? true))
+      (om/set-state! owner :minimised? true)
+
+      (let [ws (WebSocket.)
+            lt (clj->js load-test)]
+        (.log js/console lt)
+        ;; => {:id 0 ...} wtf?
+        ;; I'm always getting the same load test here!
+        ;; Though, only when new load tests are created after the initial render
+        (events/listen ws WebSocket.EventType.MESSAGE #(handle-new-data-point load-test (.-message %)))
+        (.open ws (str "ws://localhost:3000/data-points?load-test-id=" (:id load-test)))
+        (om/set-state! owner :ws ws)))
+
+    om/IWillUnmount
+    (will-unmount [_]
+      (.close (om/get-state owner :ws))
+      (om/update! load-test :data-points []))
 
     om/IRender
     (render [_]
-      (dom/li #js {:className (str "well load-test "
-                                   (when (om/get-state owner :minimised?) "minimised"))}
-              (if (om/get-state owner :minimised?)
-                (minimized-view load-test owner)
-                (load-test-detailed load-test owner))))))
+      (when (pos? (count (:data-points load-test)))
+        (dom/li #js {:className (str "well load-test "
+                                     (when (om/get-state owner :minimised?) "minimised"))}
+                (if (om/get-state owner :minimised?)
+                  (minimized-view load-test owner)
+                  (load-test-detailed load-test owner)))))))

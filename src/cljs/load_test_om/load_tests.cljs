@@ -1,44 +1,31 @@
 (ns load-test-om.load-tests
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [goog.events :as events]
+            [goog.json :as gjson]
             [clojure.set :refer [rename]]
-            [load-test-om.load-test :as load-test]))
+            [load-test-om.load-test :as load-test])
+  (:import (goog.net WebSocket EventType)))
 
-(def firebase-url "https://flickering-heat-5516.firebaseio.com/loadTests")
-
-(defn handle-removed-load-test [load-tests snapshot]
-  (let [snapshot-id (.key snapshot)]
-    (om/transact! load-tests :items (fn [items]
-                                      (remove #(= (:id %) snapshot-id) items)))))
-
-(defn handle-new-load-test [load-tests snapshot]
-  (let [v (.val snapshot)
-        data-points (-> (.-dataPoints v)
-                        (js->clj :keywordize-keys true)
-                        vals
-                        (->> (map #(select-keys % [:status :time :responseTime])))
-                        (rename {:responseTime :response-time})
-                        vec)
-        load-test {:id (.key snapshot)
-                   :resource (.-resource v)
-                   :action (.-action v)
-                   :data-points data-points}]
-    (om/transact! load-tests :items (partial into [load-test]))))
+(defn handle-new-load-test [load-tests data]
+  (let [load-test (-> (gjson/parse data)
+                      (js->clj :keywordize-keys true)
+                      (assoc :data-points []))]
+    (.log js/console "handled new load test " (clj->js load-test))
+    (om/transact! load-tests :items #(conj % load-test))))
 
 (defn load-tests [load-tests owner]
   (reify
     om/IWillMount
     (will-mount [_]
-      (let [fb-ref (js/Firebase. firebase-url)]
-        (om/set-state! owner :firebase-ref fb-ref)
-        (-> fb-ref
-            (.limitToLast 20)
-            (.on "child_added" (partial handle-new-load-test load-tests)))
-        (.on fb-ref "child_removed" (partial handle-removed-load-test load-tests))))
+      (let [ws (WebSocket.)]
+        (events/listen ws WebSocket.EventType.MESSAGE #(handle-new-load-test load-tests (.-message %)))
+        (.open ws "ws://localhost:3000/load-tests")
+        (om/set-state! owner :ws ws)))
 
     om/IWillUnmount
     (will-unmount [_]
-      (.off (om/get-state owner :firebase-ref))
+      (.close (om/get-state owner :ws))
       (om/update! load-tests :items []))
 
     om/IRender
@@ -46,5 +33,5 @@
       (->> (:items load-tests)
            (sort-by :id)
            reverse
-           (om/build-all load-test/load-test)
+           (map #(om/build load-test/load-test % {:key (:id %)}))
            (apply dom/ul nil)))))
