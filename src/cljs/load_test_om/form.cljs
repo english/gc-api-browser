@@ -42,12 +42,15 @@
                        (get resources (first selected-resource))))))
 
 (defn handle-submit [form]
-  (let [[resource action] (:selected-resource form)]
+  (let [[resource action] (:selected-resource form)
+        duration 5
+        rate 2]
     (doto (XhrIo.)
       (events/listen EventType.SUCCESS #(.log js/console "SUCCESS" %))
       (events/listen EventType.ERROR #(.log js/console "ERROR" %))
-      (.send "http://localhost:3000/load-tests" "POST"
-             (.serialize json (clj->js {:resource resource :action action}))
+      (.send "http://localhost:3000/load-tests"
+             "POST"
+             (.serialize json (clj->js {:resource resource :action action :duration duration :rate rate}))
              #js {"Content-Type" "application/json"}))))
 
 (defn submit-form [form]
