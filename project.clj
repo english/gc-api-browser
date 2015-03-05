@@ -9,7 +9,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2657"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [ring "1.3.1"]
+                 [ring "1.3.2"]
                  [compojure "1.2.0"]
                  [enlive "1.1.5"]
                  [org.om/om "0.8.0"]
@@ -54,6 +54,5 @@
                        :aot :all
                        :cljsbuild {:builds {:app
                                             {:source-paths ["env/prod/cljs"]
-                                             :compiler
-                                             {:optimizations :advanced
-                                              :pretty-print false}}}}}})
+                                             :compiler {:optimizations :advanced
+                                                        :pretty-print false}}}}}})
