@@ -4,7 +4,7 @@
             [cljs.repl :as repl :include-macros true]
             [goog.events :as events]
             [goog.json :as gjson]
-            [goog.net.XhrIo :as xhr-io]
+            [goog.net.XhrIo :as gxhr]
             [load-test-om.form :as form]
             [load-test-om.load-tests :as load-tests])
   (:import [goog.net XhrIo WebSocket]))
@@ -64,7 +64,7 @@
       (reify
         om/IWillMount
         (will-mount [_]
-          (xhr-io/send "http://localhost:3000/presets" (partial handle-preset-response app))
+          (gxhr/send "http://localhost:3000/presets" (partial handle-preset-response app))
 
           (let [ws (WebSocket.)]
             (events/listen ws WebSocket.EventType.MESSAGE
