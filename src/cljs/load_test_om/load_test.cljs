@@ -4,19 +4,10 @@
             [goog.events :as events]
             [goog.json :as gjson]
             [load-test-om.summary :as summary]
-            [load-test-om.hit-table :as hit-table]
             [load-test-om.statistics-table :as statistics-table]
             [load-test-om.hit-rate-chart :as hit-rate-chart]
             [load-test-om.histogram :as histogram])
   (:import (goog.net WebSocket EventType)))
-
-(defn start-date [data-points]
-  (js/Date. (apply min (map :time data-points))))
-
-(defn run-length [data-points]
-  (let [times (map :time data-points)]
-    (Math/round (- (apply max times)
-                   (apply min times)))))
 
 (defn handle-delete [id]
   (.log js/console "handle-delete" id))
@@ -34,7 +25,7 @@
                                  :onClick #(om/set-state! owner :minimised? false)} "+")
                    (dom/div #js {:className "u-pull-end"} (summary/component load-test)))))
 
-(defn load-test-detailed [{:keys [resource action id data-points] :as load-test} owner]
+(defn load-test-detailed [{:keys [resource action id duration rate data-points] :as load-test} owner]
   (dom/div #js {:className "detail-view"}
            (dom/h2 nil
                    (dom/div #js {:className "delete-btn"
@@ -57,20 +48,7 @@
 
            (dom/hr nil)
 
-           (dom/div #js {:className "third"} (statistics-table/component load-test))
-           (dom/div #js {:className "third"} (hit-table/component data-points))
-           (dom/div #js {:className "third"}
-                    (dom/table #js {:className "extra-details"}
-                               (dom/tr nil
-                                       (dom/th nil "ID")
-                                       (dom/td nil id))
-                               (dom/tr nil
-                                       (dom/th nil "Date")
-                                       (dom/td nil (.toDateString (start-date data-points))))
-                               (dom/tr nil
-                                       (dom/th nil "Run length")
-                                       (dom/td nil (str (/ (run-length data-points) 1000) "seconds")))))
-
+           (dom/div nil (statistics-table/component load-test))
            (dom/div #js {:className "clearfix"})))
 
 (defn handle-new-data-point [load-test data]

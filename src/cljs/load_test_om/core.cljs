@@ -18,8 +18,7 @@
 
 (comment
   (get-in @app-state [:form])
-  ;; how many load-tests
-  (:data-points (first (vals (get-in @app-state [:load-tests]))))
+  (:data-points (second (first (get-in @app-state [:load-tests]))))
   ;; how many data points in first load test
   (count (apply sorted-set-by :time (get-in @app-state [:load-tests :0 :data-points])))
   ;; look at a data-point

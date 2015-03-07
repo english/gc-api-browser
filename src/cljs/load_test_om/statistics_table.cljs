@@ -14,22 +14,32 @@
          2)
       (nth values (dec rounded-index)))))
 
-(defn component [{:keys [data-points stats]}]
-  (let [response-times (map :response-time data-points)]
+(defn counted-by-status [data-points]
+  (map (fn [[status values]]
+         [(str status "s") (count values)])
+       (group-by :status data-points)))
+
+(defn start-date [data-points]
+  (js/Date. (apply min (map :time data-points))))
+
+(defn component [{:keys [data-points id duration rate] :as load-test}]
+  (let [response-times (map :response-time data-points)
+        data (concat [["ID" id]
+                      ["Date" (.toLocaleString (start-date data-points))]
+                      ["Duration" (str duration " seconds")]
+                      ["Rate" (str rate "/second")]
+                      ["Mean" (Math/round (utils/mean response-times))]
+                      ["Median" (percentile response-times 0.5)]
+                      ["75th" (percentile response-times 0.75)]
+                      ["95th" (percentile response-times 0.95)]
+                      ["Hit Rate" (str (utils/avg-hit-rate data-points) "/s")]]
+                     (counted-by-status data-points))]
     (dom/div #js {:className "summary"}
              (dom/table nil
-                        (dom/tr nil
-                                (dom/th nil "Statistic")
-                                (dom/th nil "Mean")
-                                (dom/th nil "Median")
-                                (dom/th nil "75th")
-                                (dom/th nil "95th"))
-                        (dom/tr nil
-                                (dom/td nil "Response Time")
-                                (dom/td nil (Math/round (utils/mean response-times)))
-                                (dom/td nil (percentile response-times 0.5))
-                                (dom/td nil (percentile response-times 0.75))
-                                (dom/td nil (percentile response-times 0.95)))
-                        (dom/tr nil
-                                (dom/td nil "Hit Rate")
-                                (dom/td nil (str (utils/avg-hit-rate data-points) "/s")))))))
+                        (apply dom/tr nil
+                               (map #(dom/th nil (if (keyword? %)
+                                                   (name %)
+                                                   %))
+                                    (map first data)))
+                        (apply dom/tr nil
+                               (map #(dom/td nil %) (map second data)))))))
