@@ -1,14 +1,16 @@
 (ns load-test-om.load-tests
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [load-test-om.load-test :as load-test]))
+            [load-test-om.load-test :as lt-load-test]))
 
-(defn load-tests [load-tests owner]
+(defn component [load-tests owner]
   (reify
     om/IRender
     (render [_]
-      (let [ordered (->> (vals load-tests) (sort-by :id) reverse)]
-        (apply dom/ul nil
-               (map #(om/build load-test/load-test % {:init-state {:minimised? (not= % (first ordered))}
-                                                      :key :id})
-                    ordered))))))
+      (->> (vals load-tests)
+           (sort-by :id)
+           reverse
+           (map-indexed (fn [i load-test]
+                          (om/build lt-load-test/component load-test {:init-state {:minimised? (pos? i)}
+                                                                      :key :id})))
+           (apply dom/ul nil)))))

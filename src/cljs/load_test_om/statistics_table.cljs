@@ -14,7 +14,7 @@
          2)
       (nth values (dec rounded-index)))))
 
-(defn statistics-table [{:keys [data-points stats]}]
+(defn component [{:keys [data-points stats]}]
   (let [response-times (map :response-time data-points)]
     (dom/div #js {:className "summary"}
              (dom/table nil

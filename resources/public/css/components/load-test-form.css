@@ -9,7 +9,7 @@
 }
 
 .load-test-form--field__endpoint {
-  width: 30%;
+  width: 25%;
 }
 
 .load-test-form--field__resource {
@@ -20,6 +20,14 @@
   width: 25%;
 }
 
+.load-test-form--field__duration {
+  width: 8%;
+}
+
+.load-test-form--field__rate {
+  width: 8%;
+}
+
 .load-test-form--field__button {
-  width: 20%;
+  width: 8%;
 }

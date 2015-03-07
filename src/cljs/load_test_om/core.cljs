@@ -4,6 +4,7 @@
             [cljs.repl :as repl :include-macros true]
             [goog.events :as events]
             [goog.json :as gjson]
+            [goog.net.XhrIo :as xhr-io]
             [load-test-om.form :as form]
             [load-test-om.load-tests :as load-tests])
   (:import [goog.net XhrIo WebSocket]))
@@ -16,11 +17,11 @@
 (enable-console-print!)
 
 (comment
-  (get-in @app-state [:form :selected-resource])
+  (get-in @app-state [:form])
   ;; how many load-tests
   (:data-points (first (vals (get-in @app-state [:load-tests]))))
   ;; how many data points in first load test
-  (count (get-in @app-state [:load-tests :items 0 :data-points]))
+  (count (apply sorted-set-by :time (get-in @app-state [:load-tests :0 :data-points])))
   ;; look at a data-point
   (get-in @app-state [:load-tests :items 0 :data-points 0])
   ;; look at the first load-test's stats
@@ -37,8 +38,7 @@
   ;; show first load test stats
   (->> (get-in @app-state [:load-tests :items 0 :stats])))
 
-(comment
-  (identity @app-state))
+(comment (identity @app-state))
 
 (defn initial-selected-resource [resources]
   [(first (first resources))
@@ -50,11 +50,13 @@
                               (assoc form
                                      :resources (get json "resources")
                                      :url (get json "url")
+                                     :duration (get json "duration")
+                                     :rate (get json "rate")
                                      :selected-resource (initial-selected-resource (get json "resources")))))))
 
 (defn handle-new-or-updated-load-test [app data]
-  (let [load-tests (js->clj (gjson/parse data) :keywordize-keys true)]
-    (om/transact! app :load-tests #(merge % load-tests))))
+  (om/transact! app :load-tests
+                #(merge % (js->clj (gjson/parse data) :keywordize-keys true))))
 
 (defn main []
   (om/root
@@ -62,7 +64,7 @@
       (reify
         om/IWillMount
         (will-mount [_]
-          (.send XhrIo "http://localhost:3000/presets" (partial handle-preset-response app))
+          (xhr-io/send "http://localhost:3000/presets" (partial handle-preset-response app))
 
           (let [ws (WebSocket.)]
             (events/listen ws WebSocket.EventType.MESSAGE
@@ -82,8 +84,8 @@
                                         (dom/h2 #js {:id "title"} (:text app))))
                    (dom/div #js {:className "container"}
                             (dom/div #js {:className "main"}
-                                     (om/build form/load-test-form (:form app))
+                                     (om/build form/component (:form app))
                                      (dom/div #js {:className "hr"})
-                                     (om/build load-tests/load-tests (:load-tests app))))))))
+                                     (om/build load-tests/component (:load-tests app))))))))
     app-state
     {:target (. js/document (getElementById "app"))}))

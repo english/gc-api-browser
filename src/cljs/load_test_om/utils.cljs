@@ -23,14 +23,13 @@
                         {:bucket [item]             :coll (conj coll bucket)}
                         {:bucket (conj bucket item) :coll coll})))
                   {:bucket [] :coll []}
-                  data-points)]
+                  (sort-by :time data-points))]
     (conj (:coll v) (:bucket v))))
 
 (defn avg-hit-rate [data-points]
   {:pre [(seq data-points)
          (contains? (first data-points) :time)]}
-  (let [bucketed (bucket-into-seconds data-points)]
-    (->> (bucket-into-seconds data-points)
-         (map (comp :y hit-rate))
-         mean
-         Math/round)))
+  (->> (bucket-into-seconds data-points)
+       (map (comp :y hit-rate))
+       mean
+       Math/round))

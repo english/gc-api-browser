@@ -41,10 +41,28 @@
                   (map #(dom/option #js {:value %} %)
                        (get resources (first selected-resource))))))
 
-(defn handle-submit [form]
+(defn handle-duration-change [form e]
+  (om/transact! form #(assoc form :duration (.. e -target -value))))
+
+(defn duration-selection [{:keys [duration] :as form}]
+  (dom/div #js {:className "load-test-form--field load-test-form--field__duration"}
+           (dom/div #js {:className "label"} "Duration:")
+           (dom/input #js {:className "input" :type "number" :value duration :min "1" :max "20" :step "1"
+                           :onChange (partial handle-duration-change form)})))
+
+(defn handle-rate-change [form e]
+  (om/transact! form #(assoc form :rate (.. e -target -value))))
+
+(defn rate-selection [{:keys [rate] :as form}]
+  (dom/div #js {:className "load-test-form--field load-test-form--field__rate"}
+           (dom/div #js {:className "label"} "rate:")
+           (dom/input #js {:className "input" :type "number" :value rate :min "1" :max "20" :step "1"
+                           :onChange (partial handle-rate-change form)})))
+
+(defn handle-submit [{:keys [duration rate] :as form}]
   (let [[resource action] (:selected-resource form)
-        duration 5
-        rate 2]
+        duration (js/parseInt duration)
+        rate (js/parseInt rate)]
     (doto (XhrIo.)
       (events/listen EventType.SUCCESS #(.log js/console "SUCCESS" %))
       (events/listen EventType.ERROR #(.log js/console "ERROR" %))
@@ -60,7 +78,7 @@
                          :onClick (partial handle-submit form)}
                     "Start")))
 
-(defn load-test-form [form owner]
+(defn component [form owner]
   (reify
     om/IRender
     (render [_]
@@ -70,5 +88,7 @@
                                  (endpoint-selection form)
                                  (resource-selection form)
                                  (action-selection form)
+                                 (duration-selection form)
+                                 (rate-selection form)
                                  (submit-form form)
                                  (dom/div #js {:className "clearfix"})))))))

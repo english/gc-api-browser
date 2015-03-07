@@ -3,11 +3,11 @@
             [om.dom :as dom :include-macros true]
             [goog.events :as events]
             [goog.json :as gjson]
-            [load-test-om.summary :refer [summary]]
-            [load-test-om.hit-table :refer [hit-table]]
-            [load-test-om.statistics-table :refer [statistics-table]]
-            [load-test-om.hit-rate-chart :refer [hit-rate-chart]]
-            [load-test-om.histogram :refer [histogram]])
+            [load-test-om.summary :as summary]
+            [load-test-om.hit-table :as hit-table]
+            [load-test-om.statistics-table :as statistics-table]
+            [load-test-om.hit-rate-chart :as hit-rate-chart]
+            [load-test-om.histogram :as histogram])
   (:import (goog.net WebSocket EventType)))
 
 (defn start-date [data-points]
@@ -19,8 +19,7 @@
                    (apply min times)))))
 
 (defn handle-delete [id]
-  #_(when (.confirm js/window "Are you sure?")
-    (.remove (js/Firebase. (str firebase-url "/" id)))))
+  (.log js/console "handle-delete" id))
 
 (defn minimized-view [{:keys [resource action id data-points] :as load-test} owner]
   (dom/div #js {:className "minimised-view"}
@@ -33,7 +32,7 @@
                    (dom/small #js {:className "capitalize"} id)
                    (dom/div #js {:className "size-toggle-btn u-pull-end"
                                  :onClick #(om/set-state! owner :minimised? false)} "+")
-                   (dom/div #js {:className "u-pull-end"} (summary load-test)))))
+                   (dom/div #js {:className "u-pull-end"} (summary/component load-test)))))
 
 (defn load-test-detailed [{:keys [resource action id data-points] :as load-test} owner]
   (dom/div #js {:className "detail-view"}
@@ -50,16 +49,16 @@
            (dom/div #js {:className "charts"}
                     (dom/div #js {:className "live-chart--container half"}
                              (dom/h2 nil "Response times")
-                             (om/build histogram load-test))
+                             (om/build histogram/component load-test))
                     (dom/div #js {:className "live-chart--container half"}
                              (dom/h2 nil "Hit rate")
-                             (om/build hit-rate-chart load-test))
+                             (om/build hit-rate-chart/component load-test))
                     (dom/div #js {:className "clearfix"}))
 
            (dom/hr nil)
 
-           (dom/div #js {:className "third"} (statistics-table load-test))
-           (dom/div #js {:className "third"} (hit-table data-points))
+           (dom/div #js {:className "third"} (statistics-table/component load-test))
+           (dom/div #js {:className "third"} (hit-table/component data-points))
            (dom/div #js {:className "third"}
                     (dom/table #js {:className "extra-details"}
                                (dom/tr nil
@@ -78,7 +77,7 @@
   (let [data-point (-> (gjson/parse data) (js->clj :keywordize-keys true))]
     (om/transact! load-test :data-points #(conj % data-point))))
 
-(defn load-test [load-test owner]
+(defn component [load-test owner]
   (reify
     om/IRender
     (render [_]

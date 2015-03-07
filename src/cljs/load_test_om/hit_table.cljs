@@ -1,7 +1,7 @@
 (ns load-test-om.hit-table
   (:require [om.dom :as dom :include-macros true]))
 
-(defn hit-table [data-points]
+(defn component [data-points]
   (let [rows (map
                (fn [[status values]]
                  (dom/tr

@@ -2,7 +2,7 @@
   (:require [om.dom :as dom :include-macros true]
             [load-test-om.utils :as utils]))
 
-(defn summary [{:keys [data-points]}]
+(defn component [{:keys [data-points]}]
   (let [response-times (map :response-time data-points)]
     (dom/div #js {:className "summary"}
              (str "Avg: " (Math/round (utils/mean response-times)) "ms, "

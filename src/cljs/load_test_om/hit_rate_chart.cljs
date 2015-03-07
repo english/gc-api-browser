@@ -86,7 +86,7 @@
        utils/bucket-into-seconds
        (map utils/hit-rate)))
 
-(defn hit-rate-chart [load-test owner]
+(defn component [load-test owner]
   (reify
     om/IDidMount
     (did-mount [_]

@@ -75,7 +75,7 @@
         (.attr "transform" (str "translate(0," height ")"))
         (.call (x-axis x-scale)))))
 
-(defn histogram [load-test owner]
+(defn component [load-test owner]
   (reify
     om/IDidMount
     (did-mount [_]
