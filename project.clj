@@ -13,7 +13,7 @@
                  [ring/ring-defaults "0.1.3"]
                  [compojure "1.3.2"]
                  [enlive "1.1.5"]
-                 [org.om/om "0.8.1"]
+                 [org.omcljs/om "0.8.8"]
                  [com.cemerick/piggieback "0.1.6-SNAPSHOT"]
                  [environ "1.0.0"]]
 
