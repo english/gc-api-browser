@@ -3,6 +3,13 @@
             [om.dom :as dom :include-macros true]
             [load-test-om.utils :as utils]))
 
+(def width 446)
+(def height 150)
+(def top 20)
+(def right 10)
+(def bottom 30)
+(def left 30)
+
 (defn draw-points [el scales axes data]
   (let [svg (.select (.select js/d3 el) "svg")
         line (-> (.. js/d3 -svg line)
@@ -24,7 +31,7 @@
         (.datum (apply array datum))
         (.attr "d" line))))
 
-(defn get-scales [domain width height]
+(defn get-scales [domain]
   {:x (-> (.. js/d3 -time scale)
           (.domain (apply array (:x domain)))
           (.range #js [0 width]))
@@ -47,9 +54,7 @@
    :y (min-max (map :y data))})
 
 (defn update-chart [el data]
-  (let [width 446
-        height 150
-        scales (get-scales (domain data) width height)
+  (let [scales (get-scales (domain data))
         axes   (get-axes scales)]
     (draw-points el scales axes data)))
 
@@ -71,19 +76,13 @@
 
     om/IRender
     (render [_]
-      (let [width 446
-            height 150
-            top 20
-            right 10
-            bottom 30
-            left 30]
-        (dom/div #js {:className "chart hit-rate-chart"}
-                 (dom/svg #js {:className "d3"
-                               :width (+ width left right)
-                               :height (+ height top bottom)}
-                          (dom/g #js {:transform (str "translate(" left "," top ")")}
-                                 (dom/g #js {:className "x axis"
-                                             :transform (str "translate(0, " height ")")})
-                                 (dom/g #js {:className "y axis"}
-                                        (dom/text #js {:transform "rotate(-90)"}))
-                                 (dom/path #js {:className "line"}))))))))
+      (dom/div #js {:className "chart hit-rate-chart"}
+               (dom/svg #js {:className "d3"
+                             :width (+ width left right)
+                             :height (+ height top bottom)}
+                        (dom/g #js {:transform (str "translate(" left "," top ")")}
+                               (dom/g #js {:className "x axis"
+                                           :transform (str "translate(0, " height ")")})
+                               (dom/g #js {:className "y axis"}
+                                      (dom/text #js {:transform "rotate(-90)"}))
+                               (dom/path #js {:className "line"})))))))
