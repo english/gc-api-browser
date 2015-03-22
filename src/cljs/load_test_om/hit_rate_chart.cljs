@@ -46,39 +46,12 @@
   {:x (min-max (map :x data))
    :y (min-max (map :y data))})
 
-(defn update-chart [el width height data]
-  (let [scales (get-scales (domain data) width height)
-        axes   (get-axes scales)]
-    (draw-points el scales axes data)))
-
-(defn create-chart [el data]
+(defn update-chart [el data]
   (let [width 446
         height 150
-        top 20
-        right 10
-        bottom 30
-        left 30
-        svg (-> js/d3
-                (.select el)
-                (.append "svg")
-                (.attr "class" "d3")
-                (.attr "width" (+ width left right))
-                (.attr "height" (+ height top bottom))
-                (.append "g")
-                (.attr "transform" (str "translate(" left "," top ")")))]
-    (-> svg
-        (.append "g")
-        (.attr "class" "x axis")
-        (.attr "transform" (str "translate(0," height ")")))
-    (-> svg
-        (.append "g")
-        (.attr "class" "y axis")
-        (.append "text")
-        (.attr "transform" "rotate(-90)"))
-    (-> svg
-        (.append "path")
-        (.attr "class" "line"))
-    (update-chart el width height data)))
+        scales (get-scales (domain data) width height)
+        axes   (get-axes scales)]
+    (draw-points el scales axes data)))
 
 (defn load-test->data [load-test]
   (->> (:data-points load-test)
@@ -90,8 +63,27 @@
   (reify
     om/IDidMount
     (did-mount [_]
-      (create-chart (om/get-node owner) (load-test->data load-test)))
+      (update-chart (om/get-node owner) (load-test->data load-test)))
+
+    om/IDidUpdate
+    (did-update [_ _ _]
+      (update-chart (om/get-node owner) (load-test->data load-test)))
 
     om/IRender
     (render [_]
-      (dom/div #js {:className "chart hit-rate-chart"}))))
+      (let [width 446
+            height 150
+            top 20
+            right 10
+            bottom 30
+            left 30]
+        (dom/div #js {:className "chart hit-rate-chart"}
+                 (dom/svg #js {:className "d3"
+                               :width (+ width left right)
+                               :height (+ height top bottom)}
+                          (dom/g #js {:transform (str "translate(" left "," top ")")}
+                                 (dom/g #js {:className "x axis"
+                                             :transform (str "translate(0, " height ")")})
+                                 (dom/g #js {:className "y axis"}
+                                        (dom/text #js {:transform "rotate(-90)"}))
+                                 (dom/path #js {:className "line"}))))))))
