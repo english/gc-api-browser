@@ -55,7 +55,7 @@
 
 (defn rate-selection [{:keys [rate] :as form}]
   (dom/div #js {:className "load-test-form--field load-test-form--field__rate"}
-           (dom/div #js {:className "label"} "rate:")
+           (dom/div #js {:className "label"} "Rate:")
            (dom/input #js {:className "input" :type "number" :value rate :min "1" :max "20" :step "1"
                            :onChange (partial handle-rate-change form)})))
 
