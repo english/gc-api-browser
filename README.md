@@ -9,7 +9,7 @@ tests for a chosen resource/action and view the results as a histogram.
 - Run `foreman start -f Procfile.dev`.
 - Hit `http://localhost:8000` and check the browser repl has connected (by not having a
   console error)
-- In Vim, with fireplace.vim installed, open a `.cljs` file and run `:Piggieback (cljs.repl.browser/repl-env)`
+- In Vim, with fireplace.vim installed, open a `.cljs` file and run `:Piggieback 9000`
 
 ## License
 
