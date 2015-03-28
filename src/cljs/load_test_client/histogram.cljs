@@ -6,12 +6,6 @@
 (def chart-width 446)
 (def chart-height 150)
 
-(defn x-axis [x-scale]
-  (-> (.-svg js/d3)
-      .axis
-      (.scale x-scale)
-      (.orient "bottom")))
-
 (defn get-y-scale [data]
   (-> (.. js/d3 -scale linear)
       (.domain #js [0 (.max js/d3 data #(.-y %))])
@@ -22,101 +16,59 @@
       (.domain #js [0 (apply max response-times)])
       (.range #js [0 chart-width])))
 
-(defn format-label [x]
-  (let [v (.-y x)]
-    (when (pos? v) v)))
+(defn render-bar [x-scale y-scale bar]
+  (dom/g #js {:transform (str "translate("
+                              (x-scale (.-x bar)) ","
+                              (y-scale (.-y bar)) ")")
+              :className "bar"}
 
-(defn update-chart [el data-points]
-  (let [response-times (map :response-time data-points)
-        x-scale (get-x-scale response-times)
 
-        data ((-> (.. js/d3 -layout histogram)
-                  (.bins (.ticks x-scale 20)))
-              (apply array response-times))
+         (dom/rect #js {:width (dec (x-scale (.-dx bar)))
+                        :height (- chart-height (y-scale (.-y bar)))})
 
-        y-scale (get-y-scale data)
+         (dom/text #js {:dy "0.75em"
+                        :y 6
+                        :x (/ (x-scale (.-dx bar)) 2)
+                        :textAnchor "middle"}
+                   (when (pos? (.-y bar)) (.-y bar)))))
 
-        svg (.select (.select js/d3 el) "svg g")
+(defn render-x-axis-path []
+  (dom/path #js {:className "domain" :d (str "M0,6V0H" chart-width "V6")}))
 
-        bar (-> svg
-                (.selectAll ".bar")
-                (.data data)
-                (.attr "transform" #(str "translate(" (x-scale (.-x %)) "," (y-scale (.-y %)) ")")))]
+(defn render-x-axis-ticks [data x-scale]
+  (let [tick-arguments (array 10)
+        ticks (if (.-ticks x-scale)
+                (.apply (.-ticks x-scale) x-scale tick-arguments)
+                (.domain x-scale))]
+    (apply dom/g nil (map (fn [tick]
+                            (dom/g #js {:className "tick" :transform (str "translate(" (x-scale tick) ",0)")}
+                                   (dom/line #js {:x2 0 :y2 6})
+                                   (dom/text #js {:dy ".71em" :y 9 :x 0 :style #js {:textAnchor "middle"}} tick)))
+                          ticks))))
 
-    ;; new bars
-    (doto (-> bar
-              (.enter)
-              (.append "g")
-              (.attr "class" "bar")
-              (.attr "transform" #(str "translate(" (x-scale (.-x %)) "," (y-scale (.-y %)) ")")))
-
-      ;; new rects
-      (-> (.append "rect")
-          (.attr "x" 1)
-          (.attr "width" (dec (x-scale (.-dx (aget data 0)))))
-          (.attr "height" #(- chart-height (y-scale (.-y %)))))
-
-      ;; new texts
-      (-> (.append "text")
-          (.attr "dy" "0.75em")
-          (.attr "y" 6)
-          (.attr "x" (/ (x-scale (.-dx (aget data 0))) 2))
-          (.attr "text-anchor" "middle")
-          (.text format-label)))
-
-    ;; existing texts
-    (-> svg
-        (.selectAll ".bar text")
-        (.data data)
-        (.attr "x" (/ (x-scale (.-dx (aget data 0))) 2))
-        (.text format-label)
-        (.exit)
-        (.remove))
-
-    ;; existing rects
-    (-> svg
-        (.selectAll "rect")
-        (.data data)
-        (.attr "width" (dec (x-scale (.-dx (aget data 0)))))
-        (.attr "height" #(- chart-height (y-scale (.-y %))))
-        (.exit)
-        (.remove))
-
-    ;; cleanup old bars
-    (-> bar .exit .remove)
-
-    (-> svg
-        (.select ".x.axis")
-        (.call (x-axis x-scale)))))
-
-(defn create-x-axis [el]
-  (-> (.select js/d3 el)
-      (.select "svg g")
-      (.append "g")
-      (.attr "class" "x axis")
-      (.attr "transform" (str "translate(0," chart-height ")"))))
-
-(defn create-chart [el data-points]
-  (create-x-axis el)
-  (update-chart el data-points))
-
-(defn component [load-test owner]
+(defn component [{:keys [data-points]} owner]
   (reify
-    om/IDidMount
-    (did-mount [_]
-      (create-chart (om/get-node owner) (:data-points load-test)))
-
-    om/IDidUpdate
-    (did-update [_ _ _]
-      (update-chart (om/get-node owner) (:data-points load-test)))
-
     om/IRender
     (render [_]
       (let [top 20
             right 10
             bottom 30
-            left 30]
+            left 30
+
+            response-times (map :response-time data-points)
+            x-scale (get-x-scale response-times)
+
+            data ((-> (.. js/d3 -layout histogram)
+                      (.bins (.ticks x-scale 20)))
+                  (apply array response-times))
+
+            y-scale (get-y-scale data)]
+
         (dom/div #js {:className "chart response-time-histogram"}
                  (dom/svg #js {:width (+ chart-width left right)
                                :height (+ chart-height top bottom)}
-                          (dom/g #js {:transform (str "translate(" left "," top ")")})))))))
+                          (apply dom/g #js {:transform (str "translate(" left "," top ")")}
+                                 (dom/g #js {:className "x axis" :transform (str "translate(0," chart-height ")")}
+                                        (render-x-axis-path)
+                                        (render-x-axis-ticks data x-scale))
+                                 (map #(render-bar x-scale y-scale %) data))))))))
