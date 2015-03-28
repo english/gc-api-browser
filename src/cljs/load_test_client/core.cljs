@@ -1,12 +1,12 @@
-(ns load-test-om.core
+(ns load-test-client.core
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.repl :as repl :include-macros true]
             [goog.events :as events]
             [goog.json :as gjson]
             [goog.net.XhrIo :as gxhr]
-            [load-test-om.form :as form]
-            [load-test-om.load-tests :as load-tests])
+            [load-test-client.form :as form]
+            [load-test-client.load-tests :as load-tests])
   (:import [goog.net XhrIo WebSocket]))
 
 (defonce app-state

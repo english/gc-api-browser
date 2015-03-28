@@ -1,4 +1,4 @@
-(ns load-test-om.utils)
+(ns load-test-client.utils)
 
 (defn max-min-difference [f coll]
   (let [new-coll (map f coll)]

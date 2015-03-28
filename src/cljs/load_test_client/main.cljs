@@ -1,5 +1,5 @@
-(ns load-test-om.main
-  (:require [load-test-om.core :as core]
+(ns load-test-client.main
+  (:require [load-test-client.core :as core]
             [clojure.browser.repl :as repl]))
 
 (defonce conn

@@ -1,6 +1,6 @@
-(ns load-test-om.statistics-table
+(ns load-test-client.statistics-table
   (:require [om.dom :as dom :include-macros true]
-            [load-test-om.utils :as utils]))
+            [load-test-client.utils :as utils]))
 
 (defn percentile [xs ptile]
   {:pre [(not (empty? xs))

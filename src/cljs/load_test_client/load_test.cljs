@@ -1,12 +1,12 @@
-(ns load-test-om.load-test
+(ns load-test-client.load-test
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [goog.events :as events]
             [goog.json :as gjson]
-            [load-test-om.summary :as summary]
-            [load-test-om.statistics-table :as statistics-table]
-            [load-test-om.hit-rate-chart :as hit-rate-chart]
-            [load-test-om.histogram :as histogram])
+            [load-test-client.summary :as summary]
+            [load-test-client.statistics-table :as statistics-table]
+            [load-test-client.hit-rate-chart :as hit-rate-chart]
+            [load-test-client.histogram :as histogram])
   (:import (goog.net WebSocket EventType)))
 
 (defn handle-delete [id]

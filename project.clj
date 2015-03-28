@@ -1,4 +1,4 @@
-(defproject load-test-om "0.1.0-SNAPSHOT"
+(defproject load-test-client "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -22,7 +22,7 @@
 
   :min-lein-version "2.5.0"
 
-  :uberjar-name "load-test-om.jar"
+  :uberjar-name "load-test-client.jar"
 
   :profiles {:dev {:source-paths ["env/dev/clj"]
                    :test-paths ["test/clj"]

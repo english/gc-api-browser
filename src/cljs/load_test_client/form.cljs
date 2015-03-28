@@ -1,4 +1,4 @@
-(ns load-test-om.form
+(ns load-test-client.form
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [goog.events :as events])

@@ -1,7 +1,7 @@
-(ns load-test-om.load-tests
+(ns load-test-client.load-tests
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [load-test-om.load-test :as lt-load-test]))
+            [load-test-client.load-test :as lt-load-test]))
 
 (defn component [load-tests owner]
   (reify

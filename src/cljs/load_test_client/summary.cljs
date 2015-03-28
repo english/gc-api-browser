@@ -1,6 +1,6 @@
-(ns load-test-om.summary
+(ns load-test-client.summary
   (:require [om.dom :as dom :include-macros true]
-            [load-test-om.utils :as utils]))
+            [load-test-client.utils :as utils]))
 
 (defn component [{:keys [data-points]}]
   (let [response-times (map :response-time data-points)]

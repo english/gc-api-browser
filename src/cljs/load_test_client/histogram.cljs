@@ -1,4 +1,4 @@
-(ns load-test-om.histogram
+(ns load-test-client.histogram
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljsjs.d3]))

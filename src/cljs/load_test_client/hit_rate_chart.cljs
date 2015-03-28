@@ -1,7 +1,7 @@
-(ns load-test-om.hit-rate-chart
+(ns load-test-client.hit-rate-chart
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [load-test-om.utils :as utils]
+            [load-test-client.utils :as utils]
             [cljsjs.d3]))
 
 (def width 446)
