@@ -36,15 +36,20 @@
                    :d (str "M0" (aget rng 0) ",6V0H" (aget rng 1) "V6")})))
 
 (defn render-x-axis-ticks [x-scale]
-  (let [tick-arguments (array 10)
-        ticks (if (.-ticks x-scale)
-                (.apply (.-ticks x-scale) x-scale tick-arguments)
-                (.domain x-scale))]
+  (let [ticks (.apply (.-ticks x-scale) x-scale)]
     (apply dom/g nil (map (fn [tick]
                             (dom/g #js {:className "tick" :transform (str "translate(" (x-scale tick) ",0)")}
                                    (dom/line #js {:x2 0 :y2 6})
                                    (dom/text #js {:dy ".71em" :y 9 :x 0 :style #js {:textAnchor "middle"}} tick)))
                           ticks))))
+
+(defn x-axis-component [{:keys [chart-height scale]} owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/g #js {:className "x axis" :transform (str "translate(0," chart-height ")")}
+             (render-x-axis-path scale)
+             (render-x-axis-ticks scale)))))
 
 (defn component [{:keys [data-points]} owner]
   (reify
@@ -61,13 +66,12 @@
             data ((-> (.. js/d3 -layout histogram)
                       (.bins (.ticks x-scale 20)))
                   (apply array response-times))
+
             y-scale (get-y-scale data)]
 
         (dom/div #js {:className "chart response-time-histogram"}
                  (dom/svg #js {:width (+ chart-width left right)
                                :height (+ chart-height top bottom)}
                           (apply dom/g #js {:transform (str "translate(" left "," top ")")}
-                                 (dom/g #js {:className "x axis" :transform (str "translate(0," chart-height ")")}
-                                        (render-x-axis-path x-scale)
-                                        (render-x-axis-ticks x-scale))
+                                 (om/build x-axis-component {:chart-height chart-height :scale x-scale})
                                  (map #(render-bar x-scale y-scale %) data))))))))
