@@ -1,6 +1,7 @@
 (ns load-test-om.histogram
   (:require [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]))
+            [om.dom :as dom :include-macros true]
+            [cljsjs.d3]))
 
 (def chart-width 446)
 (def chart-height 150)

@@ -15,8 +15,8 @@
                  [compojure "1.3.2"]
                  [enlive "1.1.5"]
                  [org.omcljs/om "0.8.8"]
-                 [com.cemerick/piggieback "0.1.6-SNAPSHOT"]
-                 [environ "1.0.0"]]
+                 [cljsjs/d3 "3.5.5-2"]
+                 [com.cemerick/piggieback "0.1.6-SNAPSHOT"]]
 
   :plugins [[lein-environ "1.0.0"]]
 
@@ -28,8 +28,7 @@
                    :test-paths ["test/clj"]
                    :dependencies [[org.clojure/tools.nrepl "0.2.7"]]
 
-                   :repl-options {:init-ns load-test-om.server
-                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+                   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
                    :env {:is-dev true}}
 
