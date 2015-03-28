@@ -10,7 +10,9 @@
   (:import [goog.net XhrIo WebSocket]))
 
 (defonce app-state
-  (atom {:text "GoCardless Enterprise API Load Tester"
+  (atom {:api {:http-url "http://localhost:3000/"
+               :ws-url "ws://localhost:3000/"}
+         :text "GoCardless Enterprise API Load Tester"
          :form {}
          :load-tests {}}))
 
@@ -63,12 +65,13 @@
       (reify
         om/IWillMount
         (will-mount [_]
-          (gxhr/send "http://localhost:3000/presets" (partial handle-preset-response app))
-
-          (let [ws (WebSocket.)]
-            (events/listen ws WebSocket.EventType.MESSAGE
-                           #(handle-new-or-updated-load-test app (.-message %)))
-            (.open ws "ws://localhost:3000/load-tests")
+          (let [ws (WebSocket.)
+                ws-endpoint (str (-> app :api :ws-url) "load-tests")
+                http-endpoint (str (-> app :api :http-url) "presets")]
+            (gxhr/send http-endpoint (partial handle-preset-response app))
+            (doto ws
+              (events/listen WebSocket.EventType.MESSAGE #(handle-new-or-updated-load-test app (.-message %)))
+              (.open ws-endpoint))
             (om/set-state! owner :load-tests-ws ws)))
 
         om/IWillUnmount
@@ -83,7 +86,7 @@
                                         (dom/h2 #js {:id "title"} (:text app))))
                    (dom/div #js {:className "container"}
                             (dom/div #js {:className "main"}
-                                     (om/build form/component (:form app))
+                                     (om/build form/component app)
                                      (dom/div #js {:className "hr"})
                                      (om/build load-tests/component (:load-tests app))))))))
     app-state

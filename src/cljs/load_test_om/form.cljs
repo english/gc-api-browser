@@ -59,26 +59,26 @@
            (dom/input #js {:className "input" :type "number" :value rate :min "1" :max "20" :step "1"
                            :onChange (partial handle-rate-change form)})))
 
-(defn handle-submit [{:keys [duration rate] :as form}]
+(defn handle-submit [{:keys [duration rate] :as form} {:keys [http-url] :as api}]
   (let [[resource action] (:selected-resource form)
         duration (js/parseInt duration)
         rate (js/parseInt rate)]
     (doto (XhrIo.)
       (events/listen EventType.SUCCESS #(.log js/console "SUCCESS" %))
       (events/listen EventType.ERROR #(.log js/console "ERROR" %))
-      (.send "http://localhost:3000/load-tests"
+      (.send (str http-url "load-tests")
              "POST"
              (.serialize json (clj->js {:resource resource :action action :duration duration :rate rate}))
              #js {"Content-Type" "application/json"}))))
 
-(defn submit-form [form]
+(defn submit-form [form api]
   (dom/div #js {:className "load-test-form--field load-test-form--field__button"}
            (dom/div #js {:className "label"} "\u00A0")
            (dom/div #js {:className "btn btn-block"
-                         :onClick (partial handle-submit form)}
+                         :onClick (partial handle-submit form api)}
                     "Start")))
 
-(defn component [form owner]
+(defn component [{:keys [form api]} owner]
   (reify
     om/IRender
     (render [_]
@@ -90,5 +90,5 @@
                                  (action-selection form)
                                  (duration-selection form)
                                  (rate-selection form)
-                                 (submit-form form)
+                                 (submit-form form api)
                                  (dom/div #js {:className "clearfix"})))))))
