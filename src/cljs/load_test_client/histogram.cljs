@@ -17,25 +17,25 @@
       (.range #js [0 chart-width])))
 
 (defn render-bar [x-scale y-scale bar]
-  (dom/g #js {:transform (str "translate("
-                              (x-scale (.-x bar)) ","
-                              (y-scale (.-y bar)) ")")
-              :className "bar"}
+  (let [scaled-x (x-scale (.-x bar))
+        scaled-y (y-scale (.-y bar))
+        scaled-dx (x-scale (.-dx bar))]
+    (dom/g #js {:transform (str "translate(" scaled-x "," scaled-y ")")
+                :className "bar"}
+           (dom/rect #js {:width (dec scaled-dx)
+                          :height (- chart-height scaled-y)})
+           (dom/text #js {:dy "0.75em"
+                          :y 6
+                          :x (/ scaled-dx 2)
+                          :textAnchor "middle"}
+                     (when (pos? (.-y bar)) (.-y bar))))))
 
+(defn render-x-axis-path [x-scale]
+  (let [rng (.range x-scale)]
+    (dom/path #js {:className "domain"
+                   :d (str "M0" (aget rng 0) ",6V0H" (aget rng 1) "V6")})))
 
-         (dom/rect #js {:width (dec (x-scale (.-dx bar)))
-                        :height (- chart-height (y-scale (.-y bar)))})
-
-         (dom/text #js {:dy "0.75em"
-                        :y 6
-                        :x (/ (x-scale (.-dx bar)) 2)
-                        :textAnchor "middle"}
-                   (when (pos? (.-y bar)) (.-y bar)))))
-
-(defn render-x-axis-path []
-  (dom/path #js {:className "domain" :d (str "M0,6V0H" chart-width "V6")}))
-
-(defn render-x-axis-ticks [data x-scale]
+(defn render-x-axis-ticks [x-scale]
   (let [tick-arguments (array 10)
         ticks (if (.-ticks x-scale)
                 (.apply (.-ticks x-scale) x-scale tick-arguments)
@@ -61,7 +61,6 @@
             data ((-> (.. js/d3 -layout histogram)
                       (.bins (.ticks x-scale 20)))
                   (apply array response-times))
-
             y-scale (get-y-scale data)]
 
         (dom/div #js {:className "chart response-time-histogram"}
@@ -69,6 +68,6 @@
                                :height (+ chart-height top bottom)}
                           (apply dom/g #js {:transform (str "translate(" left "," top ")")}
                                  (dom/g #js {:className "x axis" :transform (str "translate(0," chart-height ")")}
-                                        (render-x-axis-path)
-                                        (render-x-axis-ticks data x-scale))
+                                        (render-x-axis-path x-scale)
+                                        (render-x-axis-ticks x-scale))
                                  (map #(render-bar x-scale y-scale %) data))))))))
