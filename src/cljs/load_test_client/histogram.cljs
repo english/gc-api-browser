@@ -16,19 +16,22 @@
       (.domain #js [0 (apply max response-times)])
       (.range #js [0 chart-width])))
 
-(defn render-bar [x-scale y-scale bar]
-  (let [scaled-x (x-scale (.-x bar))
-        scaled-y (y-scale (.-y bar))
-        scaled-dx (x-scale (.-dx bar))]
-    (dom/g #js {:transform (str "translate(" scaled-x "," scaled-y ")")
-                :className "bar"}
-           (dom/rect #js {:width (dec scaled-dx)
-                          :height (- chart-height scaled-y)})
-           (dom/text #js {:dy "0.75em"
-                          :y 6
-                          :x (/ scaled-dx 2)
-                          :textAnchor "middle"}
-                     (when (pos? (.-y bar)) (.-y bar))))))
+(defn bar-component [bar x-scale y-scale chart-height]
+  (reify
+    om/IRender
+    (render [_]
+      (let [scaled-x (x-scale (.-x bar))
+            scaled-y (y-scale (.-y bar))
+            scaled-dx (x-scale (.-dx bar))]
+        (dom/g #js {:transform (str "translate(" scaled-x "," scaled-y ")")
+                    :className "bar"}
+               (dom/rect #js {:width (dec scaled-dx)
+                              :height (- chart-height scaled-y)})
+               (dom/text #js {:dy "0.75em"
+                              :y 6
+                              :x (/ scaled-dx 2)
+                              :textAnchor "middle"}
+                         (when (pos? (.-y bar)) (.-y bar))))))))
 
 (defn x-axis-path-component [scale]
   (reify
@@ -38,13 +41,16 @@
         (dom/path #js {:className "domain"
                        :d (str "M0" (aget rng 0) ",6V0H" (aget rng 1) "V6")})))))
 
-(defn render-x-axis-ticks [x-scale]
-  (let [ticks (.apply (.-ticks x-scale) x-scale)]
-    (apply dom/g nil (map (fn [tick]
-                            (dom/g #js {:className "tick" :transform (str "translate(" (x-scale tick) ",0)")}
-                                   (dom/line #js {:x2 0 :y2 6})
-                                   (dom/text #js {:dy ".71em" :y 9 :x 0 :style #js {:textAnchor "middle"}} tick)))
-                          ticks))))
+(defn x-axis-ticks-component [scale]
+  (reify
+    om/IRender
+    (render [_]
+      (let [ticks (.apply (.-ticks scale) scale)]
+        (apply dom/g nil (map (fn [tick]
+                                (dom/g #js {:className "tick" :transform (str "translate(" (scale tick) ",0)")}
+                                       (dom/line #js {:x2 0 :y2 6})
+                                       (dom/text #js {:dy ".71em" :y 9 :x 0 :style #js {:textAnchor "middle"}} tick)))
+                              ticks))))))
 
 (defn x-axis-component [{:keys [chart-height scale]} owner]
   (reify
@@ -52,7 +58,7 @@
     (render [_]
       (dom/g #js {:className "x axis" :transform (str "translate(0," chart-height ")")}
              (om/build x-axis-path-component scale)
-             (render-x-axis-ticks scale)))))
+             (om/build x-axis-ticks-component scale)))))
 
 (defn component [{:keys [data-points]} owner]
   (reify
@@ -77,4 +83,4 @@
                                :height (+ chart-height top bottom)}
                           (apply dom/g #js {:transform (str "translate(" left "," top ")")}
                                  (om/build x-axis-component {:chart-height chart-height :scale x-scale})
-                                 (map #(render-bar x-scale y-scale %) data))))))))
+                                 (om/build-all #(bar-component % x-scale y-scale chart-height) data))))))))
