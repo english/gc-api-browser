@@ -30,10 +30,13 @@
                           :textAnchor "middle"}
                      (when (pos? (.-y bar)) (.-y bar))))))
 
-(defn render-x-axis-path [x-scale]
-  (let [rng (.range x-scale)]
-    (dom/path #js {:className "domain"
-                   :d (str "M0" (aget rng 0) ",6V0H" (aget rng 1) "V6")})))
+(defn x-axis-path-component [scale]
+  (reify
+    om/IRender
+    (render [_]
+      (let [rng (.range scale)]
+        (dom/path #js {:className "domain"
+                       :d (str "M0" (aget rng 0) ",6V0H" (aget rng 1) "V6")})))))
 
 (defn render-x-axis-ticks [x-scale]
   (let [ticks (.apply (.-ticks x-scale) x-scale)]
@@ -48,7 +51,7 @@
     om/IRender
     (render [_]
       (dom/g #js {:className "x axis" :transform (str "translate(0," chart-height ")")}
-             (render-x-axis-path scale)
+             (om/build x-axis-path-component scale)
              (render-x-axis-ticks scale)))))
 
 (defn component [{:keys [data-points]} owner]
