@@ -18,29 +18,6 @@
 
 (enable-console-print!)
 
-(comment
-  (get-in @app-state [:form])
-  (:data-points (second (first (get-in @app-state [:load-tests]))))
-  ;; how many data points in first load test
-  (count (apply sorted-set-by :time (get-in @app-state [:load-tests :0 :data-points])))
-  ;; look at a data-point
-  (get-in @app-state [:load-tests :items 0 :data-points 0])
-  ;; look at the first load-test's stats
-  (get-in @app-state [:load-tests :items 0 :stats])
-  ;; Correct order?
-  (apply > (map
-             (fn [load-test] (get-in load-test [:data-points 0 :time]))
-             (get-in @app-state [:load-tests :items])))
-  ;; which has the most data-points
-  (->> (get-in @app-state [:load-tests :items])
-       (sort-by (comp count :data-points) >)
-       first
-       :id)
-  ;; show first load test stats
-  (->> (get-in @app-state [:load-tests :items 0 :stats])))
-
-(comment (identity @app-state))
-
 (defn initial-selected-resource [resources]
   [(first (first resources))
    (first (second (first resources)))])
