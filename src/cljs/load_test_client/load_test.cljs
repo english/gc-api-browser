@@ -40,7 +40,9 @@
            (dom/div #js {:className "charts"}
                     (dom/div #js {:className "live-chart--container half"}
                              (dom/h2 nil "Response times")
-                             (om/build histogram/component load-test))
+                             (om/build histogram/component {:data-points data-points
+                                                            :width 446
+                                                            :height 150}))
                     (dom/div #js {:className "live-chart--container half"}
                              (dom/h2 nil "Hit rate")
                              (om/build hit-rate-chart/component load-test))
