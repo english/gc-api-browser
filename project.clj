@@ -18,8 +18,6 @@
                  [cljsjs/d3 "3.5.5-2"]
                  [com.cemerick/piggieback "0.1.6-SNAPSHOT"]]
 
-  :plugins [[lein-environ "1.0.0"]]
-
   :min-lein-version "2.5.0"
 
   :uberjar-name "load-test-client.jar"
