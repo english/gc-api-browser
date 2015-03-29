@@ -18,18 +18,16 @@
 
 (enable-console-print!)
 
-(defn initial-selected-resource [resources]
-  [(first (first resources))
-   (first (second (first resources)))])
-
 (defn handle-preset-response [app e]
-  (let [json (js->clj (.. e -target getResponseJson))]
+  (let [json (js->clj (.. e -target getResponseJson))
+        initial-selected-resource (juxt (comp first first)
+                                        (comp first second first))]
     (om/transact! app :form (fn [form]
                               (assoc form
-                                     :resources (get json "resources")
-                                     :url (get json "url")
-                                     :duration (get json "duration")
-                                     :rate (get json "rate")
+                                     :resources         (get json "resources")
+                                     :url               (get json "url")
+                                     :duration          (get json "duration")
+                                     :rate              (get json "rate")
                                      :selected-resource (initial-selected-resource (get json "resources")))))))
 
 (defn handle-new-or-updated-load-test [app data]
