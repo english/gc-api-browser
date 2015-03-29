@@ -2,7 +2,8 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljsjs.d3]
-            [load-test-client.x-axis :as x-axis]))
+            [load-test-client.x-axis :as x-axis]
+            [load-test-client.bar :as bar]))
 
 (def chart-width 446)
 (def chart-height 150)
@@ -16,23 +17,6 @@
   (-> (.. js/d3 -scale linear)
       (.domain #js [0 (apply max response-times)])
       (.range #js [0 chart-width])))
-
-(defn bar-component [bar x-scale y-scale height]
-  (reify
-    om/IRender
-    (render [_]
-      (let [scaled-x (x-scale (.-x bar))
-            scaled-y (y-scale (.-y bar))
-            scaled-dx (x-scale (.-dx bar))]
-        (dom/g #js {:transform (str "translate(" scaled-x "," scaled-y ")")
-                    :className "bar"}
-               (dom/rect #js {:width (dec scaled-dx)
-                              :height (- height scaled-y)})
-               (dom/text #js {:dy "0.75em"
-                              :y 6
-                              :x (/ scaled-dx 2)
-                              :textAnchor "middle"}
-                         (when (pos? (.-y bar)) (.-y bar))))))))
 
 (defn component [{:keys [data-points]} owner]
   (reify
@@ -57,4 +41,4 @@
                                :height (+ chart-height top bottom)}
                           (apply dom/g #js {:transform (str "translate(" left "," top ")")}
                                  (om/build x-axis/component {:chart-height chart-height :scale x-scale})
-                                 (om/build-all #(bar-component % x-scale y-scale chart-height) data))))))))
+                                 (om/build-all #(bar/component % x-scale y-scale chart-height) data))))))))
