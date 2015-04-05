@@ -13,22 +13,11 @@
   (atom {:api {:http-url "http://localhost:3000/"
                :ws-url "ws://localhost:3000/"}
          :text "GoCardless Enterprise API Load Tester"
-         :form {}
+         :form {:duration 5
+                :rate 3}
          :load-tests {}}))
 
 (enable-console-print!)
-
-(defn handle-preset-response [app e]
-  (let [json (js->clj (.. e -target getResponseJson))
-        initial-selected-resource (juxt (comp first first)
-                                        (comp first second first))]
-    (om/transact! app :form (fn [form]
-                              (assoc form
-                                     :resources         (get json "resources")
-                                     :url               (get json "url")
-                                     :duration          (get json "duration")
-                                     :rate              (get json "rate")
-                                     :selected-resource (initial-selected-resource (get json "resources")))))))
 
 (defn handle-new-or-updated-load-test [app data]
   (om/transact! app :load-tests
@@ -41,9 +30,7 @@
         om/IWillMount
         (will-mount [_]
           (let [ws (WebSocket.)
-                ws-endpoint (str (-> app :api :ws-url) "load-tests")
-                http-endpoint (str (-> app :api :http-url) "presets")]
-            (gxhr/send http-endpoint (partial handle-preset-response app))
+                ws-endpoint (str (-> app :api :ws-url) "load-tests")]
             (doto ws
               (events/listen WebSocket.EventType.MESSAGE #(handle-new-or-updated-load-test app (.-message %)))
               (.open ws-endpoint))
