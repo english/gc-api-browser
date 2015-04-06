@@ -12,9 +12,9 @@
 (defonce app-state
   (atom {:api {:http-url "http://localhost:3000/"
                :ws-url "ws://localhost:3000/"}
-         :text "GoCardless Enterprise API Load Tester"
-         :form {:duration 5
-                :rate 3}
+         :text "GC API Load Tester"
+         :form {:duration 5 :rate 3 :selected-resource nil :selected-action nil
+                :url nil :method nil :headers {}}
          :load-tests {}}))
 
 (enable-console-print!)

@@ -6,6 +6,7 @@
   display: block;
   float: left;
   padding: 0px 5px;
+  width: 25%;
 }
 
 .load-test-form--field__schema {
@@ -26,6 +27,10 @@
 
 .load-test-form--field__rate {
   width: 8%;
+}
+
+.load-test-form--field__url {
+  width: 50%;
 }
 
 .load-test-form--field__button {
