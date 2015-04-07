@@ -7,14 +7,17 @@
             [goog.net.XhrIo :as gxhr]
             [load-test-client.form :as form]
             [load-test-client.load-tests :as load-tests])
-  (:import [goog.net XhrIo WebSocket]))
+  (:import [goog.net XhrIo WebSocket]
+           [goog.ui IdGenerator]))
 
 (defonce app-state
   (atom {:api {:http-url "http://localhost:3000/"
                :ws-url "ws://localhost:3000/"}
          :text "GC API Load Tester"
          :form {:duration 5 :rate 3 :selected-resource nil :selected-action nil
-                :url nil :method nil :headers {}}
+                :url nil :method nil :headers [{:id (.getNextUniqueId (.getInstance IdGenerator))
+                                                :name "foo"
+                                                :value "bar"}]}
          :load-tests {}}))
 
 (enable-console-print!)
