@@ -26,6 +26,7 @@ header {
   padding: 10px 0px;
   text-align: center;
   color: #ffffff;
+  min-height: 55px;
 }
 
 .clearfix {
