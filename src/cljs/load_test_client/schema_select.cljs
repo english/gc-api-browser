@@ -8,13 +8,14 @@
 
 (defn request-for [schema resource action]
   (let [prefix "https://api-staging.gocardless.com"
-        link (first (filter #(= (:rel %) action)
-                            (get-in schema [:definitions (keyword resource) :links])))]
+        link (->> (get-in schema [:definitions (keyword resource) :links])
+                  (filter #(= (:title %) action))
+                  (first))]
     {:method (:method link)
      :url (str prefix (:href link))}))
 
-(defn actions-for-resource [schema resource]
-  (map :rel (get-in schema [:definitions (keyword resource) :links])))
+(defn resource->actions [schema resource]
+  (map :title (get-in schema [:definitions (keyword resource) :links])))
 
 (defn read-as-text [file c]
   (let [reader (js/FileReader.)]
@@ -27,12 +28,11 @@
 
 (defn set-selected-action! [form schema resource action]
   (om/update! form :selected-action action)
-  (om/transact! form (fn [m]
-                       (merge m (request-for schema resource action)))))
+  (om/transact! form (fn [m] (merge m (request-for schema resource action)))))
 
 (defn set-selected-resource! [form schema resource]
   (om/update! form :selected-resource resource)
-  (set-selected-action! form schema resource (first (actions-for-resource schema resource))))
+   (set-selected-action! form schema resource (first (resource->actions schema resource))))
 
 (defn set-schema! [form schema]
   (om/update! form :schema schema)
@@ -74,7 +74,7 @@
                                   :value (when selected-action (name selected-action))
                                   :onChange (partial handle-action-change form)}
                   (map #(dom/option #js {:value %} %)
-                       (actions-for-resource schema selected-resource)))))
+                       (resource->actions schema selected-resource)))))
 
 (defn component [form owner]
   (reify
