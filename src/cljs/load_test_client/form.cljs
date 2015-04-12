@@ -9,7 +9,7 @@
            [goog json]))
 
 (defn handle-duration-change [form e]
-  (om/transact! form #(assoc form :duration (.. e -target -value))))
+  (om/transact! form #(assoc form :duration (js/parseInt (.. e -target -value)))))
 
 (defn duration-selection [{:keys [duration] :as form}]
   (dom/div #js {:className "load-test-form--field load-test-form--field__duration"}
@@ -18,7 +18,7 @@
                            :onChange (partial handle-duration-change form)})))
 
 (defn handle-rate-change [form e]
-  (om/transact! form #(assoc form :rate (.. e -target -value))))
+  (om/transact! form #(assoc form :rate (js/parseInt (.. e -target -value)))))
 
 (defn rate-selection [{:keys [rate] :as form}]
   (dom/div #js {:className "load-test-form--field load-test-form--field__rate"}
@@ -26,19 +26,14 @@
            (dom/input #js {:className "input" :type "number" :value rate :min "1" :max "20" :step "1"
                            :onChange (partial handle-rate-change form)})))
 
-(defn handle-submit [{:keys [request duration rate] :as form} {:keys [http-url] :as api}]
-  (let [duration (js/parseInt duration)
-        rate (js/parseInt rate)]
-    (doto (XhrIo.)
-      (events/listen EventType.SUCCESS #(.log js/console "SUCCESS" %))
-      (events/listen EventType.ERROR #(.log js/console "ERROR" %))
-      (.send (str http-url "load-tests")
-             "POST"
-             (.serialize json (clj->js {:method (:method request)
-                                        :url (:url request)
-                                        :duration duration
-                                        :rate rate}))
-             #js {"Content-Type" "application/json"}))))
+(defn handle-submit [{:keys [duration rate headers] :as form} {:keys [http-url] :as api}]
+  (doto (XhrIo.)
+    (events/listen EventType.SUCCESS #(.log js/console "SUCCESS" %))
+    (events/listen EventType.ERROR #(.log js/console "ERROR" %))
+    (.send (str http-url "load-tests")
+           "POST"
+           (.serialize json (clj->js (select-keys form [:url :method :headers :duration :rate])))
+           #js {"Content-Type" "application/json"})))
 
 (defn submit-form [form api]
   (dom/div #js {:className "load-test-form--field load-test-form--field__button"}

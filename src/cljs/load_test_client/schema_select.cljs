@@ -16,7 +16,7 @@
   (->> (schema->resource-node schema resource)
        :links
        (filter #(= (:title %) action))
-       (first)))
+       first))
 
 (defn schema->domain [schema]
   (get-in schema [:links 0 :href]))
@@ -53,6 +53,7 @@
 
 (defn set-schema! [form schema]
   (om/update! form :schema schema)
+  (om/update! form :text (:description schema))
   (set-selected-resource! form schema (first (schema->resources schema))))
 
 (defn handle-schema-input-change [form evt]

@@ -13,8 +13,8 @@
 (defonce app-state
   (atom {:api {:http-url "http://localhost:3000/"
                :ws-url "ws://localhost:3000/"}
-         :text "GC API Load Tester"
-         :form {:duration 5 :rate 3 :selected-resource nil :selected-action nil
+         :form {:text ""
+                :duration 5 :rate 3 :selected-resource nil :selected-action nil
                 :url nil :method nil :headers {}}
          :load-tests {}}))
 
@@ -46,7 +46,7 @@
           (dom/div nil
                    (dom/header nil
                                (dom/div #js {:className "container"}
-                                        (dom/h2 #js {:id "title"} (:text app))))
+                                        (dom/h2 #js {:id "title"} (:text (:form app)))))
                    (dom/div #js {:className "container"}
                             (dom/div #js {:className "main"}
                                      (om/build form/component app)
