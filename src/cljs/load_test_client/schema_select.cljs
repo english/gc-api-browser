@@ -6,16 +6,31 @@
             [goog.events :as events]
             [cljs.core.async :refer [put! chan <!]]))
 
+(defn schema->resource-node [schema resource]
+  (->> (:definitions schema)
+       vals
+       (filter #(= (:title %) resource))
+       first))
+
+(defn schema->action-node [schema resource action]
+  (->> (schema->resource-node schema resource)
+       :links
+       (filter #(= (:title %) action))
+       (first)))
+
+(defn schema->domain [schema]
+  (get-in schema [:links 0 :href]))
+
 (defn request-for [schema resource action]
-  (let [prefix "https://api-staging.gocardless.com"
-        link (->> (get-in schema [:definitions (keyword resource) :links])
-                  (filter #(= (:title %) action))
-                  (first))]
-    {:method (:method link)
-     :url (str prefix (:href link))}))
+  (let [prefix (schema->domain schema)
+        action-node (schema->action-node schema resource action)]
+    {:method (:method action-node)
+     :url (str prefix (:href action-node))}))
 
 (defn resource->actions [schema resource]
-  (map :title (get-in schema [:definitions (keyword resource) :links])))
+  (->> (schema->resource-node schema resource)
+       :links
+       (map :title)))
 
 (defn read-as-text [file c]
   (let [reader (js/FileReader.)]
@@ -24,7 +39,9 @@
     c))
 
 (defn schema->resources [schema]
-  (map name (keys (:definitions schema))))
+  (->> (vals (:definitions schema))
+       (map :title)
+       (map name)))
 
 (defn set-selected-action! [form schema resource action]
   (om/update! form :selected-action action)
