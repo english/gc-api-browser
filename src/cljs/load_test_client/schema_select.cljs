@@ -46,8 +46,8 @@
 (defn handle-resource-change [form e]
   (set-selected-resource! form (:schema form) (.. e -target -value)))
 
-(defn handle-action-change [form e]
-  (set-selected-action! form (:schema form) (:selected-resource form) (.. e -target -value)))
+(defn handle-action-change [{:keys [schema selected-resource] :as form} e]
+  (set-selected-action! form schema selected-resource (.. e -target -value)))
 
 (defn schema-file [form]
   (dom/div

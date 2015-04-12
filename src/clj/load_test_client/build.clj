@@ -8,5 +8,5 @@
                     :main 'load-test-client.main
                     :asset-path "/js/out"
                     :verbose true}]
-  (closure/build "src" build-opts)
-  (closure/watch "src" build-opts)))
+    (closure/build "src" build-opts)
+    (closure/watch "src" build-opts)))

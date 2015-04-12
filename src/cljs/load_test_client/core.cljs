@@ -15,9 +15,7 @@
                :ws-url "ws://localhost:3000/"}
          :text "GC API Load Tester"
          :form {:duration 5 :rate 3 :selected-resource nil :selected-action nil
-                :url nil :method nil :headers [{:id (.getNextUniqueId (.getInstance IdGenerator))
-                                                :name "foo"
-                                                :value "bar"}]}
+                :url nil :method nil :headers {}}
          :load-tests {}}))
 
 (enable-console-print!)

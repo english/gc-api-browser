@@ -45,11 +45,12 @@
 }
 
 .headers__header {
+  clear: left;
 }
 
 .headers__header__name {
   float: left;
-  width: 49%;
+  width: 45%;
 }
 
 .headers__header__separator {
@@ -63,5 +64,13 @@
 
 .headers__header__value {
   float: left;
-  width: 49%;
+  width: 45%;
+}
+
+.headers__header__delete {
+  float: left;
+  width: 6%;
+  color: red;
+  line-height: 34px;
+  font-size: 1.2em;
 }

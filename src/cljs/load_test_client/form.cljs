@@ -3,10 +3,10 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [goog.events :as events]
-            [load-test-client.schema-select :as schema-select])
+            [load-test-client.schema-select :as schema-select]
+            [load-test-client.headers :as headers])
   (:import [goog.net XhrIo EventType]
-           [goog json]
-           [goog.ui IdGenerator]))
+           [goog json]))
 
 (defn handle-duration-change [form e]
   (om/transact! form #(assoc form :duration (.. e -target -value))))
@@ -54,42 +54,6 @@
                            :value (:url form)
                            :onChange #(om/update! form :url (.. % -target -value))})))
 
-(defn edit-header [header owner {:keys [on-blur handle-delete] :as opts}]
-  (reify
-    om/IRender
-    (render [_]
-      (dom/div #js {:className "headers__header"}
-               (dom/div #js {:className "headers__header__name"}
-                        (dom/input #js {:className "input"
-                                        :value (:name header)
-                                        :onChange #(om/update! header (assoc header :name (.. % -target -value)))}))
-               (dom/span #js {:className "headers__header__separator"} ":")
-               (dom/div #js {:className "headers__header__value"}
-                        (dom/input #js {:className "input"
-                                        :value (:value header)
-                                        :onBlur on-blur
-                                        :onChange #(om/update! header (assoc header :value (.. % -target -value)))}))
-               (dom/button #js {:type "button"
-                                :className "headers__header__delete"
-                                :onClick handle-delete} "Delete")))))
-
-(defn append-new-header [headers header]
-  (om/transact! headers #(if (= (:id header)
-                                (:id (last %)))
-                           (conj % {:id (.getNextUniqueId (.getInstance IdGenerator))})
-                           %)))
-
-(defn delete-header [headers-cursor {:keys [id]}]
-  (om/transact! headers-cursor (fn [headers]
-                                 (remove #(= id (:id %)) headers))))
-
-(defn edit-headers [headers]
-  (apply dom/div #js {:className "load-test-form--field headers"}
-         (dom/div #js {:className "label"} "Headers")
-         (map #(om/build edit-header % {:opts {:on-blur (partial append-new-header headers %)
-                                               :handle-delete (partial delete-header headers %)}})
-              headers)))
-
 (defn component [{:keys [form api]} owner]
   (reify
     om/IRender
@@ -101,7 +65,7 @@
                                  (dom/div #js {:className "clearfix"})
                                  (edit-url form)
                                  (dom/div #js {:className "clearfix"})
-                                 (edit-headers (:headers form))
+                                 (om/build headers/component (:headers form))
                                  (dom/div #js {:className "clearfix"})
                                  (duration-selection form)
                                  (rate-selection form)
