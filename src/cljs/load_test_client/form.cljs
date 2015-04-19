@@ -49,6 +49,14 @@
                            :value (:url form)
                            :onChange #(om/update! form :url (.. % -target -value))})))
 
+(defn edit-method [form]
+  (dom/div #js {:className "load-test-form--field load-test-form--field__method"}
+           (dom/div #js {:className "label"} "Method")
+           (apply dom/select #js {:className "input"
+                                  :value (:method form)
+                                  :onChange #(om/update! form :method (.. % -target -value))}
+                  (map #(dom/option #js {:value %} %) ["GET" "POST" "PUT"]))))
+
 (defn component [{:keys [form api]} owner]
   (reify
     om/IRender
@@ -59,6 +67,7 @@
                                  (om/build schema-select/component form)
                                  (dom/div #js {:className "clearfix"})
                                  (edit-url form)
+                                 (edit-method form)
                                  (dom/div #js {:className "clearfix"})
                                  (om/build headers/component (:headers form))
                                  (dom/div #js {:className "clearfix"})
