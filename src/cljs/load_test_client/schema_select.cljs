@@ -21,27 +21,38 @@
 (defn schema->domain [schema]
   (get-in schema [:links 0 :href]))
 
+(defn process-href [href schema]
+  (let [[match before pointer after] (re-find #"(.*)\{\((.*)\)\}(.*)" (js/decodeURIComponent href))]
+    (if match
+      (str before
+           (get-in schema (map keyword (-> (.split pointer "/")
+                                           rest
+                                           vec
+                                           (conj :example))))
+           after)
+      href)))
+
 (defn request-for [schema resource action]
   (let [prefix (schema->domain schema)
         action-node (schema->action-node schema resource action)]
     {:method (:method action-node)
-     :url (str prefix (:href action-node))}))
+     :url (str prefix (process-href (:href action-node) schema))}))
 
 (defn resource->actions [schema resource]
   (->> (schema->resource-node schema resource)
        :links
        (map :title)))
 
+(defn schema->resources [schema]
+  (->> (vals (:definitions schema))
+       (map :title)
+       (map name)))
+
 (defn read-as-text [file c]
   (let [reader (js/FileReader.)]
     (set! (.-onload reader) #(put! c (.. % -target -result)))
     (.readAsText reader file)
     c))
-
-(defn schema->resources [schema]
-  (->> (vals (:definitions schema))
-       (map :title)
-       (map name)))
 
 (defn set-selected-action! [form schema resource action]
   (om/update! form :selected-action action)
@@ -51,15 +62,21 @@
   (om/update! form :selected-resource resource)
    (set-selected-action! form schema resource (first (resource->actions schema resource))))
 
-(defn set-schema! [form schema]
-  (om/update! form :schema schema)
-  (om/update! form :text (:description schema))
-  (set-selected-resource! form schema (first (schema->resources schema))))
+(defn set-schema! [form json]
+  (let [schema (js->clj json :keywordize-keys true)]
+    (doto form
+      (om/update! :schema schema)
+      (om/update! :text (:description schema))
+      (set-selected-resource! schema (first (schema->resources schema))))))
 
 (defn handle-schema-input-change [form evt]
   (let [file (first (array-seq (.. evt -target -files)))]
     (go (let [text (<! (read-as-text file (chan)))]
-          (set-schema! form (-> text gjson/parse (js->clj :keywordize-keys true)))))))
+          (.resolveRefs js/JsonRefs (gjson/parse text)
+                        (fn [err json]
+                          (if err
+                            (throw err)
+                            (set-schema! form json))))))))
 
 (defn handle-resource-change [form e]
   (set-selected-resource! form (:schema form) (.. e -target -value)))
