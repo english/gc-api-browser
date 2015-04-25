@@ -32,7 +32,7 @@
     (events/listen EventType.ERROR #(.log js/console "ERROR" %))
     (.send (str http-url "load-tests")
            "POST"
-           (.serialize json (clj->js (select-keys form [:url :method :headers :duration :rate])))
+           (.serialize json (clj->js (select-keys form [:url :method :headers :body :duration :rate])))
            #js {"Content-Type" "application/json"})))
 
 (defn submit-form [form api]
@@ -57,6 +57,13 @@
                                   :onChange #(om/update! form :method (.. % -target -value))}
                   (map #(dom/option #js {:value %} %) ["GET" "POST" "PUT"]))))
 
+(defn edit-body [form]
+  (dom/div #js {:className "load-test-form--field load-test-form--field__body"}
+           (dom/div #js {:className "label"} "Body")
+           (dom/textarea #js {:className "input"
+                              :value (:body form)
+                              :onChange #(om/update! form :body (.. % -target -value))})))
+
 (defn component [{:keys [form api]} owner]
   (reify
     om/IRender
@@ -70,6 +77,7 @@
                                  (edit-method form)
                                  (dom/div #js {:className "clearfix"})
                                  (om/build headers/component (:headers form))
+                                 (when (not= "GET" (:method form)) (edit-body form))
                                  (dom/div #js {:className "clearfix"})
                                  (duration-selection form)
                                  (rate-selection form)

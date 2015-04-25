@@ -40,6 +40,14 @@
 .load-test-form--field__headers {
 }
 
+.load-test-form--field__body {
+  width: 50%;
+}
+
+.load-test-form--field__body textarea {
+  min-height: 125px;
+}
+
 .headers {
   width: 50%;
 }

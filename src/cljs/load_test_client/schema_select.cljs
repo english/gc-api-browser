@@ -34,9 +34,11 @@
 
 (defn request-for [schema resource action]
   (let [prefix (schema->domain schema)
-        action-node (schema->action-node schema resource action)]
-    {:method (:method action-node)
-     :url (str prefix (process-href (:href action-node) schema))}))
+        {:keys [method href example]} (schema->action-node schema resource action)]
+    {:method method
+     :url (str prefix (process-href href schema))
+     :body (when (not= method "GET")
+             (last (butlast (re-find #"(.+) (.+) (.+)\n((.|\n)*)\n\n" example))))}))
 
 (defn resource->actions [schema resource]
   (->> (schema->resource-node schema resource)
@@ -60,7 +62,7 @@
 
 (defn set-selected-resource! [form schema resource]
   (om/update! form :selected-resource resource)
-   (set-selected-action! form schema resource (first (resource->actions schema resource))))
+  (set-selected-action! form schema resource (first (resource->actions schema resource))))
 
 (defn set-schema! [form json]
   (let [schema (js->clj json :keywordize-keys true)]

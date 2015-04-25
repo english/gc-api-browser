@@ -15,7 +15,7 @@
                :ws-url "ws://localhost:3000/"}
          :form {:text ""
                 :duration 5 :rate 3 :selected-resource nil :selected-action nil
-                :url nil :method nil :headers {}}
+                :url nil :method "GET" :body nil :headers {}}
          :load-tests {}}))
 
 (enable-console-print!)
