@@ -1,7 +1,7 @@
-(ns load-test-client.core
+(ns gc-api-browser.core
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [load-test-client.form :as form]))
+            [gc-api-browser.form :as form]))
 
 (defonce app-state
   (atom {:form {:text ""

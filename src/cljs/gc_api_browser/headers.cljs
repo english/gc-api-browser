@@ -1,4 +1,4 @@
-(ns load-test-client.headers
+(ns gc-api-browser.headers
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [clojure.string :as string])
@@ -43,7 +43,7 @@
   (reify
     om/IRender
     (render [_]
-      (apply dom/div #js {:className "load-test-form--field headers"}
+      (apply dom/div #js {:className "request-form--field headers"}
              (dom/div #js {:className "label"} "Headers")
              (dom/div #js {:className "headers__header"}
                       (dom/div #js {:className "headers__header__name"}

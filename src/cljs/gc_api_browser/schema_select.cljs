@@ -1,4 +1,4 @@
-(ns load-test-client.schema-select
+(ns gc-api-browser.schema-select
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
@@ -88,7 +88,7 @@
 
 (defn schema-file [form]
   (dom/div
-    #js {:className "load-test-form--field load-test-form--field__schema"}
+    #js {:className "request-form--field request-form--field__schema"}
     (dom/div #js {:className "label"} "Schema:")
     (dom/input #js {:type "file"
                     :className "input"
@@ -96,7 +96,7 @@
                     :onChange (partial handle-schema-input-change form)})))
 
 (defn resource-selection [{:keys [selected-resource selected-action schema] :as form}]
-  (dom/div #js {:className "load-test-form--field load-test-form--field__resource"}
+  (dom/div #js {:className "request-form--field request-form--field__resource"}
            (dom/div #js {:className "label"} "Resource:")
            (apply dom/select #js {:className "input"
                                   :value selected-resource
@@ -105,7 +105,7 @@
                        (schema->resources schema)))))
 
 (defn action-selection [{:keys [selected-resource selected-action schema] :as form}]
-  (dom/div #js {:className "load-test-form--field load-test-form--field__action"}
+  (dom/div #js {:className "request-form--field request-form--field__action"}
            (dom/div #js {:className "label"} "Action:")
            (apply dom/select #js {:className "input"
                                   :value (when selected-action (name selected-action))

@@ -1,4 +1,4 @@
-(defproject load-test-client "0.1.0-SNAPSHOT"
+(defproject gc-api-browser "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -20,7 +20,7 @@
 
   :min-lein-version "2.5.0"
 
-  :uberjar-name "load-test-client.jar"
+  :uberjar-name "gc-api-browser.jar"
 
   :profiles {:dev {:source-paths ["env/dev/clj"]
                    :test-paths ["test/clj"]

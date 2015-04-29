@@ -1,5 +1,5 @@
-(ns load-test-client.main
-  (:require [load-test-client.core :as core]
+(ns gc-api-browser.main
+  (:require [gc-api-browser.core :as core]
             [clojure.browser.repl :as repl]))
 
 (defonce conn

@@ -1,3 +1,3 @@
 web: sh -c 'cd resources/public && python -m SimpleHTTPServer'
-cljs: lein run -m load-test-client.build
+cljs: lein run -m gc-api-browser.build
 repl: lein repl :headless
