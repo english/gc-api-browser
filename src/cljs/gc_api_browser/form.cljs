@@ -8,31 +8,13 @@
   (:import [goog.net XhrIo EventType]
            [goog json]))
 
-(defn handle-duration-change [form e]
-  (om/transact! form #(assoc form :duration (js/parseInt (.. e -target -value)))))
-
-(defn duration-selection [{:keys [duration] :as form}]
-  (dom/div #js {:className "request-form--field request-form--field__duration"}
-           (dom/div #js {:className "label"} "Duration:")
-           (dom/input #js {:className "input" :type "number" :value duration :min "1" :max "20" :step "1"
-                           :onChange (partial handle-duration-change form)})))
-
-(defn handle-rate-change [form e]
-  (om/transact! form #(assoc form :rate (js/parseInt (.. e -target -value)))))
-
-(defn rate-selection [{:keys [rate] :as form}]
-  (dom/div #js {:className "request-form--field request-form--field__rate"}
-           (dom/div #js {:className "label"} "Rate:")
-           (dom/input #js {:className "input" :type "number" :value rate :min "1" :max "20" :step "1"
-                           :onChange (partial handle-rate-change form)})))
-
-(defn handle-submit [{:keys [duration rate headers] :as form} {:keys [http-url] :as api}]
+(defn handle-submit [form api]
   (doto (XhrIo.)
     (events/listen EventType.SUCCESS #(.log js/console "SUCCESS" %))
     (events/listen EventType.ERROR #(.log js/console "ERROR" %))
     (.send (str "the-url") ;; FIXME
            "POST"
-           (.serialize json (clj->js (select-keys form [:url :method :headers :body :duration :rate])))
+           (.serialize json (clj->js (select-keys form [:url :method :headers :body])))
            #js {"Content-Type" "application/json"})))
 
 (defn submit-form [form api]
@@ -79,7 +61,5 @@
                                  (om/build headers/component (:headers form))
                                  (when (not= "GET" (:method form)) (edit-body form))
                                  (dom/div #js {:className "clearfix"})
-                                 (duration-selection form)
-                                 (rate-selection form)
                                  (submit-form form api)
                                  (dom/div #js {:className "clearfix"})))))))
