@@ -13,30 +13,33 @@
                  [ring "1.3.2"]
                  [ring/ring-defaults "0.1.4"]
                  [compojure "1.3.3"]
-                 [enlive "1.1.5"]
                  [org.omcljs/om "0.8.8"]
-                 [cljsjs/d3 "3.5.5-3"]
                  [racehub/om-bootstrap "0.5.0"]]
+
+  :plugins [[lein-cljsbuild "1.0.5"]
+            [cider/cider-nrepl "0.8.2"]]
 
   :min-lein-version "2.5.0"
 
   :uberjar-name "gc-api-browser.jar"
 
-  :profiles {:dev {:source-paths ["env/dev/clj"]
-                   :test-paths ["test/clj"]
-                   :dependencies [[com.cemerick/piggieback "0.2.1"]
+  :cljsbuild {:builds [{:id :main
+                        :source-paths ["src/cljs"]
+                        :compiler {:output-to  "resources/public/js/app.js"
+                                   :output-dir "resources/public/js/out"
+                                   :main       "gc-api-browser.main"
+                                   :asset-path "/js/out"
+                                   :verbose    true
+                                   :optimizations :none}}]}
+
+  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.1"]
                                   [org.clojure/tools.nrepl "0.2.10"]]
 
-                   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+                   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
 
-                   :env {:is-dev true}}
-
-             :uberjar {:source-paths ["env/prod/clj"]
-                       :env {:production true}
-                       :omit-source true
+             :uberjar {:omit-source true
                        :aot :all
-                       :cljsbuild {:builds {:app
-                                            {:source-paths ["env/prod/cljs"]
-                                             :compiler
+                       :cljsbuild {:builds {:main
+                                            {:compiler
                                              {:optimizations :advanced
                                               :pretty-print false}}}}}})
