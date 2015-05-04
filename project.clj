@@ -8,12 +8,10 @@
   :clean-targets ^{:protect false} ["resources/public/js/app.js" "resources/public/js/out"]
 
   :dependencies [[org.clojure/clojure "1.7.0-beta2"]
-                 [org.clojure/clojurescript "0.0-3211"]
+                 [org.clojure/clojurescript "0.0-3126"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [ring "1.3.2"]
-                 [ring/ring-defaults "0.1.4"]
-                 [compojure "1.3.3"]
                  [org.omcljs/om "0.8.8"]
+                 [cljs-http "0.1.30"]
                  [racehub/om-bootstrap "0.5.0"]]
 
   :plugins [[lein-cljsbuild "1.0.5"]
@@ -32,8 +30,8 @@
                                    :verbose    true
                                    :optimizations :none}}]}
 
-  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.1"]
-                                  [org.clojure/tools.nrepl "0.2.10"]]
+  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.1.6-SNAPSHOT"]
+                                  [org.clojure/tools.nrepl "0.2.7"]]
 
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
 
