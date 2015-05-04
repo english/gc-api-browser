@@ -7,7 +7,8 @@
   (atom {:form {:text ""
                 :selected-resource nil :selected-action nil
                 :url nil :method "GET" :body nil
-                :headers {"GoCardless-Version" "2014-11-03"
+                :headers {"Authorization" "FILL ME IN"
+                          "GoCardless-Version" "2015-04-29"
                           "Accept" "application/json"
                           "Content-Type" "application/json"}}}))
 

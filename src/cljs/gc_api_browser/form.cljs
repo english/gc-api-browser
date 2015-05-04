@@ -2,27 +2,21 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [cljs.core.async :as async]
             [goog.events :as events]
+            [cljs-http.client :as http]
             [gc-api-browser.schema-select :as schema-select]
             [gc-api-browser.headers :as headers])
   (:import [goog.net XhrIo EventType]
            [goog json]))
 
-(defn handle-submit [form api]
-  (doto (XhrIo.)
-    (events/listen EventType.SUCCESS #(.log js/console "SUCCESS" %))
-    (events/listen EventType.ERROR #(.log js/console "ERROR" %))
-    (.send (str "the-url") ;; FIXME
-           "POST"
-           (.serialize json (clj->js (select-keys form [:url :method :headers :body])))
-           #js {"Content-Type" "application/json"})))
-
-(defn submit-form [form api]
+(defn submit-form [form owner]
   (dom/div #js {:className "request-form--field request-form--field__button"}
            (dom/div #js {:className "label"} "\u00A0")
            (dom/div #js {:className "btn btn-block"
-                         :onClick (partial handle-submit form api)}
-                    "Start")))
+                         :onClick #(async/put! (om/get-state owner :submit-chan)
+                                               (select-keys form [:url :method :body :headers]))}
+                    "Send")))
 
 (defn edit-url [form]
   (dom/div #js {:className "request-form--field request-form--field__url"}
@@ -43,11 +37,41 @@
   (dom/div #js {:className "request-form--field request-form--field__body"}
            (dom/div #js {:className "label"} "Body")
            (dom/textarea #js {:className "input"
+                              :style #js {:fontFamily "Monospace"
+                                          :minHeight "245px"}
                               :value (:body form)
                               :onChange #(om/update! form :body (.. % -target -value))})))
 
-(defn component [{:keys [form api]} owner]
+(defn response-component [response]
   (reify
+    om/IRender
+    (render [_]
+      (dom/textarea #js {:readOnly true
+                         :className "input"
+                         :style #js {:fontFamily "Monospace"
+                                     :minHeight "245px"}
+                         :value (.stringify js/JSON (clj->js (:body response)) nil 2)}))))
+
+(defn component [{:keys [form]} owner]
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:submit-chan (async/chan)
+       :response-chan (async/chan)})
+
+    om/IWillMount
+    (will-mount [_]
+      (let [submit-chan (om/get-state owner :submit-chan)
+            response-chan (om/get-state owner :response-chan)]
+        (go (loop []
+              (let [request (async/<! submit-chan)]
+                (async/pipe (http/request request) response-chan false)
+                (recur))))
+        (go (loop []
+              (let [response (async/<! response-chan)]
+                (om/update! form :response response)
+                (recur))))))
+
     om/IRender
     (render [_]
       (dom/div #js {:className "container"}
@@ -61,5 +85,8 @@
                                  (om/build headers/component (:headers form))
                                  (when (not= "GET" (:method form)) (edit-body form))
                                  (dom/div #js {:className "clearfix"})
-                                 (submit-form form api)
-                                 (dom/div #js {:className "clearfix"})))))))
+                                 (submit-form form owner)
+                                 (dom/div #js {:className "clearfix"}))
+                        (dom/div #js {:className "well response"}
+                                 (when (:response form)
+                                   (om/build response-component (:response form)))))))))
