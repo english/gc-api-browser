@@ -22,8 +22,12 @@
                                 :className "headers__header__delete"
                                 :onClick handle-delete} "✖")))))
 
+(defn store-headers! [headers]
+  (.setItem js/localStorage "headers" (.stringify js/JSON (clj->js headers))))
+
 (defn delete-header [headers k]
-  (om/transact! headers #(dissoc % k)))
+  (om/transact! headers #(dissoc % k))
+  (store-headers! @headers))
 
 (def ENTER_KEY 13)
 
@@ -37,7 +41,8 @@
         (set! (.-value name-node) "")
         (set! (.-value value-node) "")
         (.focus name-node)))
-    (.preventDefault e)))
+    (.preventDefault e)
+    (store-headers! @headers)))
 
 (defn component [headers owner]
   (reify
