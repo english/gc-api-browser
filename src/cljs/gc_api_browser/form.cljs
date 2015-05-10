@@ -6,7 +6,8 @@
             [goog.events :as events]
             [cljs-http.client :as http]
             [gc-api-browser.schema-select :as schema-select]
-            [gc-api-browser.headers :as headers])
+            [gc-api-browser.headers :as headers]
+            [gc-api-browser.response :as response])
   (:import [goog.net XhrIo EventType]
            [goog json]))
 
@@ -42,16 +43,6 @@
                               :value (:body form)
                               :onChange #(om/update! form :body (.. % -target -value))})))
 
-(defn response-component [response]
-  (reify
-    om/IRender
-    (render [_]
-      (dom/textarea #js {:readOnly true
-                         :className "input"
-                         :style #js {:fontFamily "Monospace"
-                                     :minHeight "245px"}
-                         :value (.stringify js/JSON (clj->js (:body response)) nil 2)}))))
-
 (defn component [{:keys [form]} owner]
   (reify
     om/IInitState
@@ -68,8 +59,8 @@
                 (async/pipe (http/request request) response-chan false)
                 (recur))))
         (go (loop []
-              (let [response (async/<! response-chan)]
-                (om/update! form :response response)
+              (let [resp (async/<! response-chan)]
+                (om/update! form :response resp)
                 (recur))))))
 
     om/IRender
@@ -89,4 +80,4 @@
                                  (dom/div #js {:className "clearfix"}))
                         (dom/div #js {:className "well response"}
                                  (when (:response form)
-                                   (om/build response-component (:response form)))))))))
+                                   (om/build response/component (:response form)))))))))
