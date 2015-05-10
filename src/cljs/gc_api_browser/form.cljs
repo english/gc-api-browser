@@ -6,8 +6,7 @@
             [goog.events :as events]
             [cljs-http.client :as http]
             [gc-api-browser.schema-select :as schema-select]
-            [gc-api-browser.headers :as headers]
-            [gc-api-browser.response :as response])
+            [gc-api-browser.headers :as headers])
   (:import [goog.net XhrIo EventType]
            [goog json]))
 
@@ -65,19 +64,14 @@
 
     om/IRender
     (render [_]
-      (dom/div #js {:className "container"}
-               (dom/div #js {:className "main"}
-                        (dom/div #js {:className "well request-form"}
-                                 (om/build schema-select/component form)
-                                 (dom/div #js {:className "clearfix"})
-                                 (edit-url form)
-                                 (edit-method form)
-                                 (dom/div #js {:className "clearfix"})
-                                 (om/build headers/component (:headers form))
-                                 (when (not= "GET" (:method form)) (edit-body form))
-                                 (dom/div #js {:className "clearfix"})
-                                 (submit-form form owner)
-                                 (dom/div #js {:className "clearfix"}))
-                        (dom/div #js {:className "well response"}
-                                 (when (:response form)
-                                   (om/build response/component (:response form)))))))))
+      (dom/div #js {:className "well request-form"}
+               (om/build schema-select/component form)
+               (dom/div #js {:className "clearfix"})
+               (edit-url form)
+               (edit-method form)
+               (dom/div #js {:className "clearfix"})
+               (om/build headers/component (:headers form))
+               (when (not= "GET" (:method form)) (edit-body form))
+               (dom/div #js {:className "clearfix"})
+               (submit-form form owner)
+               (dom/div #js {:className "clearfix"})))))

@@ -6,8 +6,9 @@
   (reify
     om/IRender
     (render [_]
-      (dom/textarea #js {:readOnly true
-                         :className "input"
-                         :style #js {:fontFamily "Monospace"
-                                     :minHeight "245px"}
-                         :value (.stringify js/JSON (clj->js (:body resp)) nil 2)}))))
+      (dom/div #js {:className "well response"}
+               (dom/textarea #js {:readOnly true
+                                  :className "input"
+                                  :style #js {:fontFamily "Monospace"
+                                              :minHeight "245px"}
+                                  :value (.stringify js/JSON (clj->js (:body resp)) nil 2)})))))
