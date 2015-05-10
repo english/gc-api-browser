@@ -50,6 +50,9 @@
        (map :title)
        (map name)))
 
+(defn store-schema! [json]
+  (.setItem js/localStorage "schema" (.stringify js/JSON json)))
+
 (defn read-as-text [file c]
   (let [reader (js/FileReader.)]
     (set! (.-onload reader) #(put! c (.. % -target -result)))
@@ -78,7 +81,9 @@
                         (fn [err json]
                           (if err
                             (throw err)
-                            (set-schema! form json))))))))
+                            (do
+                              (set-schema! form json)
+                              (store-schema! json)))))))))
 
 (defn handle-resource-change [form e]
   (set-selected-resource! form (:schema form) (.. e -target -value)))
@@ -115,6 +120,13 @@
 
 (defn component [form owner]
   (reify
+    om/IWillMount
+    (will-mount [_]
+      ;; Hack! See https://github.com/omcljs/om/issues/336
+      (js/setTimeout
+        (fn []
+          (when-let [json (.getItem js/localStorage "schema")]
+            (set-schema! form (.parse js/JSON json))))))
     om/IRender
     (render [_]
       (dom/div #js {:className "schema-select"}
