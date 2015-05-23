@@ -47,13 +47,11 @@
   (reify
     om/IInitState
     (init-state [_]
-      {:submit-chan (async/chan)
-       :response-chan (async/chan)})
+      {:submit-chan (async/chan)})
 
     om/IWillMount
     (will-mount [_]
-      (let [submit-chan (om/get-state owner :submit-chan)
-            response-chan (om/get-state owner :response-chan)]
+      (let [submit-chan (om/get-state owner :submit-chan)]
         (go (loop []
               (when-let [req (async/<! submit-chan)]
                 (let [resp (async/<! (http/request req))]
