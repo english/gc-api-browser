@@ -29,13 +29,15 @@
                               :float "left"}}
              (dom/code nil json-string))))
 
-(defn component [{:keys [body headers] :as resp} owner]
+(defn component [{:keys [body headers status] :as resp} owner]
   (reify
     om/IRender
     (render [_]
       (let [json-string (.stringify js/JSON (clj->js body) nil 2)]
         (dom/div #js {:className "well response"}
-                 (dom/h1 nil "Response")
+                 (dom/h1 nil "Response"
+                         (dom/small #js {:className "response-status"
+                                         :style #js {:margin-left "10px"}} status))
                  (render-headers headers)
                  (render-body body)
                  clearfix)))))
