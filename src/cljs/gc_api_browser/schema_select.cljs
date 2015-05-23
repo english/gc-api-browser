@@ -12,11 +12,19 @@
        (filter #(= (:title %) resource))
        first))
 
+(defn format-example [example]
+  (let [example-body-string (-> (re-find #"(.+) (.+) (.+)\n((.|\n)*)\n\n" example)
+                                butlast
+                                last)
+        json (.parse js/JSON example-body-string)]
+    (.stringify js/JSON json nil 2)))
+
 (defn schema->action-node [schema resource action]
-  (->> (schema->resource-node schema resource)
-       :links
-       (filter #(= (:title %) action))
-       first))
+  (let [action (->> (schema->resource-node schema resource)
+                    :links
+                    (filter #(= (:title %) action))
+                    first)]
+    (update-in action [:example] format-example)))
 
 (defn schema->domain [schema]
   (get-in schema [:links 0 :href]))
@@ -38,7 +46,7 @@
     {:method method
      :url (str prefix (process-href href schema))
      :body (when (not= method "GET")
-             (last (butlast (re-find #"(.+) (.+) (.+)\n((.|\n)*)\n\n" example))))}))
+             example)}))
 
 (defn resource->actions [schema resource]
   (->> (schema->resource-node schema resource)
