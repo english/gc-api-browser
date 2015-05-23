@@ -15,9 +15,8 @@
 (defn format-example [example]
   (let [example-body-string (-> (re-find #"(.+) (.+) (.+)\n((.|\n)*)\n\n" example)
                                 butlast
-                                last)
-        json (.parse js/JSON example-body-string)]
-    (.stringify js/JSON json nil 2)))
+                                last)]
+    (.stringify js/JSON (.parse js/JSON example-body-string) nil 2)))
 
 (defn schema->action-node [schema resource action]
   (let [action (->> (schema->resource-node schema resource)

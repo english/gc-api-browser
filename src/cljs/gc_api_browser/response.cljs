@@ -1,15 +1,41 @@
 (ns gc-api-browser.response
   (:require [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]))
+            [om.dom :as dom :include-macros true]
+            [gc-api-browser.dom-utils :refer [clearfix]]))
 
-(defn component [resp]
+(defn render-header [[header-name header-value]]
+  (dom/div #js {:className "headers__header"}
+           (dom/div #js {:className "headers__header__name"}
+                    (dom/input #js {:className "input"
+                                    :disabled true
+                                    :value header-name}))
+           (dom/span #js {:className "headers__header__separator"} ":")
+           (dom/div #js {:className "headers__header__value"}
+                    (dom/input #js {:className "input"
+                                    :disabled true
+                                    :value header-value}))))
+
+(defn render-headers [headers]
+  (apply dom/div #js {:className "response-field headers"
+                      :style #js {:width "50%"
+                                  :float "left"}}
+         (dom/div #js {:className "label"} "Headers")
+         (dom/div #js {:className "headers__header"})
+         (map render-header headers)))
+
+(defn render-body [body]
+  (let [json-string (.stringify js/JSON (clj->js body) nil 2)]
+    (dom/pre #js {:style #js {:width "50%"
+                              :float "left"}}
+             (dom/code nil json-string))))
+
+(defn component [{:keys [body headers] :as resp} owner]
   (reify
     om/IRender
     (render [_]
-      (let [json (.stringify js/JSON (clj->js (:body resp)) nil 2)]
+      (let [json-string (.stringify js/JSON (clj->js body) nil 2)]
         (dom/div #js {:className "well response"}
-                 (dom/textarea #js {:readOnly true
-                                    :className "input"
-                                    :style #js {:fontFamily "Monospace"
-                                                :minHeight "245px"}
-                                    :value json}))))))
+                 (dom/h1 nil "Response")
+                 (render-headers headers)
+                 (render-body body)
+                 clearfix)))))
