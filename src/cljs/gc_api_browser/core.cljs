@@ -10,7 +10,8 @@
                       "Content-Type"       "application/json"})
 
 (defonce app-state
-  (atom {:request {:text "Select a JSON schema..."
+  (atom {:history []
+         :request {:text "Select a JSON schema..."
                    :selected-resource nil
                    :selected-action nil
                    :url nil
@@ -21,7 +22,10 @@
 (enable-console-print!)
 
 (defn handle-new-response [app resp]
-  (om/update! app :response resp))
+  (om/transact! app (fn [m]
+                      (-> m
+                          (assoc :response resp)
+                          (update :history #(conj % (select-keys m [:request :response])))))))
 
 (defn main []
   (om/root
