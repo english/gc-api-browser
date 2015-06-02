@@ -1,0 +1,74 @@
+:root {
+  --font-family-base: "Gotham SSm A", "Gotham SSm B", Arial, sans-serif;
+  --font-family-monospace: 'Source Code Pro', monospace;
+
+  --font-size-xxxl: 24px;
+  --font-size-xxl: 20px;
+  --font-size-xl: 18px;
+  --font-size-l: 16px;
+  --font-size-m: 14px;
+  --font-size-s: 13px;
+  --font-size-xs: 12px;
+
+  --font-weight-heavy: 700;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --font-weight-light: 200;
+
+  --base-line-height: 1.625;
+
+  --border-radius-base: 4px;
+  --border-radius-m: 10px;
+  --border-radius-l: 20px;
+
+  --space-xxl: 33px;
+  --space-xl: 27px;
+  --space-l: 22px;
+  --space-xm: 20px;
+  --space-m: 18px;
+  --space-s: 12px;
+  --space-xs: 9px;
+  --space-xxs: 6px;
+
+  --color-gray-dark: #222;
+  --color-gray: #767676;
+  --color-gray-light: #B1B1B1;
+  --color-gray-xlight: #DDD;
+  --color-gray-xxlight: #F9F9F9;
+
+  --color-primary: #5092DA;
+  --color-secondary: #EE6850;
+  --color-accent: #94C43E;
+
+  --color-yellow: #F8E16B;
+  --color-amber: #FFBF00;
+  --color-blue-light: #C4D1DE;
+  --color-blue-xlight: #e8f1fa;
+  --color-red-xlight: #FEF0EF;
+  --color-orange: #F79D19;
+  --color-green: #55CB3D;
+
+  --color-payment: #E19921;
+  --color-payout: #BD10E0;
+  --color-mandate: #41C1A4;
+  --color-refund: #873725;
+  --color-subscription: var(--color-primary);
+
+  --color-box-shadow: rgba(0,0,0,0.05);
+
+  --z-index-notification: 50;
+  --z-index-modal: 41;
+  --z-index-modal-backdrop: 40;
+  --z-index-tooltip: 39;
+  --z-index-role-notice: 38;
+  --z-index-admin-bar: 30;
+  --z-index-main-app-nav: 5;
+  --z-index-dropdown: 4;
+  --z-index-jump-list: 3;
+  --z-index-admin-nav: 2;
+  --z-index-content: 1;
+
+  --box-shadow-low: 0 2px 0 var(--color-box-shadow);
+  --box-shadow-medium: 0 4px 2px var(--color-box-shadow);
+  --box-shadow-high: 0 8px 8px var(--color-box-shadow);
+}

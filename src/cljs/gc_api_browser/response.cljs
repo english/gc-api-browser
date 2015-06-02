@@ -4,23 +4,18 @@
             [gc-api-browser.dom-utils :refer [clearfix]]))
 
 (defn render-header [[header-name header-value]]
-  (dom/div #js {:className "headers__header"}
-           (dom/div #js {:className "headers__header__name"}
+  (dom/div #js {:className "headers__header u-direction-row"}
+           (dom/div #js {:className "headers__header__name u-margin-Rxxs"}
                     (dom/input #js {:className "input"
                                     :disabled true
                                     :value header-name}))
-           (dom/span #js {:className "headers__header__separator"} ":")
-           (dom/div #js {:className "headers__header__value"}
+           (dom/div #js {:className "headers__header__value u-margin-Rxxs"}
                     (dom/input #js {:className "input"
                                     :disabled true
                                     :value header-value}))))
 
 (defn render-headers [headers]
-  (apply dom/div #js {:className "response-field headers"
-                      :style #js {:width "50%"
-                                  :float "left"}}
-         (dom/div #js {:className "label"} "Headers")
-         (dom/div #js {:className "headers__header"})
+  (apply dom/div #js {:className "response-field headers"}
          (map render-header headers)))
 
 (defn render-body [body]
@@ -35,9 +30,7 @@
     (render [_]
       (let [json-string (.stringify js/JSON (clj->js body) nil 2)]
         (dom/div #js {:className "well response"}
-                 (dom/h1 nil "Response"
-                         (dom/small #js {:className "response-status"
-                                         :style #js {:margin-left "10px"}} status))
+                 (dom/h1 #js {:className "response-status"} status)
                  (render-headers headers)
                  (render-body body)
                  clearfix)))))

@@ -1,33 +1,32 @@
 .input {
   width: 100%;
-  height: 34px;
-  padding: 8px 10px;
-  font-size: 13px;
-  line-height: normal;
-  border-radius: 3px;
-  border: 1px solid #D2D6DB;
+  padding: var(--space-xs) 0;
+  border-radius: 0;
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: var(--color-gray-xlight);
   display: block;
-  margin-bottom: 18px;
+  background-color: #fff;
+  color: var(--color-gray-dark);
+  transition: border-color 0.2s ease;
+  height: 40px;
+  margin-bottom: var(--space-m);
+}
+
+.input:hover {
+  border-bottom-color: var(--color-primary);
 }
 
 .input:focus {
   outline: none;
-  border-color: #539bca;
-}
-
-.input[disabled],
-.input.is-disabled {
-  background-color: #F1F1F1;
-  color: #444;
-  border-color: #CFCFCF;
+  border-bottom: 2px solid var(--color-primary);
 }
 
 .input--textarea {
   height: auto;
   min-height: 34px;
-}
-
-/* Angular form validity */
-.input.ng-dirty.ng-invalid {
-  border-color: #E14E3D;
+  max-height: 120px;
+  padding: var(--space-xs);
+  border-width: 1px;
+  border-radius: var(--border-radius-base);
 }

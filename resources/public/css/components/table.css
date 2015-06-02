@@ -1,83 +1,128 @@
 .table {
-  display: table;
-  table-layout: fixed;
   width: 100%;
-  background-color: #FFF;
-  border: 1px solid #D8D8D8;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.table--page {
-  height: 100%;
-}
-
-.table__cell {
-  display: table-cell;
-  vertical-align: middle;
-  float: none;
-}
-
-.table__cell--center {
-  width: 100%;
-  text-align: center;
-}
-
-.table__cell--center__inner {
-  display: inline-block;
-  margin: 20px;
   text-align: left;
 }
 
-/* tr */
-.table__row--bordered {
-  border-bottom: 1px solid #E7E7E7;
+.table tr {
+  border-bottom: 1px solid var(--color-gray-xlight);
 }
 
-.table__row--bordered-header {
-  border-bottom: 1px solid #D8D8D8;
+.table--admin tr {
+  border-bottom: 1px solid var(--color-gray);
 }
 
-.table__row--striped:nth-child(2n - 1) {
-  background-color: #FFF;
+.table tr:hover {
+  background: var(--color-gray-xxlight);
+  cursor: pointer;
 }
 
-.table__row--striped:nth-child(2n) {
-  background-color: #FBFBFB;
+.table--admin tr:hover {
+  background: black;
 }
 
-/* td, th */
-.table__divider,
-.table__header {
-  padding-left: 15px;
-  padding-right: 15px;
+.table tr.is-inactive:hover {
+  background: white;
+  cursor: auto;
 }
 
-.table__divider--wide,
-.table__header--wide {
-  width: 205px;
+.table thead tr:hover,
+.table--admin thead tr:hover {
+  background: transparent;
+  cursor: auto;
 }
 
-.table__divider--bordered,
-.table__header--bordered {
-  border-right: 1px solid #E7E7E7;
+.table th,
+.table td {
+  padding: var(--space-xs) var(--space-l) var(--space-xs) 0;
 }
 
-.table__divider--bordered:last-child,
-.table__header--bordered:last-child {
-  border-right: none;
+.table--admin td {
+  color: white;
+  max-width: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* th */
-.table__header {
-  padding-top: 7px;
-  padding-bottom: 5px;
-  color: #828282;
-  font-weight: 500;
+.table th {
+  font-weight: 400;
+  color: var(--color-gray);
 }
 
-/* td */
-.table__divider {
-  padding-top: 7px;
-  padding-bottom: 7px;
+.table--admin th:nth-child(1),
+.table--admin tr td:nth-child(1) {
+  padding-left: 0;
+}
+
+.table tr th:nth-last-child(1),
+.table tr td:nth-last-child(1) {
+  padding-right: 0;
+}
+
+.table--admin tr th:nth-last-child(1),
+.table--admin tr td:nth-last-child(1) {
+  padding-right: var(--space-m);
+}
+
+/* Setting width of amount column */
+.table--payments tr td:nth-child(1),
+.table--payouts tr td:nth-child(1),
+.table--refunds tr td:nth-child(1),
+.table--subscriptions tr td:nth-child(1) {
+  width: 130px;
+}
+
+/* Setting width of payment status column */
+.table--payments tr td:nth-child(2) {
+  max-width: 260px;
+}
+
+/* setting width of customer ID column */
+.table--customers tr td:nth-child(3) {
+  width: 155px;
+}
+
+/* Setting width of payment created date column */
+.table--payments tr td:nth-child(4) {
+  width: 90px;
+}
+
+/* Setting width of final date column */
+.table--customers tr td:last-child,
+.table--payments tr td:last-child,
+.table--payouts tr td:last-child,
+.table--refunds tr td:last-child,
+.table--subscriptions tr td:last-child,
+.table--organisation tr td:last-child {
+  width: 90px;
+}
+
+.table--events tr td:nth-child(1) {
+  width: 200px;
+}
+
+.table--events tr td:nth-child(2) {
+  width: 240px;
+}
+
+.table--events tr td:nth-child(3) {
+  width: 210px;
+}
+
+.table__status {
+  width: 200px;
+}
+
+.table--payouts-show tbody tr:nth-last-child(1) {
+  border-bottom: 0;
+}
+
+.table--payouts-show tr td:nth-last-child(1),
+.table--payouts-show tr th:nth-last-child(1) {
+  padding-right: var(--space-m);
+}
+
+.table--payouts-show tr td:nth-child(1),
+.table--payouts-show tr th:nth-child(1) {
+  padding-left: var(--space-m);
 }

@@ -1,0 +1,165 @@
+.svg-icon-size-xsm {
+  height: 8px !important;
+  width: 8px !important;
+}
+
+.svg-icon-size-sm {
+  height: 10px !important;
+  width: 10px !important;
+}
+
+.svg-icon-size-md {
+  height: 12px !important;
+  width: 12px !important;
+}
+
+.svg-icon-size-lg {
+  height: 14px !important;
+  width: 14px !important;
+}
+
+.svg-icon-size-xlg {
+  height: 16px !important;
+  width: 16px !important;
+}
+
+/* Fill colours */
+
+.svg-icon-fill-color-text * {
+  fill: var(--color-gray-dark);
+}
+
+.svg-icon-fill-color-meta * {
+  fill: var(--color-gray);
+}
+
+.svg-icon-fill-color-gray-xlight * {
+  fill: var(--color-gray-xlight);
+}
+
+.svg-icon-fill-color-primary * {
+  fill: var(--color-primary);
+}
+
+.svg-icon-fill-color-yellow * {
+  fill: var(--color-yellow);
+}
+
+.svg-icon-fill-color-secondary * {
+  fill: var(--color-secondary);
+}
+
+.svg-icon-fill-color-accent * {
+  fill: var(--color-accent);
+}
+
+.svg-icon-fill-color-gray * {
+  fill: var(--color-gray);
+}
+
+.svg-icon-fill-color-invert * {
+  fill: white;
+}
+
+/* Stroke colours */
+.svg-icon-stroke-color-text * {
+  stroke: var(--color-gray-dark);
+}
+
+.svg-icon-stroke-color-meta * {
+  stroke: var(--color-gray);
+}
+
+.svg-icon-stroke-color-primary * {
+  stroke: var(--color-primary);
+}
+
+.svg-icon-stroke-color-secondary * {
+  stroke: var(--color-secondary);
+}
+
+.svg-icon-stroke-color-accent * {
+  stroke: var(--color-accent);
+}
+
+.svg-icon-stroke-color-gray * {
+  stroke: var(--color-gray);
+}
+
+.svg-icon-stroke-color-invert * {
+  stroke: white;
+}
+
+/*
+
+Responsive Support Styles
+===
+
+James' note: I've extracted these from iconic.min.js & renamed according to our
+svg-icon classes, directive etc - they're used on the svgs themselves for sizing
+
+*/
+
+
+.svg-icon-property-fill,
+.svg-icon-property-text {
+  stroke: none !important;
+}
+
+.svg-icon-property-stroke {
+  fill: none !important;
+}
+
+.svg-icon-fluid {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.svg-icon-sm:not(.svg-icon-size-md):not(.svg-icon-size-lg),
+.svg-icon-size-sm{
+  width: 16px;
+  height: 16px;
+}
+
+.svg-icon-md:not(.svg-icon-size-sm):not(.svg-icon-size-lg),
+.svg-icon-size-md{
+  width: 32px;
+  height: 32px;
+}
+.svg-icon-lg:not(.svg-icon-size-sm):not(.svg-icon-size-md),
+.svg-icon-size-lg{
+  width: 128px;
+  height: 128px;
+}
+
+svg.svg-icon-sm > g.svg-icon-md,
+svg.svg-icon-sm > g.svg-icon-lg,
+svg.svg-icon-md > g.svg-icon-sm,
+svg.svg-icon-md > g.svg-icon-lg,
+svg.svg-icon-lg > g.svg-icon-sm,
+svg.svg-icon-lg > g.svg-icon-md {
+  display: none;
+}
+
+svg.svg-icon.svg-icon-sm > g.svg-icon-lg,
+svg.svg-icon.svg-icon-md > g.svg-icon-lg {
+  display: none;
+}
+
+svg.svg-icon-sm:not(.svg-icon-md):not(.svg-icon-lg) > g.svg-icon-sm,
+svg.svg-icon-md.svg-icon-sm > g.svg-icon-sm,
+svg.svg-icon-lg.svg-icon-sm > g.svg-icon-sm {
+  display: inline;
+}
+
+svg.svg-icon-md:not(.svg-icon-sm):not(.svg-icon-lg) > g.svg-icon-md,
+svg.svg-icon-sm.svg-icon-md > g.svg-icon-md,
+svg.svg-icon-lg.svg-icon-md > g.svg-icon-md {
+  display: inline;
+}
+
+svg.svg-icon-lg:not(.svg-icon-sm):not(.svg-icon-md) > g.svg-icon-lg,
+svg.svg-icon-sm.svg-icon-lg > g.svg-icon-lg,
+svg.svg-icon-md.svg-icon-lg > g.svg-icon-lg {
+  display: inline;
+}

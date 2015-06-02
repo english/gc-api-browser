@@ -1,5 +1,32 @@
 .well {
   padding: 10px 15px;
-  border: 1px solid #D2D6DB;
-  border-radius: 3px;
+  border: 1px solid var(--color-gray-xlight);
+  border-radius: var(--border-radius-base);
+  background: white;
+  box-shadow: var(--box-shadow-low);
+}
+
+.well__action {
+  background: var(--color-gray-xxlight);
+  position: relative;
+  border-top: 1px solid var(--color-gray-xlight);
+  border-bottom-left-radius: var(--border-radius-base);
+  border-bottom-right-radius: var(--border-radius-base);
+}
+
+.well__action {
+  font-size: var(--font-size-xs);
+  line-height: 15px;
+}
+
+.well__action:hover {
+  color: black;
+}
+
+.well--background-white {
+  background-color: white;
+}
+
+.well--background-gray {
+  background-color: var(--color-gray-xxlight);
 }

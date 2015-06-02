@@ -101,25 +101,22 @@
 (defn schema-file [form]
   (dom/div
     #js {:className "request-form--field request-form--field__schema"}
-    (dom/div #js {:className "label"} "Schema:")
     (dom/input #js {:type "file"
                     :className "input"
                     :accept "application/json"
                     :onChange (partial handle-schema-input-change form)})))
 
 (defn resource-selection [{:keys [selected-resource selected-action schema] :as form}]
-  (dom/div #js {:className "request-form--field request-form--field__resource"}
-           (dom/div #js {:className "label"} "Resource:")
-           (apply dom/select #js {:className "input"
+  (dom/div #js {:className "request-form--field request-form--field__resource select-container"}
+           (apply dom/select #js {:className "input select-container__select"
                                   :value selected-resource
                                   :onChange (partial handle-resource-change form)}
                   (map #(dom/option #js {:value %} %)
                        (schema->resources schema)))))
 
 (defn action-selection [{:keys [selected-resource selected-action schema] :as form}]
-  (dom/div #js {:className "request-form--field request-form--field__action"}
-           (dom/div #js {:className "label"} "Action:")
-           (apply dom/select #js {:className "input"
+  (dom/div #js {:className "request-form--field request-form--field__action select-container"}
+           (apply dom/select #js {:className "input select-container__select"
                                   :value (when selected-action (name selected-action))
                                   :onChange (partial handle-action-change form)}
                   (map #(dom/option #js {:value %} %)
@@ -136,7 +133,7 @@
             (set-schema! form (.parse js/JSON json))))))
     om/IRender
     (render [_]
-      (dom/div #js {:className "schema-select"}
+      (dom/div #js {:className "schema-select u-direction-row"}
                (schema-file form)
                (resource-selection form)
                (action-selection form)))))

@@ -1,0 +1,73 @@
+/**
+ * Indicate that interaction will result in an (in)action.
+ */
+
+.u-is-actionable {
+  cursor: pointer !important;
+}
+
+.u-is-disabled {
+  cursor: default !important;
+}
+
+.u-is-draggable {
+  cursor: move !important;
+}
+
+/**
+ * Completely remove from the flow and screen readers.
+ */
+
+.u-is-hidden {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/**
+ * Display a hidden-by-default element.
+ */
+
+.u-is-shown {
+  display: block !important;
+  visibility: visible !important;
+}
+
+table.u-is-shown {
+  display: table !important;
+}
+
+tr.u-is-shown,
+tr.u-is-shown {
+  display: table-row !important;
+}
+
+td.u-is-shown,
+th.u-is-shown {
+  display: table-cell !important;
+}
+
+/**
+ * Completely remove from the flow but leave available to screen readers.
+ */
+
+.u-is-hidden-visually {
+  position: absolute !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  clip: rect(1px, 1px, 1px, 1px) !important;
+}
+
+/**
+ * Control visibility without affecting flow.
+ */
+
+.u-is-invisible {
+  visibility: hidden !important;
+}
+
+.u-is-visible {
+  visibility: visible !important;
+}

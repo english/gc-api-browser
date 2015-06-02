@@ -13,22 +13,19 @@
 
 (defn submit [cursor owner]
   (dom/div #js {:className "request-form--field request-form--field__button"}
-           (dom/div #js {:className "label"} "\u00A0")
            (dom/div #js {:className "btn btn-block"
                          :onClick #(async/put! (om/get-state owner :submit-chan)
                                                (select-keys cursor [:url :method :body :headers]))}
                     "Send")))
 
 (defn edit-url [{:keys [url] :as cursor}]
-  (dom/div #js {:className "request-form--field request-form--field__url"}
-           (dom/div #js {:className "label"} "URL")
+  (dom/div #js {:className "request-form--field request-form--field__url u-size2of3"}
            (dom/input #js {:className "input"
                            :value url
                            :onChange #(om/update! cursor :url (.. % -target -value))})))
 
 (defn edit-method [{:keys [method] :as cursor}]
   (dom/div #js {:className "request-form--field request-form--field__method"}
-           (dom/div #js {:className "label"} "Method")
            (apply dom/select #js {:className "input"
                                   :value method
                                   :onChange #(om/update! cursor :method (.. % -target -value))}
@@ -36,8 +33,7 @@
 
 (defn edit-body [{:keys [body] :as cursor}]
   (dom/div #js {:className "request-form--field request-form--field__body"}
-           (dom/div #js {:className "label"} "Body")
-           (dom/textarea #js {:className "input"
+           (dom/textarea #js {:className "input input--textarea"
                               :style #js {:fontFamily "Monospace"
                                           :minHeight "245px"}
                               :value body
@@ -63,13 +59,10 @@
       (let [{:keys [headers method]} cursor]
         (dom/div #js {:className "well request-form"}
                  (om/build schema-select/component cursor)
-                 clearfix
-                 (edit-url cursor)
-                 (edit-method cursor)
-                 clearfix
+                 (dom/div #js {:className "u-direction-row"}
+                          (edit-url cursor)
+                          (edit-method cursor))
                  (om/build headers/component headers)
                  (when (not= "GET" method)
                    (edit-body cursor))
-                 clearfix
-                 (submit cursor owner)
-                 clearfix)))))
+                 (submit cursor owner))))))

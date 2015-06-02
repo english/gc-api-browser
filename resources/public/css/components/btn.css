@@ -21,24 +21,24 @@
 
 .btn {
   -webkit-appearance: none; /* 1 */
-  border: 1px solid #436E98;
-  background-color: #436E98;
-  color: #FFF;
+  border: 1px solid var(--color-primary);
+  background-color: var(--color-primary);
+  color: white;
   cursor: pointer;
   display: inline-block;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   line-height: normal; /* 6 */
   margin: 0;
   padding: 8px 15px 9px;
   position: relative;
   text-align: center;
+  align-items: center; /* Needed for centered text in flexing btns */
   text-decoration: none;
   user-select: none; /* 6 */
   white-space: normal; /* 7 */
-  border-radius: 3px;
+  border-radius: var(--border-radius-base);
 }
-
 
 /*
   Disable outline when clicking on buttons
@@ -47,11 +47,13 @@
 
 .btn:active {
   outline: none;
+  color: white;
 }
 
-/*
-  Sizes
-*/
+.btn:hover {
+  text-decoration: none;
+  border-color: #1751BF;
+}
 
 .btn--block {
   display: block;
@@ -63,18 +65,24 @@
   height: 30px;
   padding: 0 15px;
   line-height: 28px;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
 }
 
-/*
-  Styles
-*/
+.btn--edit {
+  padding: 6px 14px 3px;
+}
 
 .btn--hollow {
+  border: 1px solid var(--color-gray-xlight);
   position: relative;
-  background-color: #FFF;
-  border-color: #436E98;
-  color: #436E98;
+  background-color: white;
+  color: var(--color-primary);
+}
+
+.btn--hollow:hover,
+.btn--hollow:active {
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
 }
 
 .btn[disabled],
@@ -84,7 +92,24 @@
 .btn[disabled]:active,
 .btn--disabled:active {
   cursor: default;
-  background-color: #A8A8A8;
-  border-color: #A8A8A8;
-  color: #FFF;
+  background-color: white;
+  border-color: var(--color-gray-xlight);
+  color: var(--color-gray);
+}
+
+.btn--warning {
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.btn--warning:hover {
+  border-color: #AD1A10;
+}
+
+.btn--vertical-center {
+  padding: 9px 15px 9px;
+}
+
+.btn--hollow-color-light {
+  border-color: var(--color-gray-xlight)
 }

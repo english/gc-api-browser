@@ -8,13 +8,12 @@
   (reify
     om/IRender
     (render [_]
-      (dom/div #js {:className "headers__header"}
-               (dom/div #js {:className "headers__header__name"}
+      (dom/div #js {:className "headers__header u-direction-row"}
+               (dom/div #js {:className "headers__header__name u-margin-Rxxs"}
                         (dom/input #js {:className "input"
                                         :disabled true
                                         :value header-name}))
-               (dom/span #js {:className "headers__header__separator"} ":")
-               (dom/div #js {:className "headers__header__value"}
+               (dom/div #js {:className "headers__header__value u-margin-Rxxs"}
                         (dom/input #js {:className "input"
                                         :disabled true
                                         :value header-value}))
@@ -49,15 +48,13 @@
     om/IRender
     (render [_]
       (apply dom/div #js {:className "request-form--field headers"}
-             (dom/div #js {:className "label"} "Headers")
-             (dom/div #js {:className "headers__header"}
-                      (dom/div #js {:className "headers__header__name"}
+             (dom/div #js {:className "headers__header u-direction-row"}
+                      (dom/div #js {:className "headers__header__name u-margin-Rxxs"}
                                (dom/input #js {:className "input"
                                                :ref "newHeaderNameField"
                                                :placeholder "Header Name"
                                                :onKeyDown #(handle-new-header-keydown % headers owner)}))
-                      (dom/span #js {:className "headers__header__separator"} ":")
-                      (dom/div #js {:className "headers__header__value"}
+                      (dom/div #js {:className "headers__header__value u-margin-Rxxs"}
                                (dom/input #js {:className "input"
                                                :ref "newHeaderValueField"
                                                :placeholder "Header Value"

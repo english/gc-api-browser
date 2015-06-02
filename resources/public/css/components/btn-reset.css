@@ -1,0 +1,10 @@
+.btn-reset {
+  display: inline;
+  padding: 0;
+  background: inherit;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  text-align: inherit;
+}
+

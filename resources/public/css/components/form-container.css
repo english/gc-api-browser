@@ -1,0 +1,17 @@
+.form-container__login,
+.form-container__password {
+  max-width: 273px;
+}
+
+.form-container__registration {
+  max-width: 400px;
+}
+
+.form-container__sign-up {
+  max-width: 520px;
+}
+
+.form-container__verifications {
+  max-width: 900px;
+  padding: var(--space-xl) var(--space-m) var(--space-s);
+}

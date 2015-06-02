@@ -41,17 +41,14 @@
                               default-headers)))))
         om/IRender
         (render [_]
-          (dom/div nil
+          (dom/div #js {:style #js {:min-width "760px"
+                                    :margin "0 auto"}}
                    (dom/header nil
-                               (dom/div #js {:className "container"}
-                                        (dom/h2 #js {:id "title"} (get-in app [:request :text]))))
-                   (dom/div #js {:className "container"}
-                            (dom/div #js {:className "main"}
-                                     (dom/div #js {:className "container"}
-                                              (dom/div #js {:className "main"}
-                                                       (om/build request/component (:request app)
-                                                                 {:opts {:handle-new-response-fn (partial handle-new-response app)}})
-                                                       (when-let [resp (:response app)]
-                                                         (om/build response/component resp))))))))))
+                               (dom/h2 #js {:className "u-text-light u-margin-Am u-text-center"} (get-in app [:request :text])))
+                   (dom/div nil
+                            (om/build request/component (:request app)
+                                      {:opts {:handle-new-response-fn (partial handle-new-response app)}})
+                            (when-let [resp (:response app)]
+                              (om/build response/component resp)))))))
     app-state
     {:target (.getElementById js/document "app")}))
