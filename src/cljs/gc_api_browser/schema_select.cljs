@@ -6,6 +6,15 @@
             [goog.events :as events]
             [cljs.core.async :refer [put! chan <!]]))
 
+(defn uri->key-path [s]
+  (map keyword (rest (.split s "/"))))
+
+(defn schema-val [s v]
+  (if (and (map? v)
+           (= (keys v) [:$ref]))
+    (schema-val s (get-in s (uri->key-path (:$ref v))))
+    v))
+
 (defn schema->resource-node [schema resource]
   (->> (:definitions schema)
        vals
@@ -81,16 +90,22 @@
       (om/update! :text (:description schema))
       (set-selected-resource! schema (first (schema->resources schema))))))
 
+; (defn handle-schema-input-change [form evt]
+;   (let [file (first (array-seq (.. evt -target -files)))]
+;     (go (let [text (<! (read-as-text file (chan)))]
+;           (.resolveRefs js/JsonRefs (gjson/parse text)
+;                         (fn [err json]
+;                           (if err
+;                             (throw err)
+;                             (do
+;                               (set-schema! form json)
+;                               (store-schema! json)))))))))
+
 (defn handle-schema-input-change [form evt]
   (let [file (first (array-seq (.. evt -target -files)))]
-    (go (let [text (<! (read-as-text file (chan)))]
-          (.resolveRefs js/JsonRefs (gjson/parse text)
-                        (fn [err json]
-                          (if err
-                            (throw err)
-                            (do
-                              (set-schema! form json)
-                              (store-schema! json)))))))))
+    (go (let [json (gjson/parse (<! (read-as-text file (chan))))]
+          (set-schema! form json)
+          (store-schema! json)))))
 
 (defn handle-resource-change [form e]
   (set-selected-resource! form (:schema form) (.. e -target -value)))
