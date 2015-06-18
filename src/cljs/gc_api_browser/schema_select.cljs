@@ -3,7 +3,6 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [goog.json :as gjson]
-            [goog.events :as events]
             [cljs.core.async :refer [put! chan <!]]))
 
 (defn schema->resource-node [schema resource]
@@ -66,22 +65,22 @@
     (.readAsText reader file)
     c))
 
-(defn set-selected-action! [form schema resource action]
-  (om/update! form :selected-action action)
-  (om/transact! form (fn [m] (merge m (request-for schema resource action)))))
+(defn set-selected-action! [request schema resource action]
+  (om/update! request :selected-action action)
+  (om/transact! request (fn [m] (merge m (request-for schema resource action)))))
 
-(defn set-selected-resource! [form schema resource]
-  (om/update! form :selected-resource resource)
-  (set-selected-action! form schema resource (first (resource->actions schema resource))))
+(defn set-selected-resource! [request schema resource]
+  (om/update! request :selected-resource resource)
+  (set-selected-action! request schema resource (first (resource->actions schema resource))))
 
-(defn set-schema! [form json]
+(defn set-schema! [request json]
   (let [schema (js->clj json :keywordize-keys true)]
-    (doto form
+    (doto request
       (om/update! :schema schema)
       (om/update! :text (:description schema))
       (set-selected-resource! schema (first (schema->resources schema))))))
 
-(defn handle-schema-input-change [form evt]
+(defn handle-schema-input-change [request evt]
   (let [file (first (array-seq (.. evt -target -files)))]
     (go (let [text (<! (read-as-text file (chan)))]
           (.resolveRefs js/JsonRefs (gjson/parse text)
@@ -89,51 +88,44 @@
                           (if err
                             (throw err)
                             (do
-                              (set-schema! form json)
+                              (set-schema! request json)
                               (store-schema! json)))))))))
 
-(defn handle-resource-change [form e]
-  (set-selected-resource! form (:schema form) (.. e -target -value)))
+(defn handle-resource-change [request e]
+  (set-selected-resource! request (:schema request) (.. e -target -value)))
 
-(defn handle-action-change [{:keys [schema selected-resource] :as form} e]
-  (set-selected-action! form schema selected-resource (.. e -target -value)))
+(defn handle-action-change [{:keys [schema selected-resource] :as request} e]
+  (set-selected-action! request schema selected-resource (.. e -target -value)))
 
-(defn schema-file [form]
+(defn schema-file [request]
   (dom/div
     #js {:className "request-form--field request-form--field__schema"}
     (dom/input #js {:type "file"
                     :className "input"
                     :accept "application/json"
-                    :onChange (partial handle-schema-input-change form)})))
+                    :onChange (partial handle-schema-input-change request)})))
 
-(defn resource-selection [{:keys [selected-resource selected-action schema] :as form}]
+(defn resource-selection [{:keys [selected-resource selected-action schema] :as request}]
   (dom/div #js {:className "request-form--field request-form--field__resource select-container"}
            (apply dom/select #js {:className "input select-container__select"
                                   :value selected-resource
-                                  :onChange (partial handle-resource-change form)}
+                                  :onChange (partial handle-resource-change request)}
                   (map #(dom/option #js {:value %} %)
                        (schema->resources schema)))))
 
-(defn action-selection [{:keys [selected-resource selected-action schema] :as form}]
+(defn action-selection [{:keys [selected-resource selected-action schema] :as request}]
   (dom/div #js {:className "request-form--field request-form--field__action select-container"}
            (apply dom/select #js {:className "input select-container__select"
                                   :value (when selected-action (name selected-action))
-                                  :onChange (partial handle-action-change form)}
+                                  :onChange (partial handle-action-change request)}
                   (map #(dom/option #js {:value %} %)
                        (resource->actions schema selected-resource)))))
 
-(defn component [form owner]
+(defn component [request _]
   (reify
-    om/IWillMount
-    (will-mount [_]
-      ;; Hack! See https://github.com/omcljs/om/issues/336
-      (js/setTimeout
-        (fn []
-          (when-let [json (.getItem js/localStorage "schema")]
-            (set-schema! form (.parse js/JSON json))))))
     om/IRender
     (render [_]
       (dom/div #js {:className "schema-select u-direction-row"}
-               (schema-file form)
-               (resource-selection form)
-               (action-selection form)))))
+               (schema-file request)
+               (resource-selection request)
+               (action-selection request)))))
