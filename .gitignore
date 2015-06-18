@@ -13,3 +13,4 @@ pom.xml.asc
 /.repl*
 .idea/
 gc_api_browser.iml
+figwheel_server.log
