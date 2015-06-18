@@ -41,7 +41,7 @@
                               default-headers)))))
         om/IRender
         (render [_]
-          (dom/div #js {:style #js {:min-width "760px"
+          (dom/div #js {:style #js {:minWidth "760px"
                                     :margin "0 auto"}}
                    (dom/header nil
                                (dom/h2 #js {:className "u-text-light u-margin-Am u-text-center"} (get-in app [:request :text])))
