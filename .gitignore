@@ -10,3 +10,5 @@ pom.xml.asc
 /resources/public/js
 /out
 /.repl*
+.idea/
+gc_api_browser.iml
