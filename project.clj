@@ -7,15 +7,14 @@
   :source-paths ["src/clj" "src/cljs"]
   :clean-targets ^{:protect false} ["resources/public/js/app.js" "resources/public/js/out"]
 
-  :dependencies [[org.clojure/clojure "1.7.0-beta2"]
-                 [org.clojure/clojurescript "0.0-3126"]
+  :dependencies [[org.clojure/clojure "1.7.0-RC2"]
+                 [org.clojure/clojurescript "0.0-3308"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [org.omcljs/om "0.8.8"]
-                 [cljs-http "0.1.30"]
-                 [racehub/om-bootstrap "0.5.0"]]
+                 [cljs-http "0.1.30"]]
 
-  :plugins [[lein-cljsbuild "1.0.5"]
-            [cider/cider-nrepl "0.8.2"]]
+  :plugins [[lein-cljsbuild "1.0.6"]
+            [cider/cider-nrepl "0.9.0"]]
 
   :min-lein-version "2.5.0"
 
@@ -30,9 +29,8 @@
                                    :verbose    true
                                    :optimizations :none}}]}
 
-  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.1.6-SNAPSHOT"]
-                                  [org.clojure/tools.nrepl "0.2.7"]]
-
+  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.1"]
+                                  [org.clojure/tools.nrepl "0.2.10"]]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
 
              :uberjar {:omit-source true
