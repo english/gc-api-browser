@@ -4,8 +4,8 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :source-paths ["src/clj" "src/cljs"]
-  :clean-targets ^{:protect false} ["resources/public/js/app.js" "resources/public/js/out"]
+  :source-paths ["src/clj" "src/cljs" "src/env/dev" "src/env/prod"]
+  :clean-targets ^{:protect false} ["resources/public/js/app.js" "resources/public/js/out" "dist/app.js"]
 
   :dependencies [[org.clojure/clojure "1.7.0-RC2"]
                  [org.clojure/clojurescript "0.0-3308"]
@@ -21,15 +21,21 @@
 
   :uberjar-name "gc-api-browser.jar"
 
-  :cljsbuild {:builds [{:id :main
+  :cljsbuild {:builds [{:id "main"
                         :figwheel {:on-jsload "gc-api-browser.core/main"}
-                        :source-paths ["src/cljs"]
+                        :source-paths ["src/cljs" "src/env/dev"]
                         :compiler {:output-to  "resources/public/js/app.js"
                                    :output-dir "resources/public/js/out"
-                                   :main       "gc-api-browser.main"
+                                   :main       "gc-api-browser.dev.main"
                                    :asset-path "/js/out"
                                    :verbose    true
-                                   :optimizations :none}}]}
+                                   :optimizations :none}}
+                       {:id "prod"
+                        :source-paths ["src/cljs" "src/env/prod"]
+                        :compiler {:output-to "dist/app.js"
+                                   :main      "gc-api-browser.prod.main"
+                                   :optimizations :whitespace
+                                   :pretty-print false}}]}
 
   :figwheel {:http-server-root "public" ;; default and assumes "resources"
              :server-port 3010 ;; default is 3449

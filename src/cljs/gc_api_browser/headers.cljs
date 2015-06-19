@@ -1,8 +1,7 @@
 (ns gc-api-browser.headers
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [clojure.string :as string])
-  (:import [goog.ui IdGenerator]))
+            [clojure.string :as string]))
 
 (defn header-component [[header-name header-value] owner {:keys [handle-delete] :as opts}]
   (reify

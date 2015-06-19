@@ -1,4 +1,4 @@
-(ns gc-api-browser.main
+(ns gc-api-browser.dev.main
   (:require [gc-api-browser.core :as core]
             [clojure.browser.repl :as repl]))
 

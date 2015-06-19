@@ -14,3 +14,4 @@ pom.xml.asc
 .idea/
 gc_api_browser.iml
 figwheel_server.log
+/dist
