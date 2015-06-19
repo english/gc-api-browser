@@ -21,6 +21,8 @@ It will also serve these static files (and index.html) in development..
 
 ### REPL
 
+#### Without fireplace.vim:
+
 Run `lein repl`, then:
 
 ```clj
@@ -29,14 +31,17 @@ Run `lein repl`, then:
     (require 'cljs.repl.browser)
     (cemerick.piggieback/cljs-repl (cljs.repl.browser/repl-env)
                                    :output-to  "resources/public/js/app.js"
-                                   :output-dir "resources/public/js/out"
-                                   :main       "gc-api-browser.main"
-                                   :asset-path "/js/out"
-                                   :verbose    true
-                                   :optimizations :none))
+                                   :output-dir "resources/public/js/out"))
 ```
 
 You will now be able to run ClojureScript in this REPL.
+
+#### With fireplace.vim
+
+Run `lein repl`
+
+In vim, open a clojurescript file, then run `:Piggieback 9000`. Refresh your browser to
+make the connection.
 
 ## License
 
