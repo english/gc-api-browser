@@ -41,6 +41,13 @@
                           (assoc :response resp)
                           (update :history #(conj % (select-keys m [:request :response])))))))
 
+(defn render-request-and-response [app]
+  (dom/div nil
+           (om/build request/component (:request app)
+                     {:opts {:handle-new-response-fn (partial handle-new-response app)}})
+           (when-let [resp (:response app)]
+             (om/build response/component resp))))
+
 (defn main []
   (om/root
     (fn [app _]
@@ -67,11 +74,7 @@
                                (dom/h2 #js {:className "u-text-light u-margin-Am u-text-center"}
                                        (get-in app [:request :text])))
                    (if (get-in app [:request :schema])
-                     (dom/div nil
-                              (om/build request/component (:request app)
-                                        {:opts {:handle-new-response-fn (partial handle-new-response app)}})
-                              (when-let [resp (:response app)]
-                                (om/build response/component resp)))
-                     (dom/h1 nil "Select a JSON Schema" (schema-select/schema-file (:request app))))))))
+                     (render-request-and-response app)
+                     (schema-select/schema-file (:request app)))))))
     app-state
     {:target (.getElementById js/document "app")}))
