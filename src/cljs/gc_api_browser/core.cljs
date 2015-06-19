@@ -13,7 +13,7 @@
 
 (def init-app-state
   {:history []
-   :request {:text              "Select a JSON schema..."
+   :request {:text              "Restman"
              :selected-resource nil
              :selected-action   nil
              :url               nil
@@ -74,7 +74,7 @@
         (render [_]
           (dom/div #js {:style #js {:minWidth "760px" :margin "0 auto"}}
                    (dom/header nil
-                               (dom/h2 #js {:className "u-text-light u-margin-Am u-text-center"}
+                               (dom/h2 #js {:className "sans"}
                                        (get-in app [:request :text])))
                    (if (get-in app [:request :schema])
                      (render-request-and-response app)

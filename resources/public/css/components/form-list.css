@@ -1,7 +1,0 @@
-.form-list-container:not(:first-of-type) {
-  border-top: 1px dashed var(--color-gray-xlight);
-}
-
-.form-list-btn {
-  margin-top: -17px;
-}

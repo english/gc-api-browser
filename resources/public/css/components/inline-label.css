@@ -1,9 +1,0 @@
-.inline-label {
-  line-height: 34px;
-  font-size: var(--font-size-xs);
-}
-
-.inline-label--refund-payment {
-  position: relative;
-  top: 3px;
-}

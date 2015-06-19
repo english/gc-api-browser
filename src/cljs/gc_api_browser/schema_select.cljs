@@ -99,14 +99,14 @@
 
 (defn schema-file [request]
   (dom/div
-    #js {:className "request-form--field request-form--field__schema"}
+    #js {:className "request-form--field request-form--field__schema flex-item"}
     (dom/input #js {:type "file"
                     :className "input"
                     :accept "application/json"
                     :onChange (partial handle-schema-input-change request)})))
 
 (defn resource-selection [{:keys [selected-resource selected-action schema] :as request}]
-  (dom/div #js {:className "request-form--field request-form--field__resource select-container"}
+  (dom/div #js {:className "request-form--field request-form--field__resource select-container flex-item"}
            (apply dom/select #js {:className "input select-container__select"
                                   :value selected-resource
                                   :onChange (partial handle-resource-change request)}
