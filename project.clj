@@ -22,7 +22,7 @@
   :uberjar-name "gc-api-browser.jar"
 
   :cljsbuild {:builds [{:id :main
-                        :figwheel { :on-jsload "gc-api-browser.core/main" }
+                        :figwheel {:on-jsload "gc-api-browser.core/main"}
                         :source-paths ["src/cljs"]
                         :compiler {:output-to  "resources/public/js/app.js"
                                    :output-dir "resources/public/js/out"
@@ -32,7 +32,7 @@
                                    :optimizations :none}}]}
 
   :figwheel {:http-server-root "public" ;; default and assumes "resources"
-             :server-port 3449 ;; default
+             :server-port 3010 ;; default is 3449
              :css-dirs ["resources/public/css"]
              ;; :open-file-command "emacsclient"
              ;; Start an nREPL server into the running fighweel process

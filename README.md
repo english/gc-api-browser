@@ -19,8 +19,7 @@ lein deps
 This will compile ClojureScript and CSS and live update the browser when these change.
 It will also serve these static files (and index.html) in development..
 
-### Visit site
-at http://localhost:3449/
+Visit `http://gocardless.dev:3010/`
 
 ### REPL
 
