@@ -10,26 +10,36 @@
                       "Accept"             "application/json"
                       "Content-Type"       "application/json"})
 
+(def init-app-state
+  {:history []
+   :request {:text              "Select a JSON schema..."
+             :selected-resource nil
+             :selected-action   nil
+             :url               nil
+             :method            "GET"
+             :body              nil
+             :headers           {}}})
+
 (defonce app-state
-         (atom {:history []
-                :request {:text              "Select a JSON schema..."
-                          :selected-resource nil
-                          :selected-action   nil
-                          :url               nil
-                          :method            "GET"
-                          :body              nil
-                          :headers           {}}}))
+  (atom init-app-state))
 
 
 (enable-console-print!)
+
+;; handy repl functions
+(comment
+  (keys @app-state)
+  (swap! app-state (fn [] init-app-state))
+  (do
+    (.removeItem js/localStorage "schema")
+    (.removeItem js/localStorage "headers"))
+  (swap! app-state (fn [x] (update-in x [:request] (fn [y] (dissoc y :schema))))))
 
 (defn handle-new-response [app resp]
   (om/transact! app (fn [m]
                       (-> m
                           (assoc :response resp)
                           (update :history #(conj % (select-keys m [:request :response])))))))
-
-;; (swap! app-state (fn [x] (update-in x [:request] (fn [y] (dissoc y :schema)))))
 
 (defn main []
   (om/root
