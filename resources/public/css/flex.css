@@ -1,0 +1,27 @@
+.flex-container {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.flex-item {
+  flex: 1 1 auto;
+}
+
+.u-flex-none {
+  flex: none;
+}
+
+.u-justify-center {
+  justify-content: center;
+}
+
+/* Position content at end of flex container */
+.u-justify-end {
+  justify-content: flex-end;
+}
+
+/*Center flex items on cross axis*/
+.u-align-center {
+  align-items: center;
+}

@@ -1,9 +1,0 @@
-.flex-container {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-}
-
-.flex-item {
-  flex: 1 1 auto;
-}

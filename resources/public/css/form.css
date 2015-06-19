@@ -1,0 +1,14 @@
+.add-schema {
+  flex: none;
+  height: 100%;
+}
+
+.url-bar {
+  border: 0;
+  border-bottom: blue 2px solid;
+}
+
+.request-form {
+  width: 80%;
+  max-width: 50rem;
+}

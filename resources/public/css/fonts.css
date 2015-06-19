@@ -1,3 +1,10 @@
+.text-sans {
+  font-family: 'Gotham SSm A';
+}
+
+.text-mono {
+  font-family: 'Source Code Pro';
+}
 
 /*
 	Copyright (C) 2011-2014 Hoefler & Co.
@@ -48,5 +55,5 @@
   font-family: 'Source Code Pro';
   font-style: normal;
   font-weight: 400;
-  src: local('Source Code Pro'), url(/assets/stylesheets/fonts/source-code-pro.woff) format('woff');
+  src: local('Source Code Pro'), url(./source-code-pro.woff) format('woff');
 }

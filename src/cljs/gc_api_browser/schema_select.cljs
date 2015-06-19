@@ -99,9 +99,9 @@
 
 (defn schema-file [request]
   (dom/div
-    #js {:className "request-form--field request-form--field__schema flex-item"}
+    #js {:className "u-justify-center"}
     (dom/input #js {:type "file"
-                    :className "input"
+                    :className "add-schema"
                     :accept "application/json"
                     :onChange (partial handle-schema-input-change request)})))
 
@@ -112,6 +112,19 @@
                                   :onChange (partial handle-resource-change request)}
                   (map #(dom/option #js {:value %} %)
                        (schema->resources schema)))))
+
+(defn edit-url [{:keys [url] :as cursor}]
+  (dom/div #js {:className "text-mono u-size2of3"}
+           (dom/input #js {:className "url-bar input text-mono u-flex-none"
+                           :value url
+                           :onChange #(om/update! cursor :url (.. % -target -value))})))
+
+(defn edit-method [{:keys [method] :as cursor}]
+  (dom/div #js {:className "request-form--field request-form--field__method"}
+           (apply dom/select #js {:className "input"
+                                  :value method
+                                  :onChange #(om/update! cursor :method (.. % -target -value))}
+                  (map #(dom/option #js {:value %} %) ["GET" "POST" "PUT"]))))
 
 (defn action-selection [{:keys [selected-resource selected-action schema] :as request}]
   (dom/div #js {:className "request-form--field request-form--field__action select-container"}
@@ -127,5 +140,8 @@
     (render [_]
       (dom/div #js {:className "schema-select u-direction-row"}
                (schema-file request)
+               (dom/div #js {:className "u-direction-row"}
+                        (edit-url request)
+                        (edit-method request))
                (resource-selection request)
                (action-selection request)))))

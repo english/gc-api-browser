@@ -72,9 +72,9 @@
                               default-headers)))))
         om/IRender
         (render [_]
-          (dom/div #js {:style #js {:minWidth "760px" :margin "0 auto"}}
+          (dom/div #js {:className "flex-container u-justify-center u-align-center"}
                    (dom/header nil
-                               (dom/h2 #js {:className "sans"}
+                               (dom/h2 nil
                                        (get-in app [:request :text])))
                    (if (get-in app [:request :schema])
                      (render-request-and-response app)

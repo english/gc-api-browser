@@ -1,0 +1,13 @@
+html,
+body,
+#app {
+  height: 100%;
+}
+
+div, section, select, label,
+main, input, [flex] {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
