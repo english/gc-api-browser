@@ -2,7 +2,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [gc-api-browser.url-bar :as url-bar]
-            [gc-api-browser.response :as response]
+            [gc-api-browser.tabbed-response :as tabbed-response]
             [gc-api-browser.schema-select :as schema-select]
             [gc-api-browser.tabbed-request :as tabbed-request]))
 
@@ -48,7 +48,7 @@
                      {:opts {:handle-new-response-fn (partial handle-new-response app)}})
            (dom/div #js {:className "u-direction-row"}
                     (om/build tabbed-request/component (:request app))
-                    (om/build response/component (:response app)))
+                    (om/build tabbed-response/component (:response app)))
            (dom/div nil (schema-select/schema-file (:request app)))))
 
 (defn main []

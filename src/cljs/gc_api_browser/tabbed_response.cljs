@@ -1,4 +1,4 @@
-(ns gc-api-browser.response
+(ns gc-api-browser.tabbed-response
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [gc-api-browser.dom-utils :refer [clearfix]]))
@@ -15,13 +15,14 @@
                                     :value header-value}))))
 
 (defn render-headers [headers]
-  (apply dom/div #js {:className "response-field headers"}
+  (apply dom/div #js {:className "tabbed-response__headers headers"}
          (map render-header headers)))
 
 (defn render-body [body]
   (let [json-string (.stringify js/JSON (clj->js body) nil 2)]
-    (dom/pre #js {:style #js {:width "50%" :float "left"}}
-             (dom/code nil json-string))))
+    (dom/div #js {:className "tabbed-response__body"}
+             (dom/pre #js {:style #js {:width "50%" :float "left"}}
+                      (dom/code nil json-string)))))
 
 (defn component [cursor owner]
   (reify
@@ -30,10 +31,11 @@
       (if (empty? cursor)
         (dom/div nil)
         (let [showing-headers? (om/get-state owner :showing-headers?)]
-          (dom/div #js {:className "response"}
-                   (dom/div nil
+          (dom/div #js {:className "tabbed-response"}
+                   (dom/div #js {:className "tabbed-response__buttons"}
                             (dom/button #js {:onClick #(om/set-state! owner :showing-headers? true)} "Body")
                             (dom/button #js {:onClick #(om/set-state! owner :showing-headers? false)} "Headers"))
+                   (dom/div #js {:className "tabbed-response__content"})
                    (if showing-headers?
                      (render-headers (:headers cursor))
                      (render-body (:body cursor)))))))))
