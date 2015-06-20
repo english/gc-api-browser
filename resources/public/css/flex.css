@@ -12,6 +12,10 @@
   flex: none;
 }
 
+u-direction-row {
+  flex-direction: row;
+}
+
 .u-justify-center {
   justify-content: center;
 }

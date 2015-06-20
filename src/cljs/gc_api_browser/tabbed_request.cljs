@@ -4,7 +4,7 @@
             [gc-api-browser.headers :as headers]))
 
 (defn edit-body [{:keys [body] :as cursor}]
-  (dom/div #js {:className "request-form--field request-form--field__body"}
+  (dom/div #js {:className "tabbed-request__body"}
            (dom/textarea #js {:className "input input--textarea"
                               :style #js {:fontFamily "Source Code Pro"}
                               :value body
@@ -15,11 +15,11 @@
     om/IRender
     (render [_]
       (let [showing-headers? (om/get-state owner :showing-headers?)]
-        (dom/div nil
-                 (dom/div nil
+        (dom/div #js {:className "tabbed-request"}
+                 (dom/div #js {:className "tabbed-request__buttons"}
                           (dom/button #js {:onClick #(om/set-state! owner :showing-headers? false)} "Body")
                           (dom/button #js {:onClick #(om/set-state! owner :showing-headers? true)} "Headers"))
-                 (dom/div nil
+                 (dom/div #js {:className "tabbed-request__content"}
                           (if showing-headers?
                             (om/build headers/component (:headers cursor))
                             (when (not= "GET" (:method cursor))

@@ -4,11 +4,12 @@
 }
 
 .url-bar {
-  border: 0;
-  border-bottom: blue 2px solid;
-}
-
-.request-form {
   width: 80%;
   max-width: 50rem;
+}
+
+.url-bar__url {
+  border: 0;
+  border-bottom: blue 2px solid;
+  outline: none;
 }

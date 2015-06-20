@@ -105,43 +105,18 @@
                     :accept "application/json"
                     :onChange (partial handle-schema-input-change request)})))
 
-(defn resource-selection [{:keys [selected-resource selected-action schema] :as request}]
-  (dom/div #js {:className "request-form--field request-form--field__resource select-container flex-item"}
-           (apply dom/select #js {:className "input select-container__select"
+(defn resource-selection [{:keys [selected-resource schema] :as request}]
+  (dom/div #js {:className "flex-item"}
+           (apply dom/select #js {:className "input"
                                   :value selected-resource
                                   :onChange (partial handle-resource-change request)}
                   (map #(dom/option #js {:value %} %)
                        (schema->resources schema)))))
 
-(defn edit-url [{:keys [url] :as cursor}]
-  (dom/div #js {:className "text-mono u-size2of3"}
-           (dom/input #js {:className "url-bar input text-mono u-flex-none"
-                           :value url
-                           :onChange #(om/update! cursor :url (.. % -target -value))})))
-
-(defn edit-method [{:keys [method] :as cursor}]
-  (dom/div #js {:className "request-form--field request-form--field__method"}
-           (apply dom/select #js {:className "input"
-                                  :value method
-                                  :onChange #(om/update! cursor :method (.. % -target -value))}
-                  (map #(dom/option #js {:value %} %) ["GET" "POST" "PUT"]))))
-
 (defn action-selection [{:keys [selected-resource selected-action schema] :as request}]
-  (dom/div #js {:className "request-form--field request-form--field__action select-container"}
-           (apply dom/select #js {:className "input select-container__select"
+  (dom/div #js {:className ""}
+           (apply dom/select #js {:className "input"
                                   :value (when selected-action (name selected-action))
                                   :onChange (partial handle-action-change request)}
                   (map #(dom/option #js {:value %} %)
                        (resource->actions schema selected-resource)))))
-
-(defn component [request _]
-  (reify
-    om/IRender
-    (render [_]
-      (dom/div #js {:className "schema-select u-direction-row"}
-               (schema-file request)
-               (dom/div #js {:className "u-direction-row"}
-                        (edit-url request)
-                        (edit-method request))
-               (resource-selection request)
-               (action-selection request)))))

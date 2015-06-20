@@ -46,7 +46,7 @@
   (reify
     om/IRender
     (render [_]
-      (apply dom/div #js {:className "request-form--field headers"}
+      (apply dom/div #js {:className "headers"}
              (dom/div #js {:className "headers__header u-direction-row"}
                       (dom/div #js {:className "headers__header__name u-margin-Rxxs"}
                                (dom/input #js {:className "input"

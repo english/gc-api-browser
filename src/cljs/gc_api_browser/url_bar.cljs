@@ -8,20 +8,19 @@
             [gc-api-browser.dom-utils :refer [clearfix]]))
 
 (defn submit [cursor owner]
-  (dom/div #js {:className "request-form--field request-form--field__button"}
-           (dom/div #js {:className "btn btn-block"
-                         :onClick #(async/put! (om/get-state owner :submit-chan)
-                                               (select-keys cursor [:url :method :body :headers]))}
-                    "Send")))
+  (dom/div #js {:className ""
+                :onClick   #(async/put! (om/get-state owner :submit-chan)
+                                        (select-keys cursor [:url :method :body :headers]))}
+           "Send"))
 
 (defn edit-url [{:keys [url] :as cursor}]
-  (dom/div #js {:className "request-form--field request-form--field__url u-size2of3"}
-           (dom/input #js {:className "input"
+  (dom/div nil
+           (dom/input #js {:className "url-bar__url"
                            :value url
                            :onChange #(om/update! cursor :url (.. % -target -value))})))
 
 (defn edit-method [{:keys [method] :as cursor}]
-  (dom/div #js {:className "request-form--field request-form--field__method"}
+  (dom/div nil
            (apply dom/select #js {:className "input"
                                   :value method
                                   :onChange #(om/update! cursor :method (.. % -target -value))}
@@ -44,7 +43,7 @@
 
     om/IRender
     (render [_]
-      (dom/div #js {:className "well request-form"}
+      (dom/div #js {:className "url-bar"}
                (dom/div #js {:className "u-direction-row"}
                         (schema-select/resource-selection cursor)
                         (schema-select/action-selection cursor)
