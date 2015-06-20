@@ -31,14 +31,6 @@
                                   :onChange #(om/update! cursor :method (.. % -target -value))}
                   (map #(dom/option #js {:value %} %) ["GET" "POST" "PUT"]))))
 
-(defn edit-body [{:keys [body] :as cursor}]
-  (dom/div #js {:className "request-form--field request-form--field__body"}
-           (dom/textarea #js {:className "input input--textarea"
-                              :style #js {:fontFamily "Monospace"
-                                          :minHeight "245px"}
-                              :value body
-                              :onChange #(om/update! cursor :body (.. % -target -value))})))
-
 (defn component [cursor owner {:keys [handle-new-response-fn] :as opts}]
   (reify
     om/IInitState
@@ -58,11 +50,9 @@
     (render [_]
       (let [{:keys [headers method]} cursor]
         (dom/div #js {:className "well request-form"}
-                 (om/build schema-select/component cursor)
                  (dom/div #js {:className "u-direction-row"}
+                          (schema-select/resource-selection cursor)
+                          (schema-select/action-selection cursor)
+                          (edit-method cursor)
                           (edit-url cursor)
-                          (edit-method cursor))
-                 (om/build headers/component headers)
-                 (when (not= "GET" method)
-                   (edit-body cursor))
-                 (submit cursor owner))))))
+                          (submit cursor owner)))))))

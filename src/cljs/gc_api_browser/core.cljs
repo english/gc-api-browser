@@ -23,7 +23,6 @@
 (defonce app-state
   (atom init-app-state))
 
-
 (enable-console-print!)
 
 ;; handy repl functions
@@ -41,10 +40,20 @@
                           (assoc :response resp)
                           (update :history #(conj % (select-keys m [:request :response])))))))
 
+(defn edit-body [{:keys [body] :as cursor}]
+  (dom/div #js {:className "request-form--field request-form--field__body"}
+           (dom/textarea #js {:className "input input--textarea"
+                              :style #js {:fontFamily "Monospace"}
+                              :value body
+                              :onChange #(om/update! cursor :body (.. % -target -value))})))
+
 (defn render-request-and-response [app]
   (dom/div nil
            (om/build request/component (:request app)
                      {:opts {:handle-new-response-fn (partial handle-new-response app)}})
+           (comment (om/build headers/component (:headers (:request app)))
+                    (when (not= "GET" method)
+                      (edit-body cursor)))
            (when-let [resp (:response app)]
              (om/build response/component resp))))
 
