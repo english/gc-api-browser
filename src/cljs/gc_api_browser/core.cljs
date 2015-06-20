@@ -4,7 +4,7 @@
             [gc-api-browser.url-bar :as url-bar]
             [gc-api-browser.response :as response]
             [gc-api-browser.schema-select :as schema-select]
-            [gc-api-browser.tabs :as tabs]))
+            [gc-api-browser.tabbed-request :as tabbed-request]))
 
 (def default-headers {"Authorization"      "FILL ME IN"
                       "GoCardless-Version" "2015-04-29"
@@ -47,7 +47,7 @@
            (om/build url-bar/component (:request app)
                      {:opts {:handle-new-response-fn (partial handle-new-response app)}})
            (dom/div #js {:className "u-direction-row"}
-                    (om/build tabs/component (:request app))
+                    (om/build tabbed-request/component (:request app))
                     (om/build response/component (:response app)))))
 
 (defn main []

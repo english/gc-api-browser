@@ -1,4 +1,4 @@
-(ns gc-api-browser.tabs
+(ns gc-api-browser.tabbed-request
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [gc-api-browser.headers :as headers]))
@@ -14,15 +14,13 @@
   (reify
     om/IRender
     (render [_]
-      (let [showing-body? (om/get-state owner :showing-body)]
+      (let [showing-headers? (om/get-state owner :showing-headers?)]
         (dom/div nil
-                 (dom/div #js {:className "u-direction-row"}
-                          (dom/a #js {:href "#"
-                                      :onClick #(om/set-state! owner :showing-body false)} "Headers")
-                          (dom/a #js {:href "#"
-                                      :onClick #(om/set-state! owner :showing-body true)} "Body"))
                  (dom/div nil
-                          (if showing-body?
+                          (dom/button #js {:onClick #(om/set-state! owner :showing-headers? false)} "Body")
+                          (dom/button #js {:onClick #(om/set-state! owner :showing-headers? true)} "Headers"))
+                 (dom/div nil
+                          (if showing-headers?
+                            (om/build headers/component (:headers cursor))
                             (when (not= "GET" (:method cursor))
-                              (edit-body cursor))
-                            (om/build headers/component (:headers cursor)))))))))
+                              (edit-body cursor)))))))))

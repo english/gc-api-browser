@@ -20,8 +20,7 @@
 
 (defn render-body [body]
   (let [json-string (.stringify js/JSON (clj->js body) nil 2)]
-    (dom/pre #js {:style #js {:width "50%"
-                              :float "left"}}
+    (dom/pre #js {:style #js {:width "50%" :float "left"}}
              (dom/code nil json-string))))
 
 (defn component [cursor owner]
@@ -29,9 +28,12 @@
     om/IRender
     (render [_]
       (if (empty? cursor)
-        (dom/div #js {:className "well response"})
-        (dom/div #js {:className "well response"}
-                 (dom/h1 #js {:className "response-status"} (:status cursor))
-                 (render-headers (:headers cursor))
-                 (render-body (:body cursor))
-                 clearfix)))))
+        (dom/div nil)
+        (let [showing-headers? (om/get-state owner :showing-headers?)]
+          (dom/div #js {:className "response"}
+                   (dom/div nil
+                            (dom/button #js {:onClick #(om/set-state! owner :showing-headers? true)} "Body")
+                            (dom/button #js {:onClick #(om/set-state! owner :showing-headers? false)} "Headers"))
+                   (if showing-headers?
+                     (render-headers (:headers cursor))
+                     (render-body (:body cursor)))))))))
