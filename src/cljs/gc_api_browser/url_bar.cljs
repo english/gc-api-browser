@@ -8,10 +8,10 @@
             [gc-api-browser.dom-utils :refer [clearfix]]))
 
 (defn submit [cursor owner]
-  (dom/div #js {:className ""
-                :onClick   #(async/put! (om/get-state owner :submit-chan)
-                                        (select-keys cursor [:url :method :body :headers]))}
-           "Send"))
+  (dom/button #js {:className ""
+                   :onClick #(async/put! (om/get-state owner :submit-chan)
+                                         (select-keys cursor [:url :method :body :headers]))}
+              "Send"))
 
 (defn edit-url [{:keys [url] :as cursor}]
   (dom/div nil
