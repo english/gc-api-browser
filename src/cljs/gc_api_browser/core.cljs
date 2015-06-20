@@ -48,7 +48,8 @@
                      {:opts {:handle-new-response-fn (partial handle-new-response app)}})
            (dom/div #js {:className "u-direction-row"}
                     (om/build tabbed-request/component (:request app))
-                    (om/build response/component (:response app)))))
+                    (om/build response/component (:response app)))
+           (dom/div nil (schema-select/schema-file (:request app)))))
 
 (defn main []
   (om/root

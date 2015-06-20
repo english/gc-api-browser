@@ -3,13 +3,9 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :as async]
-            [goog.events :as events]
             [cljs-http.client :as http]
             [gc-api-browser.schema-select :as schema-select]
-            [gc-api-browser.headers :as headers]
-            [gc-api-browser.dom-utils :refer [clearfix]])
-  (:import [goog.net XhrIo EventType]
-           [goog json]))
+            [gc-api-browser.dom-utils :refer [clearfix]]))
 
 (defn submit [cursor owner]
   (dom/div #js {:className "request-form--field request-form--field__button"}
@@ -48,11 +44,10 @@
 
     om/IRender
     (render [_]
-      (let [{:keys [headers method]} cursor]
-        (dom/div #js {:className "well request-form"}
-                 (dom/div #js {:className "u-direction-row"}
-                          (schema-select/resource-selection cursor)
-                          (schema-select/action-selection cursor)
-                          (edit-method cursor)
-                          (edit-url cursor)
-                          (submit cursor owner)))))))
+      (dom/div #js {:className "well request-form"}
+               (dom/div #js {:className "u-direction-row"}
+                        (schema-select/resource-selection cursor)
+                        (schema-select/action-selection cursor)
+                        (edit-method cursor)
+                        (edit-url cursor)
+                        (submit cursor owner))))))
