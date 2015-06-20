@@ -6,7 +6,7 @@
 (defn edit-body [{:keys [body] :as cursor}]
   (dom/div #js {:className "request-form--field request-form--field__body"}
            (dom/textarea #js {:className "input input--textarea"
-                              :style #js {:fontFamily "Monospace"}
+                              :style #js {:fontFamily "Source Code Pro"}
                               :value body
                               :onChange #(om/update! cursor :body (.. % -target -value))})))
 
