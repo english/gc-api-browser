@@ -1,4 +1,4 @@
-(ns gc-api-browser.request
+(ns gc-api-browser.url-bar
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]

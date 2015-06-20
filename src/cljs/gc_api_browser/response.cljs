@@ -24,13 +24,14 @@
                               :float "left"}}
              (dom/code nil json-string))))
 
-(defn component [{:keys [body headers status] :as resp} owner]
+(defn component [cursor owner]
   (reify
     om/IRender
     (render [_]
-      (let [json-string (.stringify js/JSON (clj->js body) nil 2)]
+      (if (empty? cursor)
+        (dom/div #js {:className "well response"})
         (dom/div #js {:className "well response"}
-                 (dom/h1 #js {:className "response-status"} status)
-                 (render-headers headers)
-                 (render-body body)
+                 (dom/h1 #js {:className "response-status"} (:status cursor))
+                 (render-headers (:headers cursor))
+                 (render-body (:body cursor))
                  clearfix)))))
