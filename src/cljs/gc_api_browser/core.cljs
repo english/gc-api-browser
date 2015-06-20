@@ -1,9 +1,10 @@
 (ns gc-api-browser.core
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [gc-api-browser.request :as request]
+            [gc-api-browser.url-bar :as url-bar]
             [gc-api-browser.response :as response]
-            [gc-api-browser.schema-select :as schema-select]))
+            [gc-api-browser.schema-select :as schema-select]
+            [gc-api-browser.tabbed-request :as tabbed-request]))
 
 (def default-headers {"Authorization"      "FILL ME IN"
                       "GoCardless-Version" "2015-04-29"
@@ -18,11 +19,11 @@
              :url               nil
              :method            "GET"
              :body              nil
-             :headers           {}}})
+             :headers           {}}
+   :response {}})
 
 (defonce app-state
   (atom init-app-state))
-
 
 (enable-console-print!)
 
@@ -43,10 +44,12 @@
 
 (defn render-request-and-response [app]
   (dom/div nil
-           (om/build request/component (:request app)
+           (om/build url-bar/component (:request app)
                      {:opts {:handle-new-response-fn (partial handle-new-response app)}})
-           (when-let [resp (:response app)]
-             (om/build response/component resp))))
+           (dom/div #js {:className "u-direction-row"}
+                    (om/build tabbed-request/component (:request app))
+                    (om/build response/component (:response app)))
+           (dom/div nil (schema-select/schema-file (:request app)))))
 
 (defn main []
   (om/root

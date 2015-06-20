@@ -1,15 +1,11 @@
-(ns gc-api-browser.request
+(ns gc-api-browser.url-bar
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :as async]
-            [goog.events :as events]
             [cljs-http.client :as http]
             [gc-api-browser.schema-select :as schema-select]
-            [gc-api-browser.headers :as headers]
-            [gc-api-browser.dom-utils :refer [clearfix]])
-  (:import [goog.net XhrIo EventType]
-           [goog json]))
+            [gc-api-browser.dom-utils :refer [clearfix]]))
 
 (defn submit [cursor owner]
   (dom/div #js {:className "request-form--field request-form--field__button"}
@@ -31,14 +27,6 @@
                                   :onChange #(om/update! cursor :method (.. % -target -value))}
                   (map #(dom/option #js {:value %} %) ["GET" "POST" "PUT"]))))
 
-(defn edit-body [{:keys [body] :as cursor}]
-  (dom/div #js {:className "request-form--field request-form--field__body"}
-           (dom/textarea #js {:className "input input--textarea"
-                              :style #js {:fontFamily "Monospace"
-                                          :minHeight "245px"}
-                              :value body
-                              :onChange #(om/update! cursor :body (.. % -target -value))})))
-
 (defn component [cursor owner {:keys [handle-new-response-fn] :as opts}]
   (reify
     om/IInitState
@@ -56,13 +44,10 @@
 
     om/IRender
     (render [_]
-      (let [{:keys [headers method]} cursor]
-        (dom/div #js {:className "well request-form"}
-                 (om/build schema-select/component cursor)
-                 (dom/div #js {:className "u-direction-row"}
-                          (edit-url cursor)
-                          (edit-method cursor))
-                 (om/build headers/component headers)
-                 (when (not= "GET" method)
-                   (edit-body cursor))
-                 (submit cursor owner))))))
+      (dom/div #js {:className "well request-form"}
+               (dom/div #js {:className "u-direction-row"}
+                        (schema-select/resource-selection cursor)
+                        (schema-select/action-selection cursor)
+                        (edit-method cursor)
+                        (edit-url cursor)
+                        (submit cursor owner))))))
