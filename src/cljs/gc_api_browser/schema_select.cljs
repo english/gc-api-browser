@@ -57,11 +57,11 @@
        (map name)))
 
 (defn store-schema! [json]
-  (.setItem js/localStorage "schema" (.stringify js/JSON json)))
+  (.setItem js/localStorage "schema" (gjson/serialize json)))
 
 (defn read-as-text [file c]
   (let [reader (js/FileReader.)]
-    (set! (.-onload reader) #(put! c (.. % -target -result)))
+    (set! (.-onload reader) #(put! c (get-in % [:target :result])))
     (.readAsText reader file)
     c))
 
@@ -104,19 +104,3 @@
                     :className "add-schema"
                     :accept "application/json"
                     :onChange (partial handle-schema-input-change request)})))
-
-(defn resource-selection [{:keys [selected-resource schema] :as request}]
-  (dom/div #js {:className "flex-item url-bar__resource"}
-           (apply dom/select #js {:className "input u-flex-none"
-                                  :value selected-resource
-                                  :onChange (partial handle-resource-change request)}
-                  (map #(dom/option #js {:value %} %)
-                       (schema->resources schema)))))
-
-(defn action-selection [{:keys [selected-resource selected-action schema] :as request}]
-  (dom/div #js {:className "url-bar__action"}
-           (apply dom/select #js {:className "input u-flex-none"
-                                  :value (when selected-action (name selected-action))
-                                  :onChange (partial handle-action-change request)}
-                  (map #(dom/option #js {:value %} %)
-                       (resource->actions schema selected-resource)))))

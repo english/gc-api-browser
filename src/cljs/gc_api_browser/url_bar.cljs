@@ -7,6 +7,22 @@
             [gc-api-browser.schema-select :as schema-select]
             [gc-api-browser.dom-utils :refer [clearfix]]))
 
+(defn resource-selection [{:keys [selected-resource schema] :as request}]
+  (dom/div #js {:className "flex-item url-bar__resource"}
+           (apply dom/select #js {:className "input u-flex-none"
+                                  :value selected-resource
+                                  :onChange (partial schema-select/handle-resource-change request)}
+                  (map #(dom/option #js {:value %} %)
+                       (schema-select/schema->resources schema)))))
+
+(defn action-selection [{:keys [selected-resource selected-action schema] :as request}]
+  (dom/div #js {:className "url-bar__action"}
+           (apply dom/select #js {:className "input u-flex-none"
+                                  :value (when selected-action (name selected-action))
+                                  :onChange (partial schema-select/handle-action-change request)}
+                  (map #(dom/option #js {:value %} %)
+                       (schema-select/resource->actions schema selected-resource)))))
+
 (defn submit [cursor owner]
   (dom/div #js {:className "url-bar__submit"}
            (dom/button #js {:className "btn u-flex-none"
@@ -46,8 +62,8 @@
     (render [_]
       (dom/div #js {:className "url-bar"}
                (dom/div #js {:className "u-direction-row"}
-                        (schema-select/resource-selection cursor)
-                        (schema-select/action-selection cursor)
+                        (resource-selection cursor)
+                        (action-selection cursor)
                         (edit-method cursor)
                         (edit-url cursor)
                         (submit cursor owner))))))
