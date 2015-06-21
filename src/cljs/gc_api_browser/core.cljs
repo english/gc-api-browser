@@ -12,18 +12,18 @@
                       "Content-Type"       "application/json"})
 
 (def init-app-state
-  {:history []
-   :request {:text              "Restman"
-             :selected-resource nil
-             :selected-action   nil
-             :url               nil
-             :method            "GET"
-             :body              nil
-             :headers           {}}
+  {:history  []
+   :request  {:text              "Restman"
+              :selected-resource nil
+              :selected-action   nil
+              :url               nil
+              :method            "GET"
+              :body              nil
+              :headers           {}}
    :response {}})
 
 (defonce app-state
-  (atom init-app-state))
+         (atom init-app-state))
 
 (enable-console-print!)
 
@@ -72,12 +72,13 @@
                               default-headers)))))
         om/IRender
         (render [_]
-          (dom/div #js {:className "flex-container u-justify-center u-align-center"}
-                   (dom/header nil
-                               (dom/h2 nil
-                                       (get-in app [:request :text])))
-                   (if (get-in app [:request :schema])
-                     (render-request-and-response app)
-                     (schema-select/schema-file (:request app)))))))
+          (let [schema (get-in app [:request :schema])]
+            (dom/div #js {:className "flex-container u-justify-center u-align-center"}
+                     (dom/header nil
+                                 (dom/h2 #js {:className "title"}
+                                         (get-in app [:request :text])))
+                     (if schema
+                       (render-request-and-response app)
+                       (schema-select/schema-file (:request app))))))))
     app-state
     {:target (.getElementById js/document "app")}))

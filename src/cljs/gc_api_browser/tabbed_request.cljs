@@ -10,17 +10,25 @@
                               :value body
                               :onChange #(om/update! cursor :body (.. % -target -value))})))
 
-(defn component [cursor owner]
+(defn get? [request]
+  (= "GET" (:method request)))
+
+(defn component [request-cursor owner]
   (reify
     om/IRender
     (render [_]
-      (let [showing-headers? (om/get-state owner :showing-headers?)]
+      (let [showing-body? (om/get-state owner :showing-body?)]
         (dom/div #js {:className "tabbed-request"}
                  (dom/div #js {:className "tabbed-request__buttons u-direction-row"}
-                          (dom/button #js {:onClick #(om/set-state! owner :showing-headers? false)} "Body")
-                          (dom/button #js {:onClick #(om/set-state! owner :showing-headers? true)} "Headers"))
+                          (when-not (get? request-cursor)
+                            (dom/span #js {:className "tabbed-request__button"}
+                                      (dom/button #js {:className "btn"
+                                                       :onClick   #(om/set-state! owner :showing-body? true)} "Body")))
+                          (dom/span #js {:className "tabbed-request__button"}
+                                    (dom/button #js {:className "btn"
+                                                     :onClick   #(om/set-state! owner :showing-body? false)} "Headers")))
                  (dom/div #js {:className "tabbed-request__content"}
-                          (if showing-headers?
-                            (om/build headers/component (:headers cursor))
-                            (when (not= "GET" (:method cursor))
-                              (edit-body cursor)))))))))
+                          (if (and showing-body?
+                                   (not (get? request-cursor)))
+                            (edit-body request-cursor)
+                            (om/build headers/component (:headers request-cursor)))))))))

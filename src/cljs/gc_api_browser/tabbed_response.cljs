@@ -7,12 +7,12 @@
   (dom/div #js {:className "headers__header u-direction-row"}
            (dom/div #js {:className "headers__header__name u-margin-Rxxs"}
                     (dom/input #js {:className "input"
-                                    :disabled true
-                                    :value header-name}))
+                                    :disabled  true
+                                    :value     header-name}))
            (dom/div #js {:className "headers__header__value u-margin-Rxxs"}
                     (dom/input #js {:className "input"
-                                    :disabled true
-                                    :value header-value}))))
+                                    :disabled  true
+                                    :value     header-value}))))
 
 (defn render-headers [headers]
   (apply dom/div #js {:className "tabbed-response__headers headers"}
@@ -21,21 +21,26 @@
 (defn render-body [body]
   (let [json-string (.stringify js/JSON (clj->js body) nil 2)]
     (dom/div #js {:className "tabbed-response__body"}
-             (dom/pre #js {:style #js {:width "50%" :float "left"}}
-                      (dom/code nil json-string)))))
+             (dom/pre nil (dom/code nil json-string)))))
 
 (defn component [cursor owner]
   (reify
     om/IRender
     (render [_]
-      (if (empty? cursor)
-        (dom/div nil)
-        (let [showing-headers? (om/get-state owner :showing-headers?)]
-          (dom/div #js {:className "tabbed-response"}
-                   (dom/div #js {:className "tabbed-response__buttons"}
-                            (dom/button #js {:onClick #(om/set-state! owner :showing-headers? true)} "Body")
-                            (dom/button #js {:onClick #(om/set-state! owner :showing-headers? false)} "Headers"))
-                   (dom/div #js {:className "tabbed-response__content"})
-                   (if showing-headers?
-                     (render-headers (:headers cursor))
-                     (render-body (:body cursor)))))))))
+      (let [showing-headers? (om/get-state owner :showing-headers?)]
+        (dom/div #js {:className "tabbed-response"}
+                 (when-not (empty? cursor)
+                   (dom/div nil
+                            (dom/div #js {:className "tabbed-response__buttons u-direction-row"}
+                                     (dom/span #js {:className "tabbed-response__button"}
+                                               (dom/button #js {:className "btn"
+                                                                :onClick #(om/set-state! owner :showing-headers? false)}
+                                                           "Body"))
+                                     (dom/span #js {:className "tabbed-response__button"}
+                                               (dom/button #js {:className "btn"
+                                                                :onClick #(om/set-state! owner :showing-headers? true)}
+                                                           "Headers")))
+                            (dom/div #js {:className "tabbed-response__content"})
+                            (if showing-headers?
+                              (render-headers (:headers cursor))
+                              (render-body (:body cursor))))))))))

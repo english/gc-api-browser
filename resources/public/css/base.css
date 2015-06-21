@@ -17,3 +17,12 @@ main, input, [flex] {
 .request-response {
   width: 100%;
 }
+
+.title {
+  font-weight: normal;
+}
+
+.tabbed-request,
+.tabbed-response {
+  width: 50%;
+}
