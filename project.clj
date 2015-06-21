@@ -26,14 +26,14 @@
                         :source-paths ["src/cljs" "src/env/dev"]
                         :compiler {:output-to  "resources/public/js/app.js"
                                    :output-dir "resources/public/js/out"
-                                   :main       "gc-api-browser.dev.main"
+                                   :main       "gc-api-browser.main"
                                    :asset-path "/js/out"
                                    :verbose    true
                                    :optimizations :none}}
                        {:id "prod"
                         :source-paths ["src/cljs" "src/env/prod"]
                         :compiler {:output-to "dist/app.js"
-                                   :main      "gc-api-browser.prod.main"
+                                   :main      "gc-api-browser.main"
                                    :optimizations :whitespace
                                    :pretty-print false}}]}
 
