@@ -6,6 +6,29 @@
             [goog.Uri :as uri]
             [cljs.core.async :refer [put! chan <!]]))
 
+(defn string->keyword [s]
+  (if (string? s)
+    (keyword s)
+    s))
+
+(defn ref-node? [x]
+  (and (map? x)
+       (= [:$ref] (keys x))))
+
+(defn ref->path [m]
+  (-> (:$ref m) (.split "/") rest))
+
+(defn schema->value
+  "Given a json-schema map, this will traverse the map with the given vec of
+  keys, but also follow $ref pointers"
+  [schema path]
+  (loop [current-val schema
+         ks path]
+    (cond
+      (ref-node? current-val) (recur schema (mapv string->keyword (concat (ref->path current-val) ks)))
+      ks (recur (get current-val (first ks)) (next ks))
+      :else current-val)))
+
 (defn schema->resource-node [schema resource]
   (->> (:definitions schema)
        vals
@@ -13,10 +36,11 @@
        first))
 
 (defn format-example [example]
-  (let [example-body-string (-> (re-find #"(.+) (.+) (.+)\n((.|\n)*)\n\n" example)
-                                butlast
-                                last)]
-    (.stringify js/JSON (.parse js/JSON example-body-string) nil 2)))
+  (when (string? example)
+    (let [example-body-string (-> (re-find #"(.+) (.+) (.+)\n((.|\n)*)\n\n" example)
+                                  butlast
+                                  last)]
+      (.stringify js/JSON (.parse js/JSON example-body-string) nil 2))))
 
 (defn schema->action-node [schema resource action]
   (let [action (->> (schema->resource-node schema resource)
@@ -32,10 +56,10 @@
   (let [[match before pointer after] (re-find #"(.*)\{\((.*)\)\}(.*)" (js/decodeURIComponent href))]
     (if match
       (str before
-           (get-in schema (map keyword (-> (.split pointer "/")
-                                           rest
-                                           vec
-                                           (conj :example))))
+           (schema->value schema (map keyword (-> (.split pointer "/")
+                                                  rest
+                                                  vec
+                                                  (conj :example))))
            after)
       href)))
 
@@ -68,7 +92,8 @@
 
 (defn read-as-text [file c]
   (let [reader (js/FileReader.)]
-    (set! (.-onload reader) #(put! c (.. % -target -value)))
+    (set! (.-onload reader) (fn [e]
+                              (put! c (.. e -target -result))))
     (.readAsText reader file)
     c))
 
@@ -89,14 +114,11 @@
 
 (defn handle-schema-input-change [request evt]
   (let [file (first (array-seq (.. evt -target -files)))]
-    (go (let [text (<! (read-as-text file (chan)))]
-          (.resolveRefs js/JsonRefs (gjson/parse text)
-                        (fn [err json]
-                          (if err
-                            (throw err)
-                            (do
-                              (set-schema! request json)
-                              (store-schema! json)))))))))
+    (go
+      (let [text (<! (read-as-text file (chan)))
+            json (gjson/parse text)]
+        (set-schema! request json)
+        (store-schema! json)))))
 
 (defn handle-resource-change [request e]
   (set-selected-resource! request (:schema request) (.. e -target -value)))
@@ -107,7 +129,7 @@
 (defn schema-file [request]
   (dom/div
     #js {:className "u-justify-center"}
-    (dom/input #js {:type "file"
+    (dom/input #js {:type      "file"
                     :className "add-schema"
-                    :accept "application/json"
-                    :onChange (partial handle-schema-input-change request)})))
+                    :accept    "application/json"
+                    :onChange  (partial handle-schema-input-change request)})))
