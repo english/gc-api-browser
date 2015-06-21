@@ -4,8 +4,7 @@
             [om.dom :as dom :include-macros true]
             [cljs.core.async :as async]
             [cljs-http.client :as http]
-            [gc-api-browser.schema-select :as schema-select]
-            [gc-api-browser.dom-utils :refer [clearfix]]))
+            [gc-api-browser.schema-select :as schema-select]))
 
 (defn resource-selection [{:keys [selected-resource schema] :as request}]
   (dom/div #js {:className "flex-item url-bar__resource"}
@@ -23,18 +22,19 @@
                   (map #(dom/option #js {:value %} %)
                        (schema-select/resource->actions schema selected-resource)))))
 
-(defn submit [cursor owner]
-  (dom/div #js {:className "url-bar__submit"}
-           (dom/button #js {:className "btn u-flex-none"
-                            :onClick   #(async/put! (om/get-state owner :submit-chan)
-                                                    (select-keys cursor [:url :method :body :headers]))}
-                       "Send")))
+(defn submit-button [cursor owner]
+  (let [submit-chan (om/get-state owner :submit-chan)]
+    (dom/div #js {:className "url-bar__submit"}
+             (dom/button #js {:className "btn u-flex-none"
+                              :onClick   #(async/put! submit-chan
+                                                      (select-keys cursor [:url :method :body :headers]))}
+                         "Send"))))
 
 (defn edit-url [{:keys [url] :as cursor}]
   (dom/div #js {:className "url-bar__url"}
            (dom/input #js {:className "input u-flex-none"
                            :value     url
-                           :onChange  #(om/update! cursor :url  (.. % -target -value))})))
+                           :onChange  #(om/update! cursor :url (.. % -target -value))})))
 
 (defn edit-method [{:keys [method] :as cursor}]
   (dom/div #js {:className "url-bar__method"}
@@ -66,4 +66,4 @@
                         (action-selection cursor)
                         (edit-method cursor)
                         (edit-url cursor)
-                        (submit cursor owner))))))
+                        (submit-button cursor owner))))))
