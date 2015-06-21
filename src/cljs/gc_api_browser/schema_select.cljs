@@ -3,6 +3,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [goog.json :as gjson]
+            [goog.Uri :as uri]
             [cljs.core.async :refer [put! chan <!]]))
 
 (defn schema->resource-node [schema resource]
@@ -38,13 +39,19 @@
            after)
       href)))
 
-(defn request-for [schema resource action]
-  (let [prefix (schema->domain schema)
-        {:keys [method href example]} (schema->action-node schema resource action)]
+(defn get-domain [schema request-cursor]
+  (if-let [url-str (:url request-cursor)]
+    (let [uri (uri/parse url-str)]
+      ;; keep the previously used domain, just remove the path
+      (.replace url-str (.getPath uri) ""))
+    (schema->domain schema)))
+
+(defn request-for [schema resource action request-cursor]
+  (let [{:keys [method href example]} (schema->action-node schema resource action)]
     {:method method
-     :url (str prefix (process-href href schema))
-     :body (when (not= method "GET")
-             example)}))
+     :url    (str (get-domain schema request-cursor) (process-href href schema))
+     :body   (when (not= method "GET")
+               example)}))
 
 (defn resource->actions [schema resource]
   (->> (schema->resource-node schema resource)
@@ -61,13 +68,13 @@
 
 (defn read-as-text [file c]
   (let [reader (js/FileReader.)]
-    (set! (.-onload reader) #(put! c (get-in % [:target :result])))
+    (set! (.-onload reader) #(put! c (.. % -target -value)))
     (.readAsText reader file)
     c))
 
 (defn set-selected-action! [request schema resource action]
   (om/update! request :selected-action action)
-  (om/transact! request (fn [m] (merge m (request-for schema resource action)))))
+  (om/transact! request (fn [m] (merge m (request-for schema resource action request)))))
 
 (defn set-selected-resource! [request schema resource]
   (om/update! request :selected-resource resource)

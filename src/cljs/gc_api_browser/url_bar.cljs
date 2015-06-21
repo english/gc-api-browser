@@ -34,7 +34,7 @@
   (dom/div #js {:className "url-bar__url"}
            (dom/input #js {:className "input u-flex-none"
                            :value     url
-                           :onChange  #(om/update! cursor :url (.. % -target -value))})))
+                           :onChange  #(om/update! cursor :url  (.. % -target -value))})))
 
 (defn edit-method [{:keys [method] :as cursor}]
   (dom/div #js {:className "url-bar__method"}
