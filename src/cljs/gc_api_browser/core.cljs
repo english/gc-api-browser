@@ -43,7 +43,7 @@
                           (update :history #(conj % (select-keys m [:request :response])))))))
 
 (defn render-request-and-response [app]
-  (dom/div nil
+  (dom/div #js {:className "request-response"}
            (om/build url-bar/component (:request app)
                      {:opts {:handle-new-response-fn (partial handle-new-response app)}})
            (dom/div #js {:className "u-direction-row"}

@@ -2,6 +2,8 @@ html,
 body,
 #app {
   height: 100%;
+  width: 1024px;
+  margin: 0 auto;
 }
 
 div, section, select, label,
@@ -10,4 +12,8 @@ main, input, [flex] {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+}
+
+.request-response {
+  width: 100%;
 }

@@ -16,7 +16,7 @@
     (render [_]
       (let [showing-headers? (om/get-state owner :showing-headers?)]
         (dom/div #js {:className "tabbed-request"}
-                 (dom/div #js {:className "tabbed-request__buttons"}
+                 (dom/div #js {:className "tabbed-request__buttons u-direction-row"}
                           (dom/button #js {:onClick #(om/set-state! owner :showing-headers? false)} "Body")
                           (dom/button #js {:onClick #(om/set-state! owner :showing-headers? true)} "Headers"))
                  (dom/div #js {:className "tabbed-request__content"}

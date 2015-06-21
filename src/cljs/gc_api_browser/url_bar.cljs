@@ -8,22 +8,23 @@
             [gc-api-browser.dom-utils :refer [clearfix]]))
 
 (defn submit [cursor owner]
-  (dom/button #js {:className ""
-                   :onClick #(async/put! (om/get-state owner :submit-chan)
-                                         (select-keys cursor [:url :method :body :headers]))}
-              "Send"))
+  (dom/div #js {:className "url-bar__submit"}
+           (dom/button #js {:className "btn u-flex-none"
+                            :onClick   #(async/put! (om/get-state owner :submit-chan)
+                                                    (select-keys cursor [:url :method :body :headers]))}
+                       "Send")))
 
 (defn edit-url [{:keys [url] :as cursor}]
-  (dom/div nil
-           (dom/input #js {:className "url-bar__url"
-                           :value url
-                           :onChange #(om/update! cursor :url (.. % -target -value))})))
+  (dom/div #js {:className "url-bar__url"}
+           (dom/input #js {:className "input u-flex-none"
+                           :value     url
+                           :onChange  #(om/update! cursor :url (.. % -target -value))})))
 
 (defn edit-method [{:keys [method] :as cursor}]
-  (dom/div nil
-           (apply dom/select #js {:className "input"
-                                  :value method
-                                  :onChange #(om/update! cursor :method (.. % -target -value))}
+  (dom/div #js {:className "url-bar__method"}
+           (apply dom/select #js {:className "u-flex-none"
+                                  :value     method
+                                  :onChange  #(om/update! cursor :method (.. % -target -value))}
                   (map #(dom/option #js {:value %} %) ["GET" "POST" "PUT"]))))
 
 (defn component [cursor owner {:keys [handle-new-response-fn] :as opts}]

@@ -5,11 +5,21 @@
 
 .url-bar {
   width: 80%;
+  margin: 0 auto;
   max-width: 50rem;
 }
 
-.url-bar__url {
+.url-bar__url .input {
   border: 0;
   border-bottom: blue 2px solid;
   outline: none;
+}
+
+.url-bar__method {
+  width: 30px;
+}
+
+.url-bar__resource,
+.url-bar__action {
+  width: 75px;
 }
