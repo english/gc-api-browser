@@ -34,7 +34,7 @@
                         :source-paths ["src/cljs" "src/env/prod"]
                         :compiler {:output-to "dist/app.js"
                                    :main      "gc-api-browser.main"
-                                   :optimizations :whitespace
+                                   :optimizations :advanced
                                    :pretty-print false}}]}
 
   :figwheel {:http-server-root "public" ;; default and assumes "resources"
