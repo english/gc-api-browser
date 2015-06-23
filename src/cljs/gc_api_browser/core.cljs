@@ -23,7 +23,7 @@
    :response {}})
 
 (defonce app-state
-         (atom init-app-state))
+  (atom init-app-state))
 
 (enable-console-print!)
 

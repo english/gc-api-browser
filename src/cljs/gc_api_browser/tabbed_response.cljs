@@ -32,14 +32,12 @@
                  (when-not (empty? cursor)
                    (dom/div nil
                             (dom/div #js {:className "tabbed-response__buttons u-direction-row"}
-                                     (dom/span #js {:className "tabbed-response__button"}
-                                               (dom/button #js {:className "btn"
-                                                                :onClick #(om/set-state! owner :showing-headers? false)}
-                                                           "Body"))
-                                     (dom/span #js {:className "tabbed-response__button"}
-                                               (dom/button #js {:className "btn"
-                                                                :onClick #(om/set-state! owner :showing-headers? true)}
-                                                           "Headers")))
+                                     (dom/button #js {:className (str "tab-item" (when-not showing-headers? " tab-item--active"))
+                                                      :onClick #(om/set-state! owner :showing-headers? false)}
+                                                 "Body")
+                                     (dom/button #js {:className (str "tab-item" (when showing-headers? " tab-item--active"))
+                                                      :onClick #(om/set-state! owner :showing-headers? true)}
+                                                 "Headers"))
                             (dom/div #js {:className "tabbed-response__content"})
                             (if showing-headers?
                               (render-headers (:headers cursor))
