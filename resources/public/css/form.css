@@ -102,17 +102,22 @@
   border-radius: 4px
 }
 
+.tabs {
+  flex-direction: row;
+  flex: none; /* NOTE: why?! */
+}
+
 .tab-item {
   background-color: #f9f9f9;
   border-bottom: 1px solid #ddd;;
   border: none;
   color: #5092da;
-  color: #5092da;
-  font-size: 12px;
   font-size: 13px;
   font-weight: 400;
+  height: 50px;
   padding: 10px;
   width: 50%;
+  height: 50px;
 }
 
 .tab-item:first-child {
@@ -132,9 +137,9 @@
 }
 
 .url-bar {
-  width: 90%;
   align-items: baseline;
-  margin-bottom: 75px;
+  margin-bottom: 50px;
+  width: 100%;
 }
 
 .url-bar__item {
@@ -161,7 +166,7 @@
 
 .url-bar__item--url {
   padding-bottom: 3px;
-  width: 300px;
+  width: 350px;
 }
 
 .url-bar__item--method.select-container:after {

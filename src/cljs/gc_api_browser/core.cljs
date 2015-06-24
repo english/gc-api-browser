@@ -43,13 +43,12 @@
                           (update :history #(conj % (select-keys m [:request :response])))))))
 
 (defn render-request-and-response [app]
-  (dom/div #js {:className "request-response"}
-           (om/build url-bar/component (:request app)
-                     {:opts {:handle-new-response-fn (partial handle-new-response app)}})
-           (dom/div #js {:className "u-direction-row"}
-                    (om/build tabbed-request/component (:request app))
-                    (om/build tabbed-response/component (:response app)))
-           (dom/div nil (schema-select/schema-file (:request app)))))
+  [(om/build url-bar/component (:request app)
+             {:opts {:handle-new-response-fn (partial handle-new-response app)}})
+   (dom/div #js {:className "u-direction-row request-response"}
+            (om/build tabbed-request/component (:request app))
+            (om/build tabbed-response/component (:response app)))
+   (dom/div nil (schema-select/schema-file (:request app)))])
 
 (defn main []
   (om/root
@@ -73,12 +72,12 @@
         om/IRender
         (render [_]
           (let [schema (get-in app [:request :schema])]
-            (dom/div #js {:className "flex-container u-justify-center u-align-center"}
-                     (dom/header #js {:className "header"}
-                                 (dom/h2 #js {:className "header__title"}
-                                         (get-in app [:request :text])))
-                     (if schema
-                       (render-request-and-response app)
-                       (schema-select/schema-file (:request app))))))))
+            (apply dom/div #js {:className "flex-container u-justify-center u-align-center"}
+                   (dom/header #js {:className "header"}
+                               (dom/h2 #js {:className "header__title"}
+                                       (get-in app [:request :text])))
+                   (if schema
+                     (render-request-and-response app)
+                     (schema-select/schema-file (:request app))))))))
     app-state
     {:target (.getElementById js/document "app")}))

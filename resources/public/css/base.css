@@ -30,3 +30,7 @@ main, input, [flex] {
 .tabbed-response {
   width: 50%;
 }
+
+.headers__header:first-child {
+  margin-top: 20px;
+}

@@ -19,7 +19,7 @@
     (render [_]
       (let [showing-body? (om/get-state owner :showing-body?)]
         (dom/div #js {:className "tabbed-request"}
-                 (dom/div #js {:className "u-direction-row"}
+                 (dom/div #js {:className "tabs" :style #js {:justifyContent "center"}}
                           (when-not (get? request-cursor)
                             (dom/button #js {:className (str "tab-item" (when showing-body? " tab-item--active"))
                                              :onClick   #(om/set-state! owner :showing-body? true)}

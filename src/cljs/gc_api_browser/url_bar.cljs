@@ -61,10 +61,9 @@
 
     om/IRender
     (render [_]
-      (dom/div #js {:style #js {:alignItems "center"}}
-               (dom/div #js {:className "url-bar u-direction-row"}
-                        (resource-selection cursor)
-                        (action-selection cursor)
-                        (edit-method cursor)
-                        (edit-url cursor)
-                        (submit-button cursor owner))))))
+      (dom/div #js {:className "url-bar u-direction-row"}
+               (resource-selection cursor)
+               (action-selection cursor)
+               (edit-method cursor)
+               (edit-url cursor)
+               (submit-button cursor owner)))))
