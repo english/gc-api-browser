@@ -18,7 +18,11 @@ main, input, [flex] {
   width: 100%;
 }
 
-.title {
+.header {
+  margin-bottom: 15px;
+}
+
+.header__title {
   font-weight: normal;
 }
 

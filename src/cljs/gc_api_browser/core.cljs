@@ -74,8 +74,8 @@
         (render [_]
           (let [schema (get-in app [:request :schema])]
             (dom/div #js {:className "flex-container u-justify-center u-align-center"}
-                     (dom/header nil
-                                 (dom/h2 #js {:className "title"}
+                     (dom/header #js {:className "header"}
+                                 (dom/h2 #js {:className "header__title"}
                                          (get-in app [:request :text])))
                      (if schema
                        (render-request-and-response app)
