@@ -73,8 +73,8 @@
         (render [_]
           (let [schema (get-in app [:request :schema])]
             (apply dom/div #js {:className "flex-container u-justify-center u-align-center"}
-                   (dom/header #js {:className "header"}
-                               (dom/h2 #js {:className "header__title"}
+                   (dom/header #js {:className "header flex-container"}
+                               (dom/h2 #js {:className "header__title u-type-mono"}
                                        (get-in app [:request :text])))
                    (if schema
                      (render-request-and-response app)
