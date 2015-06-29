@@ -1,21 +1,21 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Gotham SSm A';
+}
+
 html,
 body,
 #app {
   height: 100%;
-  width: 1024px;
-  margin: 0 auto;
 }
 
-div, section, select, label,
-main, input, [flex] {
-  position: relative;
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
+body {
+  margin: 0;
 }
 
 .request-response {
   width: 100%;
+  border-top: 1px solid #ddd;
 }
 
 .header {
@@ -28,7 +28,11 @@ main, input, [flex] {
 
 .tabbed-request,
 .tabbed-response {
-  width: 50%;
+  flex: 1;
+}
+
+.tabbed-request {
+  border-right: 1px solid #ddd;
 }
 
 .headers__header:first-child {

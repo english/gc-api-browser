@@ -11,6 +11,10 @@
   flex: none;
 }
 
+.u-flex2 {
+  flex: 2;
+}
+
 .u-direction-row {
   flex-direction: row;
 }
@@ -27,4 +31,9 @@
 /*Center flex items on cross axis*/
 .u-align-center {
   align-items: center;
+}
+
+.u-flex-center {
+  flex-flow: row wrap;
+  justify-content: space-around;
 }

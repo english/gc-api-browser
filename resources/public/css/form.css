@@ -10,7 +10,6 @@
   color: #222;
   transition: border-color 0.2s ease;
   height: 40px;
-  margin-bottom: 18px;
 }
 
 .input:hover {
@@ -28,12 +27,8 @@
 }
 
 .input--textarea {
-  height: auto;
-  min-height: 34px;
-  max-height: 120px;
+  height: 30rem;
   padding: 9px;
-  border-width: 1px;
-  border-radius: 4px;
 }
 
 .select-container {
@@ -104,13 +99,15 @@
 
 .tabs {
   flex-direction: row;
-  flex: none; /* NOTE: why?! */
 }
 
 .tab-item {
+  cursor: pointer;
   background-color: #f9f9f9;
+  border-top: none;
+  border-right: none;
   border-bottom: 1px solid #ddd;;
-  border: none;
+  border-left: none;
   color: #5092da;
   font-size: 13px;
   font-weight: 400;
@@ -138,12 +135,7 @@
 
 .url-bar {
   align-items: baseline;
-  margin-bottom: 50px;
-  width: 100%;
-}
-
-.url-bar__item {
-  margin-right: 10px;
+  width: 80%;
 }
 
 .url-bar__item--resource,
@@ -165,8 +157,6 @@
 }
 
 .url-bar__item--url {
-  padding-bottom: 3px;
-  width: 350px;
 }
 
 .url-bar__item--method.select-container:after {
@@ -175,5 +165,4 @@
 }
 
 .url-bar__item--submit {
-  width: 40px;
 }
