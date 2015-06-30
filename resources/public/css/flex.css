@@ -1,6 +1,5 @@
 .flex-container {
   display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
 }
 
@@ -10,6 +9,10 @@
 
 .u-flex-none {
   flex: none;
+}
+
+.u-flex2 {
+  flex: 2;
 }
 
 .u-direction-row {
@@ -28,4 +31,9 @@
 /*Center flex items on cross axis*/
 .u-align-center {
   align-items: center;
+}
+
+.u-flex-center {
+  flex-flow: row wrap;
+  justify-content: space-around;
 }

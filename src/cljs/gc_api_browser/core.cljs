@@ -45,7 +45,7 @@
 (defn render-request-and-response [app]
   [(om/build url-bar/component (:request app)
              {:opts {:handle-new-response-fn (partial handle-new-response app)}})
-   (dom/div #js {:className "u-direction-row request-response"}
+   (dom/div #js {:className "flex-container u-direction-row request-response"}
             (om/build tabbed-request/component (:request app))
             (om/build tabbed-response/component (:response app)))
    (dom/div nil (schema-select/schema-file (:request app)))])
@@ -72,10 +72,11 @@
         om/IRender
         (render [_]
           (let [schema (get-in app [:request :schema])]
-            (apply dom/div #js {:className "flex-container u-justify-center u-align-center"}
-                   (dom/header #js {:className "header"}
-                               (dom/h2 #js {:className "header__title"}
-                                       (get-in app [:request :text])))
+            (apply dom/div #js {:className "flex-container u-flex-center"}
+                   (dom/div nil
+                            (dom/header #js {:className "header flex-container"}
+                                        (dom/h2 #js {:className "header__title u-type-mono"}
+                                                (get-in app [:request :text]))))
                    (if schema
                      (render-request-and-response app)
                      (schema-select/schema-file (:request app))))))))

@@ -4,7 +4,7 @@
             [gc-api-browser.headers :as headers]))
 
 (defn edit-body [{:keys [body] :as cursor}]
-  (dom/div #js {:className "tabbed-request__body"}
+  (dom/div #js {:className "flex-container tabbed-request__body"}
            (dom/textarea #js {:className "input input--textarea"
                               :style #js {:fontFamily "Source Code Pro"}
                               :value body

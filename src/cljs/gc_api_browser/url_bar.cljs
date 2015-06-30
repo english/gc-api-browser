@@ -31,7 +31,7 @@
                   (map #(dom/option #js {:value %} %) ["GET" "POST" "PUT"]))))
 
 (defn edit-url [{:keys [url] :as cursor}]
-  (dom/div nil
+  (dom/div #js {:className "u-flex2"}
            (dom/input #js {:className "input url-bar__item url-bar__item--url"
                            :value     url
                            :onChange  #(om/update! cursor :url (.. % -target -value))})))
@@ -61,7 +61,7 @@
 
     om/IRender
     (render [_]
-      (dom/div #js {:className "url-bar u-direction-row"}
+      (dom/div #js {:className "flex-container u-justify-center u-direction-row url-bar"}
                (resource-selection cursor)
                (action-selection cursor)
                (edit-method cursor)
