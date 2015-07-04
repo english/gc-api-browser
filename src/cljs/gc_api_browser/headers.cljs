@@ -8,11 +8,11 @@
     om/IRender
     (render [_]
       (dom/div #js {:className "flex-container headers__header u-direction-row"}
-               (dom/div #js {:className "headers__header__name u-margin-Rxxs"}
+               (dom/div #js {:className "flex-item headers__header__name u-margin-Rxxs"}
                         (dom/input #js {:className "input"
                                         :disabled true
                                         :value header-name}))
-               (dom/div #js {:className "headers__header__value u-margin-Rxxs"}
+               (dom/div #js {:className "flex-item headers__header__value u-margin-Rxxs"}
                         (dom/input #js {:className "input"
                                         :disabled true
                                         :value header-value}))

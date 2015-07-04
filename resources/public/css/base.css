@@ -26,6 +26,21 @@ body {
   font-weight: normal;
 }
 
+.headers__header {
+  position: relative;
+}
+
+.headers__header__delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: none;
+}
+
+.headers__header:hover .headers__header__delete {
+  display: block;
+}
+
 .tabbed-request,
 .tabbed-response {
   flex: 1;
