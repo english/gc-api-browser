@@ -13,6 +13,10 @@ body {
   margin: 0;
 }
 
+code {
+  font-family: 'Source Code Pro', monospace;
+}
+
 .request-response {
   width: 100%;
   border-top: 1px solid #ddd;
@@ -52,6 +56,15 @@ body {
 
 .tabbed-request {
   border-right: 1px solid #ddd;
+}
+
+.tabbed-request code {
+  outline: none;
+}
+
+.tabbed-request__body,
+.tabbed-response__body {
+  font-family: "Source Code Pro";
 }
 
 .headers__header:first-child {

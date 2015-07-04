@@ -3,12 +3,18 @@
             [om.dom :as dom :include-macros true]
             [gc-api-browser.headers :as headers]))
 
+(defn content-editable [cursor owner]
+  (reify om/IRender
+    (render [_]
+      (dom/code #js {:contentEditable true
+                     :dangerouslySetInnerHTML #js {:__html (:body cursor)}
+                     :onInput (fn [_]
+                                (let [html (.-innerHTML (om/get-node owner))]
+                                  (om/update! cursor :body html)))}))))
+
 (defn edit-body [{:keys [body] :as cursor}]
-  (dom/div #js {:className "flex-container tabbed-request__body"}
-           (dom/textarea #js {:className "input input--textarea"
-                              :style #js {:fontFamily "Source Code Pro"}
-                              :value body
-                              :onChange #(om/update! cursor :body (.. % -target -value))})))
+  (dom/pre #js {:className "flex-container tabbed-request__body"}
+           (om/build content-editable cursor)))
 
 (defn get? [request]
   (= "GET" (:method request)))
