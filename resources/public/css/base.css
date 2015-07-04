@@ -30,6 +30,10 @@ body {
   position: relative;
 }
 
+.headers__header__value .input {
+  text-overflow: ellipsis;
+}
+
 .headers__header__delete {
   position: absolute;
   top: 0;
