@@ -79,6 +79,6 @@
                                                 (get-in app [:request :text]))))
                    (if schema
                      (render-request-and-response app)
-                     (schema-select/schema-file (:request app))))))))
+                     [(schema-select/schema-file (:request app))]))))))
     app-state
     {:target (.getElementById js/document "app")}))
