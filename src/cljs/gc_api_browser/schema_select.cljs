@@ -127,9 +127,8 @@
   (set-selected-action! request schema selected-resource (.. e -target -value)))
 
 (defn schema-file [request]
-  (dom/div
-    #js {:className "u-justify-center"}
-    (dom/input #js {:type      "file"
-                    :className "add-schema"
-                    :accept    "application/json"
-                    :onChange  (partial handle-schema-input-change request)})))
+  (dom/div #js {:className "u-justify-center"}
+           (dom/input #js {:type      "file"
+                           :className "add-schema"
+                           :accept    "application/json"
+                           :onChange  (partial handle-schema-input-change request)})))

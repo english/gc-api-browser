@@ -50,6 +50,9 @@
             (om/build tabbed-response/component (:response app)))
    (dom/div nil (schema-select/schema-file (:request app)))])
 
+(defn render-schema-select [app]
+  [(schema-select/schema-file (:request app))])
+
 (defn main []
   (om/root
     (fn [app _]
@@ -72,13 +75,13 @@
         om/IRender
         (render [_]
           (let [schema (get-in app [:request :schema])]
-            (apply dom/div #js {:className "flex-container u-flex-center"}
+            (apply dom/div #js {:className "flex-container u-align-center u-flex-center"}
                    (dom/div nil
                             (dom/header #js {:className "header flex-container"}
                                         (dom/h2 #js {:className "header__title u-type-mono"}
                                                 (get-in app [:request :text]))))
                    (if schema
                      (render-request-and-response app)
-                     [(schema-select/schema-file (:request app))]))))))
+                     (render-schema-select app)))))))
     app-state
     {:target (.getElementById js/document "app")}))
