@@ -1,0 +1,13 @@
+#!/bin/bash
+
+rm dist/app*
+lein trampoline cljsbuild once prod
+
+gzip --best dist/app.js
+mv dist/app.js.gz dist/app.js
+
+cat resources/public/css/*.css > dist/app.css
+gzip --best dist/app.css
+mv dist/app.css.gz dist/app.css
+
+cp 'resources/public/css/source-code-pro.woff' dist/
