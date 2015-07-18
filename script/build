@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# don't delete font!
 rm dist/app*
 lein trampoline cljsbuild once prod
 
