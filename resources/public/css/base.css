@@ -18,7 +18,7 @@ code {
 }
 
 .request-response {
-  width: 100%;
+  width: 90%;
   border-top: 1px solid #ddd;
   margin-bottom: 30px;
 }
@@ -35,14 +35,22 @@ code {
   position: relative;
 }
 
+.headers__header:first-child {
+  margin-top: 20px;
+}
+
+.headers__header .input {
+  padding-left: 5px;
+}
+
 .headers__header__value .input {
   text-overflow: ellipsis;
 }
 
 .headers__header__delete {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 5px;
+  right: 5px;
   display: none;
 }
 
@@ -53,10 +61,12 @@ code {
 .tabbed-request,
 .tabbed-response {
   flex: 1;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
 }
 
 .tabbed-request {
-  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
 }
 
 .tabbed-request code {
@@ -66,8 +76,5 @@ code {
 .tabbed-request__body,
 .tabbed-response__body {
   font-family: "Source Code Pro";
-}
-
-.headers__header:first-child {
-  margin-top: 20px;
+  padding: 6px;
 }
