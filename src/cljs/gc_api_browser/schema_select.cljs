@@ -80,12 +80,14 @@
 (defn resource->actions [schema resource]
   (->> (schema->resource-node schema resource)
        :links
-       (map :title)))
+       (map :title)
+       sort))
 
 (defn schema->resources [schema]
   (->> (vals (:definitions schema))
        (map :title)
-       (map name)))
+       (map name)
+       sort))
 
 (defn store-schema! [json]
   (.setItem js/localStorage "schema" (gjson/serialize json)))
