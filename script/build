@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# quit if any command fails
+set -e
+
 # don't delete font!
 rm dist/app*
 lein trampoline cljsbuild once prod
