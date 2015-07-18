@@ -7,20 +7,20 @@
             [gc-api-browser.schema-select :as schema-select]))
 
 (defn resource-selection [{:keys [selected-resource schema] :as request}]
-  (dom/div #js {:className "url-bar__item url-bar__item--resource select-container"}
-           (apply dom/select #js {:className "select-container__select input"
-                                  :value     selected-resource
-                                  :onChange  (partial schema-select/handle-resource-change request)}
-                  (map #(dom/option #js {:value %} %)
-                       (schema-select/schema->resources schema)))))
+  (let [resources (sort (schema-select/schema->resources schema))]
+    (dom/div #js {:className "url-bar__item url-bar__item--resource select-container"}
+             (apply dom/select #js {:className "select-container__select input"
+                                    :value     selected-resource
+                                    :onChange  (partial schema-select/handle-resource-change request)}
+                    (map #(dom/option #js {:value %} %) resources)))))
 
 (defn action-selection [{:keys [selected-resource selected-action schema] :as request}]
-  (dom/div #js {:className "url-bar__item url-bar__item--action select-container"}
-           (apply dom/select #js {:className "select-container__select input"
-                                  :value     (when selected-action (name selected-action))
-                                  :onChange  (partial schema-select/handle-action-change request)}
-                  (map #(dom/option #js {:value %} %)
-                       (schema-select/resource->actions schema selected-resource)))))
+  (let [actions (sort (schema-select/resource->actions schema selected-resource))]
+    (dom/div #js {:className "url-bar__item url-bar__item--action select-container"}
+             (apply dom/select #js {:className "select-container__select input"
+                                    :value     (when selected-action (name selected-action))
+                                    :onChange  (partial schema-select/handle-action-change request)}
+                    (map #(dom/option #js {:value %} %) actions)))))
 
 (defn edit-method [{:keys [method] :as cursor}]
   (dom/div #js {:className "url-bar__item url-bar__item--method select-container"}
