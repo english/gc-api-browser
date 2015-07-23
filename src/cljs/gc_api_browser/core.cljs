@@ -53,25 +53,21 @@
 (defn render-schema-select [app]
   [(schema-select/schema-file (:request app))])
 
+(defn load-stored-schema! [app]
+  (when-not (get-in app [:request :schema])
+    (when-let [json-string (.getItem js/localStorage "schema")]
+      (schema-select/set-schema! (:request app) (.parse js/JSON json-string)))))
+
 (defn main []
   (om/root
     (fn [app _]
       (reify
-        om/IWillMount
-        (will-mount [_]
-          ;; Hack! See https://github.com/omcljs/om/issues/336
-          (js/setTimeout
-            (fn []
-              (when-let [json (.getItem js/localStorage "schema")]
-                (schema-select/set-schema! (:request app) (.parse js/JSON json))))))
         om/IDidMount
         (did-mount [_]
-          ;; Hack! See https://github.com/omcljs/om/issues/336
-          (js/setTimeout
-            (fn []
-              (om/update! app [:request :headers]
-                          (or (js->clj (.parse js/JSON (.getItem js/localStorage "headers")))
-                              default-headers)))))
+          (load-stored-schema! app)
+          (om/update! app [:request :headers]
+                      (or (js->clj (.parse js/JSON (.getItem js/localStorage "headers")))
+                          default-headers)))
         om/IRender
         (render [_]
           (let [schema (get-in app [:request :schema])]
