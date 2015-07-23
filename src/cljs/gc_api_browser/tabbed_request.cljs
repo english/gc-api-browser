@@ -25,13 +25,15 @@
     (render [_]
       (let [showing-body? (om/get-state owner :showing-body?)]
         (dom/div #js {:className "tabbed-request"}
-                 (dom/div #js {:className "tabs" :style #js {:justifyContent "center"}}
-                          (when-not (get? request-cursor)
-                            (dom/button #js {:className (str "tab-item" (when showing-body? " tab-item--active"))
-                                             :onClick   #(om/set-state! owner :showing-body? true)}
-                                        "Body"))
-                          (dom/button #js {:className (str "tab-item" (when-not showing-body? " tab-item--active"))
-                                           :onClick   #(om/set-state! owner :showing-body? false)} "Headers"))
+                 (dom/span nil
+                           (if (get? request-cursor)
+                             (dom/div #js {:className "tabs"} (dom/button #js {:className "tab-item tab-item--active"} "Headers"))
+                             (dom/div #js {:className "tabs"}
+                                      (dom/button #js {:className (str "tab-item" (when showing-body? " tab-item--active"))
+                                                       :onClick   #(om/set-state! owner :showing-body? true)}
+                                                  "Body")
+                                      (dom/button #js {:className (str "tab-item" (when-not showing-body? " tab-item--active"))
+                                                       :onClick   #(om/set-state! owner :showing-body? false)} "Headers"))))
                  (dom/div nil
                           (if (and showing-body?
                                    (not (get? request-cursor)))

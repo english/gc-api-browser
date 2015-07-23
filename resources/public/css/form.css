@@ -99,7 +99,9 @@
 }
 
 .tabs {
+  display: flex;
   flex-direction: row;
+  justify-content "center";
 }
 
 .tab-item {
@@ -113,10 +115,9 @@
   font-size: 13px;
   font-weight: 400;
   height: 50px;
-  height: 50px;
   outline: none;
   padding: 10px;
-  width: 50%;
+  flex: 1 1 auto;
 }
 
 .tab-item:first-child {
