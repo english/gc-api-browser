@@ -11,7 +11,8 @@
                (dom/div #js {:className "flex-item headers__header__name u-margin-Rxxs"}
                         (dom/input #js {:className "input"
                                         :disabled true
-                                        :value header-name}))
+                                        :value (name header-name) ;; when we reload headers from localStorage, we symbolize keys
+                                        }))
                (dom/div #js {:className "flex-item headers__header__value u-margin-Rxxs"}
                         (dom/input #js {:className "input"
                                         :disabled true
@@ -20,12 +21,8 @@
                                 :className "headers__header__delete"
                                 :onClick handle-delete} "✖")))))
 
-(defn store-headers! [headers]
-  (.setItem js/localStorage "headers" (.stringify js/JSON (clj->js headers))))
-
 (defn delete-header [headers k]
-  (om/transact! headers #(dissoc % k))
-  (store-headers! @headers))
+  (om/transact! headers #(dissoc % k)))
 
 (def ENTER_KEY 13)
 
@@ -39,8 +36,7 @@
         (set! (.-value name-node) "")
         (set! (.-value value-node) "")
         (.focus name-node)))
-    (.preventDefault e)
-    (store-headers! @headers)))
+    (.preventDefault e)))
 
 (defn component [headers owner]
   (reify

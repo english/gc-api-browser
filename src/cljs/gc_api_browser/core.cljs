@@ -1,6 +1,8 @@
 (ns gc-api-browser.core
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [cljs.core.async :as async]
             [gc-api-browser.url-bar :as url-bar]
             [gc-api-browser.tabbed-response :as tabbed-response]
             [gc-api-browser.schema-select :as schema-select]
@@ -31,9 +33,6 @@
 (comment
   (keys @app-state)
   (swap! app-state (fn [] init-app-state))
-  (do
-    (.removeItem js/localStorage "schema")
-    (.removeItem js/localStorage "headers"))
   (swap! app-state (fn [x] (update-in x [:request] (fn [y] (dissoc y :schema))))))
 
 (defn handle-new-response [app resp]
@@ -53,31 +52,45 @@
 (defn render-schema-select [app]
   [(schema-select/schema-file (:request app))])
 
-(defn load-stored-schema! [app]
-  (when-not (get-in app [:request :schema])
-    (when-let [json-string (.getItem js/localStorage "schema")]
-      (schema-select/set-schema! (:request app) (.parse js/JSON json-string)))))
+(defn load-app-state! [app]
+  (when-let [previous-app-state (js->clj (.parse js/JSON (.getItem js/localStorage "app-state")) :keywordize-keys true)]
+    (om/update! app previous-app-state)))
+
+; stolen from: https://gist.github.com/swannodette/5886048
+(defn throttle [c ms]
+  (let [c' (async/chan)]
+    (go
+      (while true
+        (>! c' (<! c))
+        (<! (async/timeout ms))))
+    c'))
 
 (defn main []
-  (om/root
-    (fn [app _]
-      (reify
-        om/IDidMount
-        (did-mount [_]
-          (load-stored-schema! app)
-          (om/update! app [:request :headers]
-                      (or (js->clj (.parse js/JSON (.getItem js/localStorage "headers")))
-                          default-headers)))
-        om/IRender
-        (render [_]
-          (let [schema (get-in app [:request :schema])]
-            (apply dom/div #js {:className "flex-container u-align-center u-flex-center"}
-                   (dom/div nil
-                            (dom/header #js {:className "header flex-container"}
-                                        (dom/h2 #js {:className "header__title u-type-mono"}
-                                                (get-in app [:request :text]))))
-                   (if schema
-                     (render-request-and-response app)
-                     (render-schema-select app)))))))
-    app-state
-    {:target (.getElementById js/document "app")}))
+  (let [sync-chan (async/chan (async/sliding-buffer 1))
+        throttled (throttle sync-chan 300)]
+    (om/root
+      (fn [app _]
+        (reify
+          om/IWillMount
+          (will-mount [_]
+            (js/setTimeout
+              (fn []
+                (load-app-state! app)
+                (om/transact! app [:request :headers] #(or % default-headers))))
+            (go (while true
+                  (let [state (async/<! throttled)]
+                    (.setItem js/localStorage "app-state" (.stringify js/JSON (clj->js state)))))))
+          om/IRender
+          (render [_]
+            (let [schema (get-in app [:request :schema])]
+              (apply dom/div #js {:className "flex-container u-align-center u-flex-center"}
+                     (dom/div nil
+                              (dom/header #js {:className "header flex-container"}
+                                          (dom/h2 #js {:className "header__title u-type-mono"}
+                                                  (get-in app [:request :text]))))
+                     (if schema
+                       (render-request-and-response app)
+                       (render-schema-select app)))))))
+      app-state
+      {:target (.getElementById js/document "app")
+       :tx-listen (fn [_ root-cursor] (async/put! sync-chan @root-cursor))})))

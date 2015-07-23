@@ -36,12 +36,17 @@
                            :value     url
                            :onChange  #(om/update! cursor :url (.. % -target -value))})))
 
+(defn stringify-keys [m]
+  (reduce-kv #(assoc %1 (name %2) %3) {} m))
+
 (defn submit-button [cursor owner]
   (let [submit-chan (om/get-state owner :submit-chan)]
     (dom/div #js {:className "url-bar__item url-bar__item--submit"}
              (dom/button #js {:className "btn"
                               :onClick   #(async/put! submit-chan
-                                                      (select-keys cursor [:url :method :body :headers]))}
+                                                      (-> cursor
+                                                          (select-keys [:url :method :body :headers])
+                                                          (update :headers stringify-keys)))}
                          "Send"))))
 
 (defn component [cursor owner {:keys [handle-new-response-fn] :as opts}]

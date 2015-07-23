@@ -89,9 +89,6 @@
        (map name)
        sort))
 
-(defn store-schema! [json]
-  (.setItem js/localStorage "schema" (gjson/serialize json)))
-
 (defn read-as-text [file c]
   (let [reader (js/FileReader.)]
     (set! (.-onload reader) (fn [e]
@@ -119,8 +116,7 @@
     (go
       (let [text (<! (read-as-text file (chan)))
             json (gjson/parse text)]
-        (set-schema! request json)
-        (store-schema! json)))))
+        (set-schema! request json)))))
 
 (defn handle-resource-change [request e]
   (set-selected-resource! request (:schema request) (.. e -target -value)))
