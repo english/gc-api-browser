@@ -124,6 +124,10 @@
   border-right: 1px solid #ddd;
 }
 
+.tab-item--only:first-child {
+  border-right: none;
+}
+
 .tab-item--active {
   background: #fff;
   color: #767676;

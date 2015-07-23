@@ -27,7 +27,7 @@
         (dom/div #js {:className "tabbed-request"}
                  (dom/span nil
                            (if (get? request-cursor)
-                             (dom/div #js {:className "tabs"} (dom/button #js {:className "tab-item tab-item--active"} "Headers"))
+                             (dom/div #js {:className "tabs"} (dom/button #js {:className "tab-item tab-item--active tab-item--only"} "Headers"))
                              (dom/div #js {:className "tabs"}
                                       (dom/button #js {:className (str "tab-item" (when showing-body? " tab-item--active"))
                                                        :onClick   #(om/set-state! owner :showing-body? true)}

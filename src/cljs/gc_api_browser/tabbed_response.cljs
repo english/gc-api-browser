@@ -28,10 +28,10 @@
     om/IRender
     (render [_]
       (let [showing-headers? (om/get-state owner :showing-headers?)]
-        (dom/div #js {:className "tabbed-response"}
+        (dom/div #js {:className (str "tabbed-response" (when (empty? cursor) " tabbed-response--empty"))}
                  (when-not (empty? cursor)
                    (dom/div nil
-                            (dom/div #js {:className "tabbed-response__buttons u-direction-row"}
+                            (dom/div #js {:className "tabs"}
                                      (dom/button #js {:className (str "tab-item" (when-not showing-headers? " tab-item--active"))
                                                       :onClick #(om/set-state! owner :showing-headers? false)}
                                                  "Body")

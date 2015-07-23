@@ -19,7 +19,6 @@ code {
 
 .request-response {
   width: 90%;
-  border-top: 1px solid #ddd;
   margin-bottom: 30px;
 }
 
@@ -61,12 +60,20 @@ code {
 .tabbed-request,
 .tabbed-response {
   flex: 1;
-  border-right: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
 }
 
 .tabbed-request {
-  border-left: 1px solid #ddd;
+  border: 1px solid #ddd;
+}
+
+.tabbed-response {
+  border: 1px solid #ddd;
+  border-left: none;
+  overflow-x: scroll;
+}
+
+.tabbed-response--empty {
+  border: none;
 }
 
 .tabbed-request code {
