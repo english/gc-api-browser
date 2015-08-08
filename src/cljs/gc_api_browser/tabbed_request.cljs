@@ -3,14 +3,22 @@
             [om.dom :as dom :include-macros true]
             [gc-api-browser.headers :as headers]))
 
+(def ENTER 13)
+
+(defn handle-key-down [e]
+  (when (= (.-keyCode e) ENTER)
+    (.execCommand js/document "insertHTML" false "\n")
+    (.preventDefault e)))
+
 (defn content-editable [cursor owner]
   (reify om/IRender
     (render [_]
       (dom/code #js {:contentEditable true
                      :dangerouslySetInnerHTML #js {:__html (:body cursor)}
+                     :onKeyDown handle-key-down
                      :onInput (fn [_]
                                 (let [html (.-innerHTML (om/get-node owner))]
-                                  (om/update! cursor :body html)))}))))
+                                  (om/transact! cursor :body (fn [_] html))))}))))
 
 (defn edit-body [{:keys [body] :as cursor}]
   (dom/pre #js {:className "flex-container tabbed-request__body"}
