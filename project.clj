@@ -8,10 +8,13 @@
   :clean-targets ^{:protect false} ["resources/public/js/app.js" "resources/public/js/out" "dist/app.js"]
 
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "0.0-3308"]
+                 [org.clojure/clojurescript "1.7.48"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [org.omcljs/om "0.9.0"]
-                 [cljs-http "0.1.35"]]
+                 [cljs-http "0.1.35"]
+                 [com.novemberain/pantomime "2.7.0"]
+                 [clj-aws-s3 "0.3.10" :exclusions [joda-time]]]
+
 
   :plugins [[lein-cljsbuild "1.0.6"]
             [cider/cider-nrepl "0.9.1"]

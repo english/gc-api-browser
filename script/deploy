@@ -3,6 +3,8 @@
 # quit if any command fails
 set -e
 
+BUCKET='api-browser-staging.gocardless.com'
+
 # don't delete font!
 rm dist/app*
 lein trampoline cljsbuild once prod
@@ -15,3 +17,4 @@ gzip --best dist/app.css
 mv dist/app.css.gz dist/app.css
 
 cp 'resources/public/css/source-code-pro.woff' dist/
+lein trampoline run -m deploy dist $BUCKET $GC_AWS_ACCESS_KEY $GC_AWS_SECRET
