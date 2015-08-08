@@ -12,6 +12,7 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [org.omcljs/om "0.9.0"]
                  [cljs-http "0.1.35"]
+                 [com.cognitect/transit-cljs "0.8.220"]
                  [com.novemberain/pantomime "2.7.0"]
                  [clj-aws-s3 "0.3.10" :exclusions [joda-time]]]
 

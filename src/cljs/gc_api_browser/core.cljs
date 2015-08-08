@@ -1,6 +1,8 @@
 (ns gc-api-browser.core
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [om.core :as om :include-macros true]
+  (:require [cljs.pprint :as pprint]
+            [cognitect.transit :as transit]
+            [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :as async]
             [gc-api-browser.url-bar :as url-bar]
@@ -53,8 +55,9 @@
   [(schema-select/schema-file (:request app))])
 
 (defn load-app-state! [app]
-  (when-let [previous-app-state (js->clj (.parse js/JSON (.getItem js/localStorage "app-state")) :keywordize-keys true)]
-    (om/update! app previous-app-state)))
+  (let [reader (transit/reader :json)]
+    (when-let [app-state-str (.getItem js/localStorage "app-state")]
+      (om/update! app (transit/read reader app-state-str)))))
 
 ; stolen from: https://gist.github.com/swannodette/5886048
 (defn throttle [c ms]
@@ -76,10 +79,11 @@
             (js/setTimeout
               (fn []
                 (load-app-state! app)
-                (om/transact! app [:request :headers] #(or % default-headers))))
-            (go (while true
-                  (let [state (async/<! throttled)]
-                    (.setItem js/localStorage "app-state" (.stringify js/JSON (clj->js state)))))))
+                (om/transact! app [:request :headers] #(if (empty? %) default-headers %))))
+            (let [writer (transit/writer :json)]
+              (go (while true
+                    (let [state (async/<! throttled)]
+                      (.setItem js/localStorage "app-state" (transit/write writer state)))))))
           om/IRender
           (render [_]
             (let [schema (get-in app [:request :schema])]
