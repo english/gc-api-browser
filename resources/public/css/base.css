@@ -17,11 +17,6 @@ code {
   font-family: 'Source Code Pro', monospace;
 }
 
-.request-response {
-  width: 90%;
-  margin-bottom: 30px;
-}
-
 .header {
   margin-bottom: 15px;
 }
@@ -57,18 +52,25 @@ code {
   display: block;
 }
 
+.request-response {
+  margin-bottom: 30px;
+  width: 100%;
+}
+
 .tabbed-request,
 .tabbed-response {
   flex: 1;
+  border: 2px solid #B1B1B1;
 }
 
 .tabbed-request {
-  border: 1px solid #ddd;
+  border-left: none;
+  border-right-width: 1px;
 }
 
 .tabbed-response {
-  border: 1px solid #ddd;
-  border-left: none;
+  border-right: none;
+  border-left-width: 1px;
   overflow-x: scroll;
 }
 

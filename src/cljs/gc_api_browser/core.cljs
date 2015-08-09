@@ -44,15 +44,20 @@
                           (update :history #(conj % (select-keys m [:request :response])))))))
 
 (defn render-request-and-response [app]
-  [(om/build url-bar/component (:request app)
-             {:opts {:handle-new-response-fn (partial handle-new-response app)}})
-   (dom/div #js {:className "flex-container u-direction-row request-response"}
-            (om/build tabbed-request/component (:request app))
-            (om/build tabbed-response/component (:response app)))
-   (dom/div nil (schema-select/schema-file (:request app)))])
+  (dom/div #js {:className "flex-container u-align-center u-flex-center"}
+           (om/build url-bar/component (:request app)
+                     {:opts {:handle-new-response-fn (partial handle-new-response app)}})
+           (dom/div #js {:className "flex-container u-direction-row request-response"}
+                    (om/build tabbed-request/component (:request app))
+                    (om/build tabbed-response/component (:response app)))
+           (dom/div nil (schema-select/schema-file (:request app)))))
 
 (defn render-schema-select [app]
-  [(schema-select/schema-file (:request app))])
+  (dom/div #js {:className "flex-container u-align-center u-flex-center"}
+           (dom/header #js {:className "header"}
+                       (dom/h2 #js {:className "header__title u-type-mono"}
+                               (get-in app [:request :text])))
+           (schema-select/schema-file (:request app))))
 
 (defn load-app-state! [app]
   (let [reader (transit/reader :json)]
@@ -86,15 +91,9 @@
                       (.setItem js/localStorage "app-state" (transit/write writer state)))))))
           om/IRender
           (render [_]
-            (let [schema (get-in app [:request :schema])]
-              (apply dom/div #js {:className "flex-container u-align-center u-flex-center"}
-                     (dom/div nil
-                              (dom/header #js {:className "header flex-container"}
-                                          (dom/h2 #js {:className "header__title u-type-mono"}
-                                                  (get-in app [:request :text]))))
-                     (if schema
-                       (render-request-and-response app)
-                       (render-schema-select app)))))))
+            (if (get-in app [:request :schema])
+              (render-request-and-response app)
+              (render-schema-select app)))))
       app-state
       {:target (.getElementById js/document "app")
        :tx-listen (fn [_ root-cursor] (async/put! sync-chan @root-cursor))})))

@@ -2,9 +2,9 @@
   width: 100%;
   padding: 9px 0;
   border-radius: 0;
-  border-width: 0 0 1px 0;
+  border-width: 0 0 2px 0;
   border-style: solid;
-  border-color: #ddd;
+  border-color: #B1B1B1;
   display: block;
   background-color: #fff;
   color: #222;
@@ -42,9 +42,6 @@
   -moz-appearance: none;
   appearance: none;
   background: none;
-  border-width: 0 0 1px 0;
-  border-style: solid;
-  border-color: #ddd;
   color: #5092DA;
   border-radius: 0;
   padding: 9px 0;
@@ -106,7 +103,7 @@
 
 .tab-item {
   background-color: #f9f9f9;
-  border-bottom: 1px solid #ddd;;
+  border-bottom: 2px solid #B1B1B1;;
   border-left: none;
   border-right: none;
   border-top: none;
@@ -114,14 +111,14 @@
   cursor: pointer;
   font-size: 13px;
   font-weight: 400;
-  height: 50px;
+  height: 70px;
   outline: none;
   padding: 10px;
   flex: 1 1 auto;
 }
 
 .tab-item:first-child {
-  border-right: 1px solid #ddd;
+  border-right: 2px solid #B1B1B1;
 }
 
 .tab-item--only:first-child {
@@ -142,25 +139,27 @@
 
 .url-bar {
   align-items: baseline;
-  width: 80%;
+  width: 90%;
+  margin-top: 70px;
+  margin-bottom: 70px;
 }
 
-.url-bar__item--resource {
-  margin-right: 10px;
+.url-bar__item {
+  margin-right: 50px;
+  width: 170px;
 }
 
-.url-bar__item--resource,
-.url-bar__item--action {
-  width: 150px;
+.url-bar__item .input {
+  color: #060402;
 }
 
 .url-bar__item--method {
-  width: 55px;
+  width: 45px;
   margin-right: 0;
 }
 
 .url-bar__item--method .input {
-  border-bottom: none;
+  color: #B1B1B1;
 }
 
 .url-bar__item--method select {
@@ -168,6 +167,7 @@
 }
 
 .url-bar__item--url {
+  width: 400px;
 }
 
 .url-bar__item--method.select-container:after {

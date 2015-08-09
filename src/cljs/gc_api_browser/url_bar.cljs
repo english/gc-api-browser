@@ -31,8 +31,8 @@
                   (map #(dom/option #js {:value %} %) ["GET" "POST" "PUT"]))))
 
 (defn edit-url [{:keys [url] :as cursor}]
-  (dom/div #js {:className "u-flex2"}
-           (dom/input #js {:className "input url-bar__item url-bar__item--url"
+  (dom/div #js {:className "url-bar__item url-bar__item--url"}
+           (dom/input #js {:className "input"
                            :value     url
                            :onChange  #(om/update! cursor :url (.. % -target -value))})))
 
