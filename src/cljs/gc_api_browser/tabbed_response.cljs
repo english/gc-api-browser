@@ -20,8 +20,8 @@
 
 (defn render-body [body]
   (let [json-string (.stringify js/JSON (clj->js body) nil 2)]
-    (dom/div #js {:className "tabbed-response__body"}
-             (dom/pre nil (dom/code nil json-string)))))
+    (dom/pre #js {:className "tabbed-response__body"}
+             (dom/code nil json-string))))
 
 (defn component [cursor owner]
   (reify

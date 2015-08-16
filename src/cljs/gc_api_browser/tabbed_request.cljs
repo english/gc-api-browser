@@ -42,8 +42,7 @@
                                                   "Body")
                                       (dom/button #js {:className (str "tab-item" (when-not showing-body? " tab-item--active"))
                                                        :onClick   #(om/set-state! owner :showing-body? false)} "Headers"))))
-                 (dom/div nil
-                          (if (and showing-body?
-                                   (not (get? request-cursor)))
-                            (edit-body request-cursor)
-                            (om/build headers/component (:headers request-cursor)))))))))
+                 (if (and showing-body?
+                          (not (get? request-cursor)))
+                   (edit-body request-cursor)
+                   (om/build headers/component (:headers request-cursor))))))))

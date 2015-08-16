@@ -27,14 +27,27 @@ code {
 
 .headers__header {
   position: relative;
+  margin-bottom: 10px;
 }
 
 .headers__header:first-child {
   margin-top: 20px;
 }
 
-.headers__header .input {
-  padding-left: 5px;
+.headers__header--edit input {
+  border-bottom: none;
+}
+
+.headers__header .input[disabled] {
+  color: #2D2D2D;
+}
+
+.headers__header__name {
+  margin: 0 30px;
+}
+
+.headers__header__value {
+  margin: 0 30px;
 }
 
 .headers__header__value .input {
@@ -78,6 +91,10 @@ code {
   border: none;
 }
 
+.tabbed-response .headers__header:first-child {
+  margin-top: 70px;
+}
+
 .tabbed-request code {
   outline: none;
 }
@@ -86,4 +103,6 @@ code {
 .tabbed-response__body {
   font-family: "Source Code Pro";
   padding: 6px;
+  margin-top: 70px;
+  margin-left: 20px;
 }

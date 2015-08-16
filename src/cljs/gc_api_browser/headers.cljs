@@ -43,16 +43,16 @@
     om/IRender
     (render [_]
       (apply dom/div #js {:className "headers"}
-             (dom/div #js {:className "flex-container headers__header u-direction-row"}
+             (dom/div #js {:className "flex-container headers__header headers__header--edit u-direction-row"}
                       (dom/div #js {:className "flex-item headers__header__name u-margin-Rxxs"}
                                (dom/input #js {:className "input"
                                                :ref "newHeaderNameField"
-                                               :placeholder "Header Name"
+                                               :placeholder "Name"
                                                :onKeyDown #(handle-new-header-keydown % headers owner)}))
                       (dom/div #js {:className "flex-item headers__header__value u-margin-Rxxs"}
                                (dom/input #js {:className "input"
                                                :ref "newHeaderValueField"
-                                               :placeholder "Header Value"
+                                               :placeholder "Value"
                                                :onKeyDown #(handle-new-header-keydown % headers owner)})))
              (map (fn [[k v]]
                     (om/build header-component [k v] {:opts {:handle-delete #(delete-header headers k)}}))
