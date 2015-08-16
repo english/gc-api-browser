@@ -32,7 +32,7 @@
 (defn schema->resource-node [schema resource]
   (->> (:definitions schema)
        vals
-       (filter #(= (:title %) resource))
+       (filter #(= (:envelope %) resource))
        first))
 
 (defn format-example [example]
@@ -45,7 +45,7 @@
 (defn schema->action-node [schema resource action]
   (let [action (->> (schema->resource-node schema resource)
                     :links
-                    (filter #(= (:title %) action))
+                    (filter #(= (:rel %) action))
                     first)]
     (update-in action [:example] format-example)))
 
@@ -80,12 +80,12 @@
 (defn resource->actions [schema resource]
   (->> (schema->resource-node schema resource)
        :links
-       (map :title)
+       (map :rel)
        sort))
 
 (defn schema->resources [schema]
   (->> (vals (:definitions schema))
-       (map :title)
+       (map :envelope)
        (map name)
        sort))
 
