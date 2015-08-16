@@ -175,5 +175,10 @@
   display: none;
 }
 
-.url-bar__item--submit {
+.url-bar__item--submit .btn {
+  border-radius: 0;
+  background-color: #E8F1FA;
+  border-color: #64A6DF;
+  border-width: 2px;
+  color: #64A6DF;
 }

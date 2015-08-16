@@ -47,7 +47,7 @@
                                                       (-> cursor
                                                           (select-keys [:url :method :body :headers])
                                                           (update :headers stringify-keys)))}
-                         "Send"))))
+                         "explore"))))
 
 (defn component [cursor owner {:keys [handle-new-response-fn] :as opts}]
   (reify
