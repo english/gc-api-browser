@@ -34,6 +34,19 @@
 ;; handy repl functions
 (comment
   (keys @app-state)
+  (let [schema (get-in @app-state [:request :schema])
+        resource "Bank Details Lookups"]
+    (-> (schema-select/schema->resource-node schema resource)
+        :links
+        first
+        :rel))
+
+  (->> (get-in @app-state [:request :schema])
+       :definitions
+       vals
+       first
+       keys)
+  (keys (get-in @app-state [:request :schema]))
   (swap! app-state (fn [] init-app-state))
   (swap! app-state (fn [x] (update-in x [:request] (fn [y] (dissoc y :schema))))))
 

@@ -4,7 +4,8 @@
             [om.dom :as dom :include-macros true]
             [goog.json :as gjson]
             [goog.Uri :as uri]
-            [cljs.core.async :refer [put! chan <!]]))
+            [cljs.core.async :refer [put! chan <!]]
+            [gc-api-browser.schema-example :as schema-example]))
 
 (defn string->keyword [s]
   (if (string? s)
@@ -37,10 +38,7 @@
 
 (defn format-example [example]
   (when (string? example)
-    (let [example-body-string (-> (re-find #"(.+) (.+) (.+)\n((.|\n)*)\n\n" example)
-                                  butlast
-                                  last)]
-      (.stringify js/JSON (.parse js/JSON example-body-string) nil 2))))
+    (schema-example/prettify example)))
 
 (defn schema->action-node [schema resource action]
   (let [action (->> (schema->resource-node schema resource)
