@@ -11,7 +11,7 @@
             [gc-api-browser.tabbed-request :as tabbed-request]))
 
 (def default-headers {"Authorization"      "FILL ME IN"
-                      "GoCardless-Version" "2015-04-29"
+                      "GoCardless-Version" "2015-07-06"
                       "Accept"             "application/json"
                       "Content-Type"       "application/json"})
 
