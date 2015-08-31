@@ -47,6 +47,7 @@
   padding: 9px 0;
   transition: border-color 0.2s ease;
   display: block;
+  padding-right: 15px;
 }
 
 .select-container__select:hover  {
@@ -139,14 +140,21 @@
 
 .url-bar {
   align-items: baseline;
-  width: 90%;
   margin-top: 70px;
   margin-bottom: 70px;
 }
 
 .url-bar__item {
   margin-right: 50px;
-  width: 170px;
+}
+
+.url-bar__item:last-child {
+  margin-right: 0;
+}
+
+.url-bar__item--resource,
+.url-bar__item--action {
+  width: 220px;
 }
 
 .url-bar__item .input {
@@ -173,6 +181,10 @@
 .url-bar__item--method.select-container:after {
   /* hide arrow */
   display: none;
+}
+
+.url-bar__item--submit {
+  width: 85px;
 }
 
 .url-bar__item--submit .btn {
