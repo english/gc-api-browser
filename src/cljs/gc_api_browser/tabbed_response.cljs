@@ -1,7 +1,6 @@
 (ns gc-api-browser.tabbed-response
   (:require [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]
-            [gc-api-browser.dom-utils :refer [clearfix]]))
+            [om.dom :as dom :include-macros true]))
 
 (defn render-header [[header-name header-value]]
   (dom/div #js {:className "flex-container headers__header u-direction-row"}

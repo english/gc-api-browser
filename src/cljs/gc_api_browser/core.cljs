@@ -1,10 +1,10 @@
 (ns gc-api-browser.core
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [cljs.pprint :as pprint]
-            [cognitect.transit :as transit]
+  (:require [cognitect.transit :as transit]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :as async]
+            [gc-api-browser.utils :refer [log]]
             [gc-api-browser.url-bar :as url-bar]
             [gc-api-browser.tabbed-response :as tabbed-response]
             [gc-api-browser.schema-select :as schema-select]
@@ -48,7 +48,9 @@
        keys)
   (keys (get-in @app-state [:request :schema]))
   (swap! app-state (fn [] init-app-state))
-  (swap! app-state (fn [x] (update-in x [:request] (fn [y] (dissoc y :schema))))))
+  (swap! app-state (fn [x] (update-in x [:request] (fn [y] (dissoc y :schema)))))
+  (log (schema-select/schema->action-node (get-in @app-state [:request :schema])
+                                          "Customers" "Create a customer")))
 
 (defn handle-new-response [app resp]
   (om/transact! app (fn [m]

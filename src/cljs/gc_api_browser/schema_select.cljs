@@ -5,6 +5,7 @@
             [goog.json :as gjson]
             [goog.Uri :as uri]
             [cljs.core.async :refer [put! chan <!]]
+            [gc-api-browser.utils :refer [log]]
             [gc-api-browser.schema-example :as schema-example]))
 
 (defn string->keyword [s]
