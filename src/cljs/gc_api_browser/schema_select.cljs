@@ -84,7 +84,6 @@
 (defn schema->resources [schema]
   (->> (vals (:definitions schema))
        (map :envelope)
-       (map name)
        sort))
 
 (defn read-as-text [file c]
