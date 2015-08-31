@@ -46,7 +46,9 @@
                     :links
                     (filter #(= (:title %) action))
                     first)]
-    (update-in action [:example] format-example)))
+    (if (#{"POST" "PUT"} (:method action))
+      (update-in action [:example] format-example)
+      action)))
 
 (defn schema->domain [schema]
   (get-in schema [:links 0 :href]))
