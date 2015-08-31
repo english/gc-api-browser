@@ -28,7 +28,7 @@
                    (filter (memfn isFile)))]
     (future
       (doseq [file (map (partial upload-file! bucket access-key secret-key) files)]
-        (println "uplaoded" (.getName @file))
+        (println "uploaded" (.getName @file))
         directory))))
 
 (defn -main [dir bucket access-key secret-key]
