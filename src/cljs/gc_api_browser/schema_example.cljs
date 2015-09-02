@@ -7,12 +7,16 @@
 
 (defn- extract-first-json-part [example-str]
   (string/join (->> (string/split example-str #"\n")
-                    (drop-while #(not (starts-with? % "{")))
-                    (take-while #(not (starts-with? % "H"))))))
+                    reverse
+                    (drop-while #(not (starts-with? % "H")))
+                    rest
+                    (take-while #(not (or (starts-with? % "POST")
+                                          (starts-with? % "PUT"))))
+                    reverse)))
 
 (defn prettify [schema-example-str]
-  (let [example-json-str (extract-first-json-part schema-example-str)]
+  (let [request-json-str (extract-first-json-part schema-example-str)]
     (try
-      (.format (JsonPrettyPrinter.) example-json-str)
+      (.format (JsonPrettyPrinter.) request-json-str)
       (catch js/Error _
-        example-json-str))))
+        ""))))
