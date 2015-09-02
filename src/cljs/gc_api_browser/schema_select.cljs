@@ -6,30 +6,8 @@
             [goog.Uri :as uri]
             [cljs.core.async :refer [put! chan <!]]
             [gc-api-browser.utils :refer [log]]
-            [gc-api-browser.schema-example :as schema-example]))
-
-(defn string->keyword [s]
-  (if (string? s)
-    (keyword s)
-    s))
-
-(defn ref-node? [x]
-  (and (map? x)
-       (= [:$ref] (keys x))))
-
-(defn ref->path [m]
-  (-> (:$ref m) (.split "/") rest))
-
-(defn schema->value
-  "Given a json-schema map, this will traverse the map with the given vec of
-  keys, but also follow $ref pointers"
-  [schema path]
-  (loop [current-val schema
-         ks path]
-    (cond
-      (ref-node? current-val) (recur schema (mapv string->keyword (concat (ref->path current-val) ks)))
-      ks (recur (get current-val (first ks)) (next ks))
-      :else current-val)))
+            [gc-api-browser.schema-example :as schema-example]
+            [gc-api-browser.json-pointer :as json-pointer]))
 
 (defn schema->resource-node [schema resource]
   (->> (:definitions schema)
@@ -57,10 +35,10 @@
   (let [[match before pointer after] (re-find #"(.*)\{\((.*)\)\}(.*)" (js/decodeURIComponent href))]
     (if match
       (str before
-           (schema->value schema (map keyword (-> (.split pointer "/")
-                                                  rest
-                                                  vec
-                                                  (conj :example))))
+           (json-pointer/get-in schema (map keyword (-> (.split pointer "/")
+                                                        rest
+                                                        vec
+                                                        (conj :example))))
            after)
       href)))
 
