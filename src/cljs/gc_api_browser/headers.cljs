@@ -8,12 +8,12 @@
     om/IRender
     (render [_]
       (dom/div #js {:className "flex-container headers__header u-direction-row"}
-               (dom/div #js {:className "flex-item headers__header__name u-margin-Rxxs"}
+               (dom/div #js {:className "flex-item headers__header__name"}
                         (dom/input #js {:className "input"
                                         :disabled true
                                         :value (name header-name) ;; when we reload headers from localStorage, we symbolize keys
                                         }))
-               (dom/div #js {:className "flex-item headers__header__value u-margin-Rxxs"}
+               (dom/div #js {:className "flex-item headers__header__value"}
                         (dom/input #js {:className "input"
                                         :disabled true
                                         :value header-value}))
@@ -44,12 +44,12 @@
     (render [_]
       (apply dom/div #js {:className "headers"}
              (dom/div #js {:className "flex-container headers__header headers__header--edit u-direction-row"}
-                      (dom/div #js {:className "flex-item headers__header__name u-margin-Rxxs"}
+                      (dom/div #js {:className "flex-item headers__header__name"}
                                (dom/input #js {:className "input"
                                                :ref "newHeaderNameField"
                                                :placeholder "Name"
                                                :onKeyDown #(handle-new-header-keydown % headers owner)}))
-                      (dom/div #js {:className "flex-item headers__header__value u-margin-Rxxs"}
+                      (dom/div #js {:className "flex-item headers__header__value"}
                                (dom/input #js {:className "input"
                                                :ref "newHeaderValueField"
                                                :placeholder "Value"
