@@ -1,6 +1,7 @@
 (ns gc-api-browser.tabbed-response
   (:require [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]))
+            [om.dom :as dom :include-macros true])
+  (:import [goog.format JsonPrettyPrinter]))
 
 (defn render-header [[header-name header-value]]
   (dom/div #js {:className "flex-container headers__header u-direction-row"}
@@ -18,7 +19,7 @@
          (map render-header headers)))
 
 (defn render-body [body]
-  (let [json-string (.stringify js/JSON (clj->js body) nil 2)]
+  (let [json-string (.format (JsonPrettyPrinter.) (clj->js body))]
     (dom/pre #js {:className "tabbed-response__body"}
              (dom/code nil json-string))))
 
