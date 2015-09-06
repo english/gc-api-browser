@@ -24,6 +24,8 @@
               :method            "GET"
               :body              nil
               :headers           {}}
+   :text nil
+   :schema nil
    :response {}})
 
 (defonce app-state
@@ -40,21 +42,20 @@
 (defn render-request-and-response [app]
   (let [{:keys [request response]} app]
     (dom/div #js {:className "flex-container u-align-center u-flex-center"}
-             (om/build url-bar/component request
+             (om/build url-bar/component app
                        {:opts {:handle-new-response-fn (partial handle-new-response app)}})
              (dom/div #js {:className "flex-container u-direction-row request-response"}
                       (om/build tabbed-request/component request)
                       (om/build tabbed-response/component response))
-             (dom/div nil (schema-select/schema-file request)))))
+             (dom/div nil (schema-select/schema-file app)))))
 
 (defn render-schema-select [app]
   (dom/div #js {:className "flex-container u-align-center u-flex-center"}
            (dom/header #js {:className "header"}
-                       (dom/h2 #js {:className "header__title u-type-mono"}
-                               (get-in app [:request :text])))
+                       (dom/h2 #js {:className "header__title u-type-mono"} (:text app)))
            (dom/div #js {:className "flex-container u-direction-row"}
                     (dom/span #js {:className "u-margin-Rm"} "Select a JSON schema")
-                    (schema-select/schema-file (:request app)))))
+                    (schema-select/schema-file app))))
 
 (defn load-app-state! [app]
   (when-let [stored-state (store/read! store/store-key)]
@@ -85,7 +86,7 @@
                 (sync-app-state! app-state-chan))))
           om/IRender
           (render [_]
-            (if (get-in app [:request :schema])
+            (if (:schema app)
               (render-request-and-response app)
               (render-schema-select app)))))
       app-state

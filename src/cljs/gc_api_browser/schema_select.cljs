@@ -53,8 +53,7 @@
   (let [{:keys [method href example]} (schema->action-node schema resource action)]
     {:method method
      :url    (str (get-domain schema request-cursor) (process-href href schema))
-     :body   (when (not= method "GET")
-               example)}))
+     :body   (when (not= method "GET") example)}))
 
 (defn resource->actions [schema resource]
   (->> (schema->resource-node schema resource)
@@ -69,42 +68,41 @@
 
 (defn read-as-text [file c]
   (let [reader (js/FileReader.)]
-    (set! (.-onload reader) (fn [e]
-                              (put! c (.. e -target -result))))
+    (set! (.-onload reader) (fn [e] (put! c (.. e -target -result))))
     (.readAsText reader file)
     c))
 
-(defn set-selected-action! [request schema resource action]
-  (om/update! request :selected-action action)
-  (om/transact! request (fn [m] (merge m (request-for schema resource action request)))))
+(defn set-selected-action! [app schema resource action]
+  (om/update! app :selected-action action)
+  (om/transact! app :request (fn [m] (merge m (request-for schema resource action (:request app))))))
 
-(defn set-selected-resource! [request schema resource]
-  (om/update! request :selected-resource resource)
-  (set-selected-action! request schema resource (first (resource->actions schema resource))))
+(defn set-selected-resource! [app schema resource]
+  (om/update! app :selected-resource resource)
+  (set-selected-action! app schema resource (first (resource->actions schema resource))))
 
-(defn set-schema! [request json]
+(defn set-schema! [app json]
   (let [schema (js->clj json :keywordize-keys true)]
-    (doto request
+    (doto app
       (om/update! :schema schema)
       (om/update! :text (:description schema))
       (set-selected-resource! schema (first (schema->resources schema))))))
 
-(defn handle-schema-input-change [request evt]
+(defn handle-schema-input-change [app evt]
   (let [file (first (array-seq (.. evt -target -files)))]
     (go
       (let [text (<! (read-as-text file (chan)))
             json (gjson/parse text)]
-        (set-schema! request json)))))
+        (set-schema! app json)))))
 
-(defn handle-resource-change [request e]
-  (set-selected-resource! request (:schema request) (.. e -target -value)))
+(defn handle-resource-change [app e]
+  (set-selected-resource! app (:schema app) (.. e -target -value)))
 
-(defn handle-action-change [{:keys [schema selected-resource] :as request} e]
-  (set-selected-action! request schema selected-resource (.. e -target -value)))
+(defn handle-action-change [{:keys [schema selected-resource] :as app} e]
+  (set-selected-action! app schema selected-resource (.. e -target -value)))
 
-(defn schema-file [request]
+(defn schema-file [app]
   (dom/div #js {:className "u-justify-center"}
            (dom/input #js {:type      "file"
                            :className "add-schema"
                            :accept    "application/json"
-                           :onChange  (partial handle-schema-input-change request)})))
+                           :onChange  (partial handle-schema-input-change app)})))
