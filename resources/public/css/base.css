@@ -17,6 +17,10 @@ code {
   font-family: 'Source Code Pro', monospace;
 }
 
+.u-margin-Rm {
+  margin-right: 18px
+}
+
 .header {
   margin-bottom: 15px;
 }

@@ -72,7 +72,9 @@
            (dom/header #js {:className "header"}
                        (dom/h2 #js {:className "header__title u-type-mono"}
                                (get-in app [:request :text])))
-           (schema-select/schema-file (:request app))))
+           (dom/div #js {:className "flex-container u-direction-row"}
+                    (dom/span #js {:className "u-margin-Rm"} "Select a JSON schema")
+                    (schema-select/schema-file (:request app)))))
 
 (defn load-app-state! [app]
   (let [reader (transit/reader :json)]
