@@ -1,5 +1,5 @@
 (ns gc-api-browser.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [cognitect.transit :as transit]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
@@ -65,12 +65,15 @@
   (om/transact! app [:request :headers]
                 (fn [headers] (if (empty? headers) default-headers headers))))
 
-(defn tx-listener [sync-chan _ root-cursor]
-  (async/put! sync-chan @root-cursor))
+(defn sync-app-state! [c]
+  (let [throttled (throttle c 300)]
+    (go-loop []
+      (when-some [state (async/<! throttled)]
+        (store/write! state)
+        (recur)))))
 
 (defn main []
-  (let [sync-chan (async/chan (async/sliding-buffer 1))
-        throttled (throttle sync-chan 300)]
+  (let [app-state-chan (async/chan (async/sliding-buffer 1))]
     (om/root
       (fn [app _]
         (reify
@@ -79,10 +82,8 @@
             (js/setTimeout
               (fn []
                 (load-app-state! app)
-                (set-default-headers! app)))
-            (go (while true
-                  (let [state (async/<! throttled)]
-                    (store/write! state)))))
+                (set-default-headers! app)
+                (sync-app-state! app-state-chan))))
           om/IRender
           (render [_]
             (if (get-in app [:request :schema])
@@ -90,4 +91,5 @@
               (render-schema-select app)))))
       app-state
       {:target (.getElementById js/document "app")
-       :tx-listen (partial tx-listener sync-chan)})))
+       :tx-listen (fn [_ root-cursor]
+                    (async/put! app-state-chan @root-cursor))})))
