@@ -1,7 +1,6 @@
 (ns gc-api-browser.core
   (:require-macros [cljs.core.async.macros :refer [go-loop]])
-  (:require [cognitect.transit :as transit]
-            [om.core :as om :include-macros true]
+  (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :as async]
             [gc-api-browser.utils :refer [log throttle]]
@@ -58,7 +57,7 @@
                     (schema-select/schema-file (:request app)))))
 
 (defn load-app-state! [app]
-  (when-let [stored-state (store/read!)]
+  (when-let [stored-state (store/read! store/store-key)]
     (om/update! app stored-state)))
 
 (defn set-default-headers! [app]
@@ -69,7 +68,7 @@
   (let [throttled (throttle c 300)]
     (go-loop []
       (when-some [state (async/<! throttled)]
-        (store/write! state)
+        (store/write! store/store-key state)
         (recur)))))
 
 (defn main []

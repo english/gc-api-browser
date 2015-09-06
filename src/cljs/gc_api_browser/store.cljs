@@ -6,9 +6,9 @@
 (def reader (transit/reader :json))
 (def writer (transit/writer :json))
 
-(defn write! [object]
-  (.setItem js/localStorage store-key (transit/write writer object)))
+(defn write! [k v]
+  (.setItem js/localStorage k (transit/write writer v)))
 
-(defn read! []
-  (when-let [app-state-str (.getItem js/localStorage store-key)]
+(defn read! [k]
+  (when-let [app-state-str (.getItem js/localStorage k)]
     (transit/read reader app-state-str)))
