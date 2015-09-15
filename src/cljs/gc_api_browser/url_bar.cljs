@@ -5,10 +5,11 @@
             [gc-api-browser.utils :refer [log]]
             [cljs.core.async :as async]
             [cljs-http.client :as http]
-            [gc-api-browser.schema-select :as schema-select]))
+            [gc-api-browser.schema-select :as schema-select]
+            [gc-api-browser.json-schema :as json-schema]))
 
 (defn resource-selection [{:keys [selected-resource schema] :as app}]
-  (let [resources (sort (schema-select/schema->resources schema))]
+  (let [resources (sort (json-schema/schema->resources schema))]
     (dom/div #js {:className "url-bar__item url-bar__item--resource select-container"}
              (apply dom/select #js {:className "select-container__select input"
                                     :value     selected-resource
@@ -16,7 +17,7 @@
                     (map #(dom/option #js {:value %} %) resources)))))
 
 (defn action-selection [{:keys [selected-resource selected-action schema] :as app}]
-  (let [actions (sort (schema-select/resource->actions schema selected-resource))]
+  (let [actions (sort (json-schema/resource->actions schema selected-resource))]
     (dom/div #js {:className "url-bar__item url-bar__item--action select-container"}
              (apply dom/select #js {:className "select-container__select input"
                                     :value     (when selected-action (name selected-action))
@@ -49,7 +50,7 @@
                                                         (update :headers stringify-keys)))}
                        "explore")))
 
-(defn component [cursor owner {:keys [handle-new-response-fn] :as opts}]
+(defn component [cursor owner {:keys [handle-new-response-fn]}]
   (reify
     om/IInitState
     (init-state [_]
