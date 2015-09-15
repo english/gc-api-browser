@@ -249,6 +249,7 @@ code {
 .add-schema {
   flex: none;
   height: 100%;
+  color: transparent;
 }
 
 .url-bar {
