@@ -11,7 +11,7 @@
 (defn throttle [c ms]
   (let [c' (async/chan)]
     (go
-      (while true
-        (async/>! c' (async/<! c))
-        (async/<! (async/timeout ms))))
+     (while true
+       (async/>! c' (async/<! c))
+       (async/<! (async/timeout ms))))
     c'))

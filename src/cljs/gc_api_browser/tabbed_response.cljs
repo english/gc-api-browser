@@ -33,10 +33,10 @@
                    (dom/div nil
                             (dom/div #js {:className "tabs"}
                                      (dom/button #js {:className (str "tab-item" (when-not showing-headers? " tab-item--active"))
-                                                      :onClick #(om/set-state! owner :showing-headers? false)}
+                                                      :onClick   #(om/set-state! owner :showing-headers? false)}
                                                  "Body")
                                      (dom/button #js {:className (str "tab-item" (when showing-headers? " tab-item--active"))
-                                                      :onClick #(om/set-state! owner :showing-headers? true)}
+                                                      :onClick   #(om/set-state! owner :showing-headers? true)}
                                                  "Headers"))
                             (dom/div #js {:className "tabbed-response__content"})
                             (if showing-headers?

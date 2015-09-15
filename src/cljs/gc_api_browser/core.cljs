@@ -16,20 +16,20 @@
                       "Content-Type"       "application/json"})
 
 (def init-app-state
-  {:history  []
-   :request  {:text              "Restman"
-              :selected-resource nil
-              :selected-action   nil
-              :url               nil
-              :method            "GET"
-              :body              nil
-              :headers           {}}
-   :text nil
-   :schema nil
-   :response {}})
+  {:history           []
+   :request           {:text    "Restman"
+                       :url     nil
+                       :method  "GET"
+                       :body    nil
+                       :headers {}}
+   :text              nil
+   :selected-resource nil
+   :selected-action   nil
+   :schema            nil
+   :response          {}})
 
 (defonce app-state
-  (atom init-app-state))
+         (atom init-app-state))
 
 (enable-console-print!)
 
@@ -68,28 +68,28 @@
 (defn sync-app-state! [c]
   (let [throttled (throttle c 300)]
     (go-loop []
-      (when-some [state (async/<! throttled)]
-        (store/write! store/store-key state)
-        (recur)))))
+             (when-some [state (async/<! throttled)]
+               (store/write! store/store-key state)
+               (recur)))))
 
 (defn main []
   (let [app-state-chan (async/chan (async/sliding-buffer 1))]
     (om/root
-      (fn [app _]
-        (reify
-          om/IWillMount
-          (will-mount [_]
-            (js/setTimeout
-              (fn []
-                (load-app-state! app)
-                (set-default-headers! app)
-                (sync-app-state! app-state-chan))))
-          om/IRender
-          (render [_]
-            (if (:schema app)
-              (render-request-and-response app)
-              (render-schema-select app)))))
-      app-state
-      {:target (.getElementById js/document "app")
-       :tx-listen (fn [_ root-cursor]
-                    (async/put! app-state-chan @root-cursor))})))
+     (fn [app _]
+       (reify
+         om/IWillMount
+         (will-mount [_]
+           (js/setTimeout
+            (fn []
+              (load-app-state! app)
+              (set-default-headers! app)
+              (sync-app-state! app-state-chan))))
+         om/IRender
+         (render [_]
+           (if (:schema app)
+             (render-request-and-response app)
+             (render-schema-select app)))))
+     app-state
+     {:target    (.getElementById js/document "app")
+      :tx-listen (fn [_ root-cursor]
+                   (async/put! app-state-chan @root-cursor))})))

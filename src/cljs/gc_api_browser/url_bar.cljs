@@ -67,7 +67,7 @@
     om/IRender
     (render [_]
       (let [submit-chan (om/get-state owner :submit-chan)
-            request (:request cursor)]
+            request     (:request cursor)]
         (dom/div #js {:className "flex-container u-justify-center u-direction-row url-bar"}
                  (resource-selection cursor)
                  (action-selection cursor)

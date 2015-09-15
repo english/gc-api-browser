@@ -90,9 +90,9 @@
 (defn handle-schema-input-change [app evt]
   (let [file (first (array-seq (.. evt -target -files)))]
     (go
-      (let [text (<! (read-as-text file (chan)))
-            json (gjson/parse text)]
-        (set-schema! app json)))))
+     (let [text (<! (read-as-text file (chan)))
+           json (gjson/parse text)]
+       (set-schema! app json)))))
 
 (defn handle-resource-change [app e]
   (set-selected-resource! app (:schema app) (.. e -target -value)))

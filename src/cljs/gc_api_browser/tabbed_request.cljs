@@ -13,12 +13,12 @@
 (defn content-editable [cursor owner]
   (reify om/IRender
     (render [_]
-      (dom/code #js {:contentEditable true
+      (dom/code #js {:contentEditable         true
                      :dangerouslySetInnerHTML #js {:__html (:body cursor)}
-                     :onKeyDown handle-key-down
-                     :onInput (fn [_]
-                                (let [html (.-innerHTML (om/get-node owner))]
-                                  (om/transact! cursor :body (fn [_] html))))}))))
+                     :onKeyDown               handle-key-down
+                     :onInput                 (fn [_]
+                                                (let [html (.-innerHTML (om/get-node owner))]
+                                                  (om/transact! cursor :body (fn [_] html))))}))))
 
 (defn edit-body [{:keys [body] :as cursor}]
   (dom/pre #js {:className "flex-container tabbed-request__body"}
