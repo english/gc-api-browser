@@ -3,30 +3,31 @@
             [om.dom :as dom :include-macros true]
             [clojure.string :as string]))
 
-(defn header-component [[header-name header-value] owner {:keys [handle-delete] :as opts}]
+(defn disabled-input [val]
+  (dom/input #js {:className "input"
+                  :disabled  true
+                  :value     val}))
+
+(defn header-component [[header-name header-value] _ opts]
   (reify
     om/IRender
     (render [_]
       (dom/div #js {:className "flex-container headers__header u-direction-row"}
                (dom/div #js {:className "flex-item headers__header__name"}
-                        (dom/input #js {:className "input"
-                                        :disabled  true
-                                        :value     (name header-name) ;; when we reload headers from localStorage, we symbolize keys
-                                        }))
+                        (disabled-input (name header-name)  ;; when we reload headers from localStorage, we symbolize keys
+                                        ))
                (dom/div #js {:className "flex-item headers__header__value"}
-                        (dom/input #js {:className "input"
-                                        :disabled  true
-                                        :value     header-value}))
+                        (disabled-input header-value))
                (dom/button #js {:type      "button"
                                 :className "headers__header__delete"
-                                :onClick   handle-delete} "✖")))))
+                                :onClick   (:handle-delete opts)} "✖")))))
 
 (defn delete-header [headers k]
   (om/transact! headers #(dissoc % k)))
 
 (def ENTER_KEY 13)
 
-(defn handle-new-header-keydown [e headers owner]
+(defn handle-new-header-keydown [headers owner e]
   (when (== (.-which e) ENTER_KEY)
     (let [name-node  (om/get-node owner "newHeaderNameField")
           value-node (om/get-node owner "newHeaderValueField")]
@@ -38,6 +39,9 @@
         (.focus name-node)))
     (.preventDefault e)))
 
+(defn render-header [headers [k v]]
+  (om/build header-component [k v] {:opts {:handle-delete #(delete-header headers k)}}))
+
 (defn component [headers owner]
   (reify
     om/IRender
@@ -48,12 +52,10 @@
                                (dom/input #js {:className   "input"
                                                :ref         "newHeaderNameField"
                                                :placeholder "Name"
-                                               :onKeyDown   #(handle-new-header-keydown % headers owner)}))
+                                               :onKeyDown (partial handle-new-header-keydown headers owner)}))
                       (dom/div #js {:className "flex-item headers__header__value"}
                                (dom/input #js {:className   "input"
                                                :ref         "newHeaderValueField"
                                                :placeholder "Value"
-                                               :onKeyDown   #(handle-new-header-keydown % headers owner)})))
-             (map (fn [[k v]]
-                    (om/build header-component [k v] {:opts {:handle-delete #(delete-header headers k)}}))
-                  headers)))))
+                                               :onKeyDown (partial handle-new-header-keydown headers owner)})))
+             (map (partial render-header headers) headers)))))

@@ -38,6 +38,11 @@
                           (assoc :response resp)
                           (update :history #(conj % (select-keys m [:request :response])))))))
 
+(defn render-schema-select [app-cursor]
+  (dom/div #js {:className "flex-container u-direction-row"}
+           (dom/span #js {:className "u-margin-Rm"} "Select a JSON schema")
+           (om/build schema-select/component app-cursor)))
+
 (defn render-request-and-response [app]
   (let [{:keys [request response]} app]
     (dom/div #js {:className "flex-container u-align-center u-flex-center"}
@@ -46,15 +51,13 @@
              (dom/div #js {:className "flex-container u-direction-row request-response"}
                       (om/build tabbed-request/component request)
                       (om/build tabbed-response/component response))
-             (dom/div nil (schema-select/schema-file app)))))
+             (render-schema-select app))))
 
-(defn render-schema-select [app]
+(defn render-init-app [app]
   (dom/div #js {:className "flex-container u-align-center u-flex-center"}
            (dom/header #js {:className "header"}
                        (dom/h2 #js {:className "header__title u-type-mono"} (:text app)))
-           (dom/div #js {:className "flex-container u-direction-row"}
-                    (dom/span #js {:className "u-margin-Rm"} "Select a JSON schema")
-                    (schema-select/schema-file app))))
+           (render-schema-select app)))
 
 (defn load-app-state! [app]
   (when-let [stored-state (store/read! store/store-key)]
@@ -87,7 +90,7 @@
          (render [_]
            (if (:schema app)
              (render-request-and-response app)
-             (render-schema-select app)))))
+             (render-init-app app)))))
      app-state
      {:target    (.getElementById js/document "app")
       :tx-listen (fn [_ root-cursor]

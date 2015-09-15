@@ -100,9 +100,11 @@
 (defn handle-action-change [{:keys [schema selected-resource] :as app} e]
   (set-selected-action! app schema selected-resource (.. e -target -value)))
 
-(defn schema-file [app]
-  (dom/div #js {:className "u-justify-center"}
-           (dom/input #js {:type      "file"
-                           :className "add-schema"
-                           :accept    "application/json"
-                           :onChange  (partial handle-schema-input-change app)})))
+(defn component [cursor _]
+  (reify om/IRender
+    (render [_]
+      (dom/div #js {:className "u-justify-center"}
+               (dom/input #js {:type      "file"
+                               :className "add-schema"
+                               :accept    "application/json"
+                               :onChange  (partial handle-schema-input-change cursor)})))))
