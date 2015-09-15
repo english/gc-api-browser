@@ -17,12 +17,11 @@
 
 (def init-app-state
   {:history           []
-   :request           {:text    "Restman"
-                       :url     nil
+   :request           {:url     nil
                        :method  "GET"
                        :body    nil
                        :headers {}}
-   :text              nil
+   :text              "Restman"
    :selected-resource nil
    :selected-action   nil
    :schema            nil
