@@ -16,7 +16,8 @@
                  [cljs-http "0.1.37"]
                  [com.cognitect/transit-cljs "0.8.225"]
                  [com.novemberain/pantomime "2.7.0"]
-                 [clj-aws-s3 "0.3.10" :exclusions [joda-time]]]
+                 [clj-aws-s3 "0.3.10" :exclusions [joda-time]]
+                 [com.amazonaws/aws-java-sdk "1.7.5" :exclusions [joda-time]]]
 
 
   :plugins [[lein-cljsbuild "1.0.6"]
