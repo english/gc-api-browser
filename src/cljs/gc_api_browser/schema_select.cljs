@@ -18,7 +18,7 @@
 (defn request-for [schema resource action request-cursor]
   (let [{:keys [method href example]} (json-schema/schema->action-node schema resource action)]
     {:method method
-     :url    (str (get-domain schema request-cursor) (json-schema/process-href href schema))
+     :url    (str (get-domain schema request-cursor) (json-schema/expand-href href schema))
      :body   (when (not= method "GET") example)}))
 
 (defn read-as-text [file c]

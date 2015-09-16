@@ -1,6 +1,19 @@
 (ns gc-api-browser.json-schema
-  (:require [gc-api-browser.json-pointer :as json-pointer]
+  (:require [clojure.set :refer [project]]
+            [gc-api-browser.utils :refer [log]]
+            [gc-api-browser.json-pointer :as json-pointer]
             [gc-api-browser.schema-example :as schema-example]))
+
+(defn- expand-href* [schema [_ before pointer after]]
+  (let [path-with-example (-> (.split pointer "/") rest vec (conj :example))]
+    (str before
+         (json-pointer/get-in schema (map keyword path-with-example))
+         after)))
+
+(defn expand-href [href schema]
+  (if-let [matches (re-find #"(.*)\{\((.*)\)\}(.*)" (js/decodeURIComponent href))]
+    (expand-href* schema matches)
+    href))
 
 (defn- schema->resource-node [schema resource]
   (->> (:definitions schema)
@@ -8,33 +21,23 @@
        (filter #(= (:title %) resource))
        first))
 
-(defn- format-example [example]
-  (when (string? example)
-    (schema-example/prettify example)))
+(defn set-example [action-node]
+  (if (and (#{"POST" "PUT"} (:method action-node))
+           (string? (:example action-node)))
+    (update action-node :example schema-example/prettify)
+    action-node))
 
 (defn schema->action-node [schema resource action]
-  (let [action (->> (schema->resource-node schema resource)
-                    :links
-                    (filter #(= (:title %) action))
-                    first)
-        node  (if (#{"POST" "PUT"} (:method action))
-                 (update-in action [:example] format-example)
-                 action)]
-    (select-keys node [:method :href :example])))
+  (let [xform (comp (filter #(= (:title %) action))
+                    (map set-example)
+                    (map #(select-keys % [:method :href :example])))]
+    (->> (schema->resource-node schema resource)
+         :links
+         (sequence xform)
+         first)))
 
 (defn schema->domain [schema]
   (get-in schema [:links 0 :href]))
-
-(defn process-href [href schema]
-  (let [[match before pointer after] (re-find #"(.*)\{\((.*)\)\}(.*)" (js/decodeURIComponent href))]
-    (if match
-      (str before
-           (json-pointer/get-in schema (map keyword (-> (.split pointer "/")
-                                                        rest
-                                                        vec
-                                                        (conj :example))))
-           after)
-      href)))
 
 (defn resource->actions [schema resource]
   (->> (schema->resource-node schema resource)

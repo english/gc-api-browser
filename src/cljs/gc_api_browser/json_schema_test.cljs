@@ -17,11 +17,11 @@
     (is (= '()
            (json-schema/resource->actions fixture "Doesn't exist"))))
 
-  (testing "process-href"
+  (testing "expand-href"
     (is (= "/creditors/CR123"
-           (json-schema/process-href "/creditors/{(%23%2Fdefinitions%2Fcreditor%2Fdefinitions%2Fidentity)}" fixture)))
+           (json-schema/expand-href "/creditors/{(%23%2Fdefinitions%2Fcreditor%2Fdefinitions%2Fidentity)}" fixture)))
     (is (= "/creditors"
-           (json-schema/process-href "/creditors" fixture))))
+           (json-schema/expand-href "/creditors" fixture))))
 
   (testing "schema->domain"
     (is (= "https://api.gocardless.com"
