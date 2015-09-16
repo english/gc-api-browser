@@ -27,7 +27,7 @@
     (update action-node :example schema-example/prettify)
     action-node))
 
-(defn schema->action-node [schema resource action]
+(defn- schema->action-node [schema resource action]
   (let [xform (comp (filter #(= (:title %) action))
                     (map set-example)
                     (map #(select-keys % [:method :href :example])))]
@@ -35,6 +35,12 @@
          :links
          (sequence xform)
          first)))
+
+(defn schema->request [schema resource action]
+  (let [{:keys [method href example]} (schema->action-node schema resource action)]
+    {:method method
+     :path   (expand-href href schema)
+     :body   (when (not= method "GET") example)}))
 
 (defn schema->domain [schema]
   (get-in schema [:links 0 :href]))

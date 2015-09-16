@@ -27,12 +27,10 @@
     (is (= "https://api.gocardless.com"
            (json-schema/schema->domain fixture))))
 
-  (testing "schema->action-node"
-    (is (= {:method  "POST"
-            :href    "/creditor_bank_accounts"
-            :example "{\n  \"creditor_bank_accounts\": {\n    \"account_number\": \"55779911\",\n    \"branch_code\": \"200000\",\n    \"country_code\": \"GB\",\n    \"set_as_default_payout_account\": true,\n    \"account_holder_name\": \"Nude Wines\",\n    \"links\": {\n      \"creditor\": \"CR123\"\n    }\n  }\n}"}
-           (json-schema/schema->action-node fixture "Creditor Bank Accounts" "Create a creditor bank account")))))
+  (testing "schema->request"
+    (is (= {:method "POST"
+            :path "/creditor_bank_accounts"
+            :body "{\n  \"creditor_bank_accounts\": {\n    \"account_number\": \"55779911\",\n    \"branch_code\": \"200000\",\n    \"country_code\": \"GB\",\n    \"set_as_default_payout_account\": true,\n    \"account_holder_name\": \"Nude Wines\",\n    \"links\": {\n      \"creditor\": \"CR123\"\n    }\n  }\n}"}
+           (json-schema/schema->request fixture "Creditor Bank Accounts" "Create a creditor bank account")))))
 
-(comment
- (run-tests)
- )
+(comment (run-tests))

@@ -2,6 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [clojure.set :refer [rename-keys]]
             [goog.json :as gjson]
             [goog.Uri :as uri]
             [cljs.core.async :refer [put! chan <!]]
@@ -16,16 +17,9 @@
     (json-schema/schema->domain schema)))
 
 (defn request-for [schema resource action request-cursor]
-  (let [{:keys [method href example]} (json-schema/schema->action-node schema resource action)]
-    {:method method
-     :url    (str (get-domain schema request-cursor) (json-schema/expand-href href schema))
-     :body   (when (not= method "GET") example)}))
-
-(defn read-as-text [file c]
-  (let [reader (js/FileReader.)]
-    (set! (.-onload reader) (fn [e] (put! c (.. e -target -result))))
-    (.readAsText reader file)
-    c))
+  (-> (json-schema/schema->request schema resource action)
+      (update :path #(str (get-domain schema request-cursor) %))
+      (rename-keys {:path :url})))
 
 (defn set-selected-action! [app schema resource action]
   (om/update! app :selected-action action)
@@ -41,6 +35,12 @@
       (om/update! :schema schema)
       (om/update! :text (:description schema))
       (set-selected-resource! schema (first (json-schema/schema->resources schema))))))
+
+(defn- read-as-text [file c]
+  (let [reader (js/FileReader.)]
+    (set! (.-onload reader) (fn [e] (put! c (.. e -target -result))))
+    (.readAsText reader file)
+    c))
 
 (defn handle-schema-input-change [app evt]
   (let [file (first (array-seq (.. evt -target -files)))]
