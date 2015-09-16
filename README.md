@@ -14,33 +14,24 @@ lein deps
 
 ### Run Figwheel
 
-`lein figwheel`
+Run `lein repl`, then eval all of script/repl.clj.
 
 This will compile ClojureScript and CSS and live update the browser when these change.
 It will also serve these static files (and index.html) in development..
 
 Visit `http://gocardless.dev:3010/`
 
-### REPL
+### ClojureScript REPL
 
 #### Without fireplace.vim:
 
-Run `lein repl`, then:
-
 ```clj
-(do (require 'cemerick.piggieback)
-    (require 'cljs.repl)
-    (require 'cljs.repl.browser)
-    (cemerick.piggieback/cljs-repl (cljs.repl.browser/repl-env)
-                                   :output-to  "resources/public/js/app.js"
-                                   :output-dir "resources/public/js/out"))
+(figwheel-sidecar.repl-api/cljs-repl)
 ```
 
 You will now be able to run ClojureScript in this REPL.
 
 #### With fireplace.vim
-
-Run `lein repl`
 
 In vim, open a clojurescript file, then run `:Piggieback 9000`. Refresh your browser to
 make the connection.

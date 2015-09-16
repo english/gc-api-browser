@@ -9,4 +9,4 @@
 
 (figwheel-sidecar.repl-api/start-autobuild "main")
 
-(comment (cljs-repl))
+(comment (figwheel-sidecar.repl-api/cljs-repl))
