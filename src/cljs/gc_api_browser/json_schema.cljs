@@ -2,13 +2,13 @@
   (:require [gc-api-browser.json-pointer :as json-pointer]
             [gc-api-browser.schema-example :as schema-example]))
 
-(defn schema->resource-node [schema resource]
+(defn- schema->resource-node [schema resource]
   (->> (:definitions schema)
        vals
        (filter #(= (:title %) resource))
        first))
 
-(defn format-example [example]
+(defn- format-example [example]
   (when (string? example)
     (schema-example/prettify example)))
 
@@ -16,10 +16,11 @@
   (let [action (->> (schema->resource-node schema resource)
                     :links
                     (filter #(= (:title %) action))
-                    first)]
-    (if (#{"POST" "PUT"} (:method action))
-      (update-in action [:example] format-example)
-      action)))
+                    first)
+        node  (if (#{"POST" "PUT"} (:method action))
+                 (update-in action [:example] format-example)
+                 action)]
+    (select-keys node [:method :href :example])))
 
 (defn schema->domain [schema]
   (get-in schema [:links 0 :href]))
