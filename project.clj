@@ -32,14 +32,14 @@
                         :source-paths ["src/cljs"]
                         :compiler     {:output-to     "resources/public/js/app.js"
                                        :output-dir    "resources/public/js/out"
-                                       :main          "gc-api-browser.main"
+                                       :main          "gc-api-browser.dev"
                                        :asset-path    "/js/out"
                                        :verbose       true
                                        :optimizations :none}}
                        {:id           "prod"
                         :source-paths ["src/cljs"]
                         :compiler     {:output-to     "dist/app.js"
-                                       :main          "gc-api-browser.main"
+                                       :main          "gc-api-browser.prod"
                                        :optimizations :advanced
                                        :pretty-print  false}}]}
 
