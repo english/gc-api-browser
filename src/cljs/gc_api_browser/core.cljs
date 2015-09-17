@@ -21,7 +21,7 @@
                        :method  "GET"
                        :body    nil
                        :headers {}}
-   :text              "Restman"
+   :text              "Explore"
    :selected-resource nil
    :selected-action   nil
    :schema            nil
