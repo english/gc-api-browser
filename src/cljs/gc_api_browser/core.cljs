@@ -36,7 +36,7 @@
   (om/transact! app (fn [m]
                       (-> m
                           (assoc :response resp)
-                          (update :history #(conj % (select-keys m [:request :response])))))))
+                          #_(update :history #(conj % (select-keys m [:request :response])))))))
 
 (defn render-schema-select [app-cursor]
   (dom/div #js {:className "flex-container u-direction-row"}
