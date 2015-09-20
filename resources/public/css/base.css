@@ -91,10 +91,6 @@ code {
   overflow-x: scroll;
 }
 
-.tabbed-response--empty {
-  border: none;
-}
-
 .tabbed-response .headers__header:first-child {
   margin-top: 70px;
 }
