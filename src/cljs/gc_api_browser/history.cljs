@@ -25,6 +25,7 @@
   (and history-id (not= history-id (:id (last history)))))
 
 (defn go-forward [app]
+  {:pre [(can-go-forward? app)]}
   (let [entry (second (drop-while #(not= (:history-id app) (:id %)) (:history app)))]
     (assoc app :request (:request entry)
                :response (:response entry)
