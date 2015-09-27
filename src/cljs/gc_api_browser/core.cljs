@@ -65,17 +65,6 @@
                        (dom/h2 #js {:className "header__title u-type-mono"} (:text app)))
            (render-schema-select app)))
 
-(defn load-app-state! [app]
-  (when-let [stored-state (store/read! store/store-key)]
-    (om/update! app stored-state)))
-
-(defn sync-app-state! [c]
-  (let [throttled (throttle c 300)]
-    (go-loop []
-             (when-some [state (async/<! throttled)]
-               (store/write! store/store-key state)
-               (recur)))))
-
 (defn main []
   (let [app-state-chan (async/chan (async/sliding-buffer 1))]
     (om/root
@@ -85,8 +74,9 @@
           (will-mount [_]
             (js/setTimeout
               (fn []
-                (load-app-state! app)
-                (sync-app-state! app-state-chan))))
+                (when-let [stored-state (store/read! store/store-key)]
+                  (om/update! app stored-state))
+                (store/write-throttled! app-state-chan))))
           om/IRender
           (render [_]
             (if (:schema app)
