@@ -8,33 +8,18 @@
                    :response nil
                    :history []}
         request {:req "uest"}
-        response {:resp "once"}
+        response {:resp "onse"}
         new-state (core/handle-response request response old-state)]
 
-    (is (string? (:history-id new-state)))
+    (is (instance? UUID (:history-id new-state)))
     (is (= {:foo "bar"} (:request new-state)))
-    (is (= {:resp "once"} (:response new-state)))
+    (is (= {:resp "onse"} (:response new-state)))
     (is (= 1 (count (:history new-state))))
 
     (let [{:keys [request response id]} (first (:history new-state))]
       (is (= {:req "uest"} request))
-      (is (= {:resp "once"} response))
-      (is (string? id)))))
-
-(deftest test-go-back!
-  (let [history [{:request "first request" :response "first response" :id "1"}
-                 {:request "second request" :response "second response" :id "2"}]
-        cursor (om/ref-cursor (om/root-cursor (atom {:request "current request"
-                                                     :response "current response"
-                                                     :history history
-                                                     :history-id "2"})))]
-    (core/go-back! cursor)
-
-    (is (= {:request "first request"
-            :response "first response"
-            :history-id "1"
-            :history history}
-           @cursor))))
+      (is (= {:resp "onse"} response))
+      (is (instance? UUID id)))))
 
 (comment
   (run-tests)

@@ -3,6 +3,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :as async]
+            [gc-api-browser.history :as history]
             [gc-api-browser.utils :refer [log throttle]]
             [gc-api-browser.store :as store]
             [gc-api-browser.url-bar :as url-bar]
@@ -34,11 +35,8 @@
 
 (enable-console-print!)
 
-(defn guid []
-  (.getNextUniqueId (.getInstance IdGenerator)))
-
 (defn handle-response [request response app-cursor]
-  (let [id (guid)]
+  (let [id (random-uuid)]
     (-> app-cursor
         (assoc :response response :history-id id)
         (update :history conj {:request request
@@ -50,45 +48,6 @@
            (dom/span #js {:className "u-margin-Rm"} "Select a JSON schema")
            (om/build schema-select/component app-cursor)))
 
-(defn at-start? [history id]
-  (= id (:id (first history))))
-
-(defn can-go-back? [{:keys [history history-id]}]
-  (if history-id
-    (not (at-start? history history-id))
-    (seq history)))
-
-(defn go-back! [app]
-  (let [entry (deref (if-let [id (:history-id app)]
-                       (last (take-while #(not= id (:id %)) (:history app)))
-                       (last (:history app))))]
-    (om/transact!
-      app
-      (fn [m]
-        (assoc m :request (:request entry)
-                 :response (:response entry)
-                 :history-id (:id entry))))))
-
-(defn can-go-forward? [{:keys [history-id history]}]
-  (and history-id (not= history-id (:id (last history)))))
-
-(defn go-forward! [app]
-  (let [entry (deref (second (drop-while #(not= (:history-id app) (:id %)) (:history app))))]
-    (om/transact!
-      app
-      (fn [m]
-        (assoc m :request (:request entry)
-                 :response (:response entry)
-                 :history-id (:id entry))))))
-
-(defn render-paginator [app]
-  (dom/div #js {:className "flex-container u-direction-row u-justify-center u-margin-Bm"
-                :style #js {:flex "1 100%"}}
-           (dom/button #js {:onClick #(go-back! app)
-                            :disabled (not (can-go-back? app))} "<")
-           (dom/button #js {:onClick #(go-forward! app)
-                            :disabled (not (can-go-forward? app))} ">")))
-
 (defn render-request-and-response [app]
   (let [{:keys [request response]} app]
     (dom/div #js {:className "flex-container u-align-center u-flex-center"}
@@ -97,7 +56,7 @@
              (dom/div #js {:className "flex-container u-direction-row request-response"}
                       (om/build tabbed-request/component request)
                       (om/build tabbed-response/component response))
-             (render-paginator app)
+             (history/render-paginator app)
              (render-schema-select app))))
 
 (defn render-init-app [app]
