@@ -32,9 +32,10 @@
                :history-id (:id entry))))
 
 (defn render-paginator [app]
-  (dom/div #js {:className "flex-container u-direction-row u-justify-center u-margin-Bm"
-                :style #js {:flex "1 100%"}}
-           (dom/button #js {:onClick #(om/transact! app go-back)
+  (dom/div #js {:className "url-bar__item url-bar__item--paginator paginator"}
+           (dom/button #js {:className "paginator__item btn"
+                            :onClick #(om/transact! app go-back)
                             :disabled (not (can-go-back? app))} "<")
-           (dom/button #js {:onClick #(om/transact! app go-forward)
+           (dom/button #js {:className "paginator__item btn"
+                            :onClick #(om/transact! app go-forward)
                             :disabled (not (can-go-forward? app))} ">")))

@@ -1,7 +1,6 @@
-(ns gc-api-browser.core-test
+(ns gc-api-browser.url-bar-test
   (:require [cljs.test :refer-macros [deftest is testing run-tests]]
-            [om.core :as om]
-            [gc-api-browser.core :as core]))
+            [gc-api-browser.url-bar :as url-bar]))
 
 (deftest test-handle-response
   (let [old-state {:request {:foo "bar"}
@@ -9,7 +8,7 @@
                    :history []}
         request {:req "uest"}
         response {:resp "onse"}
-        new-state (core/handle-response request response old-state)]
+        new-state (url-bar/handle-response request response old-state)]
 
     (is (instance? UUID (:history-id new-state)))
     (is (= {:foo "bar"} (:request new-state)))

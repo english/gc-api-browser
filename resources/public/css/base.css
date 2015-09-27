@@ -186,7 +186,7 @@ code {
   -webkit-appearance: none;
   border: 1px solid #5092da;
   background-color: #5092da;
-  color: white;
+  color: #5092da;
   cursor: pointer;
   display: inline-block;
   font-size: 12px;
@@ -264,6 +264,27 @@ code {
 }
 
 .url-bar__item:last-child {
+  margin-right: 0;
+}
+
+.url-bar__item--paginator {
+}
+
+.paginator__item {
+  border-radius: 0;
+  border-width: 2px;
+  border-color: #B1B1B1;
+  background-color: #F9F9F9;
+  margin-right: 5px;
+  outline: none;
+}
+
+.paginator__item:disabled {
+  background-color: white;
+  color: #767676;
+}
+
+.paginator__item:last-child {
   margin-right: 0;
 }
 

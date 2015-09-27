@@ -2,6 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [gc-api-browser.history :as history]
             [gc-api-browser.utils :refer [log]]
             [cljs.core.async :as async]
             [cljs-http.client :as http]
@@ -48,9 +49,17 @@
                                                     (-> cursor
                                                         (select-keys [:url :method :body :headers])
                                                         (update :headers stringify-keys)))}
-                       "explore")))
+                       "Explore")))
 
-(defn component [cursor owner {:keys [handle-new-response-fn]}]
+(defn handle-response [request response app-cursor]
+  (let [id (random-uuid)]
+    (-> app-cursor
+        (assoc :response response :history-id id)
+        (update :history conj {:request request
+                               :response response
+                               :id id}))))
+
+(defn component [app owner]
   (reify
     om/IInitState
     (init-state [_]
@@ -59,19 +68,21 @@
     om/IWillMount
     (will-mount [_]
       (let [submit-chan (om/get-state owner :submit-chan)]
-        (go-loop []
-                 (when-some [req (async/<! submit-chan)]
-                   (let [resp (async/<! (http/request req))]
-                     (handle-new-response-fn req resp)
-                     (recur))))))
+        (go-loop
+          []
+          (when-some [req (async/<! submit-chan)]
+            (let [resp (async/<! (http/request req))]
+              (om/transact! app (partial handle-response req resp))
+              (recur))))))
 
     om/IRender
     (render [_]
       (let [submit-chan (om/get-state owner :submit-chan)
-            request     (:request cursor)]
+            request     (:request app)]
         (dom/div #js {:className "flex-container u-justify-center u-direction-row url-bar"}
-                 (resource-selection cursor)
-                 (action-selection cursor)
+                 (history/render-paginator app)
+                 (resource-selection app)
+                 (action-selection app)
                  (edit-method (:method request) request)
                  (edit-url (:url request) request)
                  (submit-button request submit-chan))))))

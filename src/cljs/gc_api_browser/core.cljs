@@ -1,9 +1,7 @@
 (ns gc-api-browser.core
-  (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :as async]
-            [gc-api-browser.history :as history]
             [gc-api-browser.utils :refer [log throttle]]
             [gc-api-browser.store :as store]
             [gc-api-browser.url-bar :as url-bar]
@@ -35,14 +33,6 @@
 
 (enable-console-print!)
 
-(defn handle-response [request response app-cursor]
-  (let [id (random-uuid)]
-    (-> app-cursor
-        (assoc :response response :history-id id)
-        (update :history conj {:request request
-                               :response response
-                               :id id}))))
-
 (defn render-schema-select [app-cursor]
   (dom/div #js {:className "flex-container u-direction-row"}
            (dom/span #js {:className "u-margin-Rm"} "Select a JSON schema")
@@ -51,12 +41,10 @@
 (defn render-request-and-response [app]
   (let [{:keys [request response]} app]
     (dom/div #js {:className "flex-container u-align-center u-flex-center"}
-             (om/build url-bar/component app
-                       {:opts {:handle-new-response-fn #(om/transact! app (partial handle-response %1 %2))}})
+             (om/build url-bar/component app)
              (dom/div #js {:className "flex-container u-direction-row request-response"}
                       (om/build tabbed-request/component request)
                       (om/build tabbed-response/component response))
-             (history/render-paginator app)
              (render-schema-select app))))
 
 (defn render-init-app [app]
