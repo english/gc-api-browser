@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :source-paths ["src/clj" "src/cljs"]
+  :source-paths ["src/clj" "src/cljs" "test/cljs"]
   :clean-targets ^{:protect false} ["resources/public/js/app.js" "resources/public/js/out" "dist/app.js"]
 
   :dependencies [[org.clojure/clojure "1.7.0"]
@@ -29,7 +29,7 @@
 
   :cljsbuild {:builds [{:id           "main"
                         :figwheel     {:on-jsload "gc-api-browser.core/main"}
-                        :source-paths ["src/cljs"]
+                        :source-paths ["src/cljs" "test/cljs"]
                         :compiler     {:output-to     "resources/public/js/app.js"
                                        :output-dir    "resources/public/js/out"
                                        :main          "gc-api-browser.dev"

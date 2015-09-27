@@ -18,7 +18,11 @@ code {
 }
 
 .u-margin-Rm {
-  margin-right: 18px
+  margin-right: 18px;
+}
+
+.u-margin-Bm {
+  margin-bottom: 18px;
 }
 
 .header {

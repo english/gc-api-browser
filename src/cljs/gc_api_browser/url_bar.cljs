@@ -62,7 +62,7 @@
         (go-loop []
                  (when-some [req (async/<! submit-chan)]
                    (let [resp (async/<! (http/request req))]
-                     (handle-new-response-fn resp)
+                     (handle-new-response-fn req resp)
                      (recur))))))
 
     om/IRender

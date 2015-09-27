@@ -11,7 +11,8 @@
     (.preventDefault e)))
 
 (defn content-editable [cursor owner]
-  (reify om/IRender
+  (reify
+    om/IRender
     (render [_]
       (dom/code #js {:contentEditable         true
                      :dangerouslySetInnerHTML #js {:__html (:body cursor)}
@@ -20,7 +21,7 @@
                                                 (let [html (.-innerHTML (om/get-node owner))]
                                                   (om/transact! cursor :body (fn [_] html))))}))))
 
-(defn edit-body [{:keys [body] :as cursor}]
+(defn edit-body [cursor]
   (dom/pre #js {:className "flex-container tabbed-request__body"}
            (om/build content-editable cursor)))
 
@@ -35,7 +36,8 @@
         (dom/div #js {:className "tabbed-request"}
                  (dom/span nil
                            (if (get? request-cursor)
-                             (dom/div #js {:className "tabs"} (dom/button #js {:className "tab-item tab-item--active tab-item--only"} "Headers"))
+                             (dom/div #js {:className "tabs"}
+                                      (dom/button #js {:className "tab-item tab-item--active tab-item--only"} "Headers"))
                              (dom/div #js {:className "tabs"}
                                       (dom/button #js {:className (str "tab-item" (when showing-body? " tab-item--active"))
                                                        :onClick   #(om/set-state! owner :showing-body? true)}
