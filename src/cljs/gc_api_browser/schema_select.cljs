@@ -30,10 +30,11 @@
   (set-selected-action! app schema resource (first (json-schema/resource->actions schema resource))))
 
 (defn set-schema! [app json]
-  (let [schema (js->clj json :keywordize-keys true)]
+  (let [sub-schema #js {:definitions (.-definitions json)
+                        :links       (.-links json)}
+        schema (js->clj sub-schema :keywordize-keys true)]
     (doto app
       (om/update! :schema schema)
-      (om/update! :text (:description schema))
       (set-selected-resource! schema (first (json-schema/schema->resources schema))))))
 
 (defn- read-as-text [file c]

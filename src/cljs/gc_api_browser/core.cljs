@@ -23,7 +23,6 @@
                        :body    nil
                        :headers default-headers}
    :response          {}
-   :text              "Explore"
    :selected-resource nil
    :selected-action   nil
    :schema            nil})
@@ -48,10 +47,12 @@
              (render-schema-select app))))
 
 (defn render-init-app [app]
-  (dom/div #js {:className "flex-container u-align-center u-flex-center"}
-           (dom/header #js {:className "header"}
-                       (dom/h2 #js {:className "header__title u-type-mono"} (:text app)))
-           (render-schema-select app)))
+  (dom/div
+    #js {:className "flex-container u-align-center u-flex-center"}
+    (dom/header
+      #js {:className "header"}
+      (dom/h2 #js {:className "header__title u-type-mono"} "Explore"))
+    (render-schema-select app)))
 
 (defn main []
   (let [app-state-chan (async/chan (async/sliding-buffer 1))]
