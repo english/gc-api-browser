@@ -2,7 +2,7 @@
   (:require [cljs.test :refer-macros [deftest is testing run-tests]]
             [gc-api-browser.schema-example :refer [prettify]]))
 
-(deftest example-parsing
+(deftest test-prettify
   (testing "response only"
     (let [example-str "POST https://api.gocardless.com/access_tokens/AC123/actions/disable HTTP/1.1
 
@@ -78,4 +78,5 @@ HTTP/1.1 200 (OK)
         (is (= expected-output (prettify example-str))))))
 
 (comment
-  (run-tests))
+  (run-tests)
+  )
