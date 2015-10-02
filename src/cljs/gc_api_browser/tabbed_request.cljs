@@ -39,9 +39,11 @@
                                   request-string)))
 
 (defn edit-body [cursor]
-  (let [validation-result (validate-request cursor)]
+  (let [validation-result (validate-request cursor)
+        class-name (str "flex-container tabbed-request__body"
+                        (when (not (:valid validation-result)) " error"))]
     (dom/div nil
-             (dom/pre #js {:className (str "flex-container tabbed-request__body" (when (not (:valid validation-result)) " error"))}
+             (dom/pre #js {:className class-name}
                       (om/build content-editable (:request cursor)))
              (when (seq (:errors validation-result))
                (dom/ul nil
