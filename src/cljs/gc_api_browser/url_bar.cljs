@@ -51,13 +51,16 @@
                                                         (update :headers stringify-keys)))}
                        "Explore")))
 
-(defn handle-response [request response app-cursor]
-  (let [id (random-uuid)]
-    (-> app-cursor
+(defn handle-response [response app-at-request-time app-map]
+  (let [id (random-uuid)
+        {:keys [selected-resource selected-action request]} app-at-request-time]
+    (-> app-map
         (assoc :response response :history-id id)
         (update :history conj {:request request
                                :response response
-                               :id id}))))
+                               :id id
+                               :selected-resource selected-resource
+                               :selected-action selected-action}))))
 
 (defn component [app owner]
   (reify
@@ -71,8 +74,9 @@
         (go-loop
           []
           (when-some [req (async/<! submit-chan)]
-            (let [resp (async/<! (http/request req))]
-              (om/transact! app (partial handle-response req resp))
+            (let [app-at-request-time @app
+                  resp (async/<! (http/request req))]
+              (om/transact! app (partial handle-response resp app-at-request-time))
               (recur))))))
 
     om/IRender
