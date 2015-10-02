@@ -64,11 +64,14 @@
     (catch js/Object e
       false)))
 
+(defn error->map [error]
+  {:message (.-message error)})
+
 (defn validate-request [schema resource action request-string]
   (if (valid-json? request-string)
     (let [action-schema (:schema (schema->action-node schema resource action))
           body-object (-> request-string gjson/parse gobject/getValues first)
           result (.validateMultiple js/tv4 body-object (clj->js action-schema) false true)]
-      (js->clj result :keywordize-keys true))
+      (update (js->clj result :keywordize-keys true) :errors #(map error->map %)))
     {:valid false
-     :message "invalid json"}))
+     :errors [{:message "invalid json"}]}))

@@ -2,6 +2,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [goog.json :as gjson]
+            [gc-api-browser.utils :refer [log]]
             [gc-api-browser.json-schema :as json-schema]
             [gc-api-browser.headers :as headers]))
 
@@ -30,17 +31,22 @@
     (catch :default e
       false)))
 
-(defn valid-request? [cursor]
-  (let [request-string (get-in cursor [:request :body])
-        validation-result (json-schema/validate-request (:schema cursor)
-                                                        (:selected-resource cursor)
-                                                        (:selected-action cursor)
-                                                        request-string)]
-    (:valid validation-result)))
+(defn validate-request [cursor]
+  (let [request-string (get-in cursor [:request :body])]
+    (json-schema/validate-request (:schema cursor)
+                                  (:selected-resource cursor)
+                                  (:selected-action cursor)
+                                  request-string)))
 
 (defn edit-body [cursor]
-  (dom/pre #js {:className (str "flex-container tabbed-request__body" (when (not (valid-request? cursor)) " error"))}
-           (om/build content-editable (:request cursor))))
+  (let [validation-result (validate-request cursor)]
+    (dom/div nil
+             (dom/pre #js {:className (str "flex-container tabbed-request__body" (when (not (:valid validation-result)) " error"))}
+                      (om/build content-editable (:request cursor)))
+             (when (seq (:errors validation-result))
+               (dom/ul nil
+                       (for [error (:errors validation-result)]
+                         (dom/li nil (:message error))))))))
 
 (defn get? [request]
   (= "GET" (:method request)))
