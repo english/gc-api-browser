@@ -1,5 +1,7 @@
 (ns gc-api-browser.json-schema
   (:require [clojure.set :refer [project]]
+            [goog.json :as gjson]
+            [goog.object :as gobject]
             [gc-api-browser.utils :refer [log]]
             [gc-api-browser.json-pointer :as json-pointer]
             [gc-api-browser.schema-example :as schema-example]))
@@ -27,10 +29,9 @@
     (update action-node :example schema-example/prettify)
     action-node))
 
-(defn- schema->action-node [schema resource action]
+(defn schema->action-node [schema resource action]
   (let [xform (comp (filter #(= (:title %) action))
-                    (map set-example)
-                    (map #(select-keys % [:method :href :example])))]
+                    (map set-example))]
     (->> (schema->resource-node schema resource)
          :links
          (sequence xform)
@@ -55,3 +56,19 @@
   (->> (vals (:definitions schema))
        (map :title)
        sort))
+
+(defn- valid-json? [string]
+  (try
+    (gjson/parse string)
+    true
+    (catch js/Object e
+      false)))
+
+(defn validate-request [schema resource action request-string]
+  (if (valid-json? request-string)
+    (let [action-schema (:schema (schema->action-node schema resource action))
+          body-object (-> request-string gjson/parse gobject/getValues first)
+          result (.validateMultiple js/tv4 body-object (clj->js action-schema) false true)]
+      (js->clj result :keywordize-keys true))
+    {:valid false
+     :message "invalid json"}))

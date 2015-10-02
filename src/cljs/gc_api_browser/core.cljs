@@ -42,7 +42,7 @@
     (dom/div #js {:className "flex-container u-align-center u-flex-center"}
              (om/build url-bar/component app)
              (dom/div #js {:className "flex-container u-direction-row request-response"}
-                      (om/build tabbed-request/component request)
+                      (om/build tabbed-request/component app)
                       (om/build tabbed-response/component response))
              (render-schema-select app))))
 

@@ -330,3 +330,7 @@ code {
   border-width: 2px;
   color: #64A6DF;
 }
+
+.error {
+  border: 1px solid #ff5555;
+}
