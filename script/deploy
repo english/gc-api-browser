@@ -16,5 +16,9 @@ cat resources/public/css/*.css > dist/app.css
 gzip --best dist/app.css
 mv dist/app.css.gz dist/app.css
 
+cp resources/public/js/tv4.js dist/
+gzip --best dist/tv4.js
+mv dist/tv4.js.gz dist/tv4.js
+
 cp 'resources/public/css/source-code-pro.woff' dist/
 lein run -m deploy dist $BUCKET $GC_AWS_ACCESS_KEY $GC_AWS_SECRET

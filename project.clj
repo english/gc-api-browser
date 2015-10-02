@@ -41,7 +41,8 @@
                         :compiler     {:output-to     "dist/app.js"
                                        :main          "gc-api-browser.prod"
                                        :optimizations :advanced
-                                       :pretty-print  false}}]}
+                                       :pretty-print  false
+                                       :externs ["externs/tv4.js"]}}]}
 
   :profiles {:dev     {:dependencies [[com.cemerick/piggieback "0.2.1"]
                                       [org.clojure/tools.nrepl "0.2.10"]]
