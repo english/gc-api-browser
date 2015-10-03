@@ -11,12 +11,12 @@
 
 (defn handle-paste [e]
   (let [text (.getData (.-clipboardData e) "text/plain")]
-    (.execCommand js/document "insertText", false text))
+    (.execCommand js/document "insertHTML", false text))
   (.preventDefault e))
 
 (defn handle-key-down [e]
   (when (= (.-keyCode e) ENTER)
-    (.execCommand js/document "insertText" false "\n")
+    (.execCommand js/document "insertHTML" false "\n")
     (.preventDefault e)))
 
 (defn content-editable [cursor owner]

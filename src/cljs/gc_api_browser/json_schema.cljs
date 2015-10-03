@@ -81,8 +81,9 @@
 
 (defn validate-against-schema [schema resource action request-string]
   (let [action-schema (:schema (schema->action-node schema resource action))
+        combined-schema (merge action-schema schema)
         body-object (-> request-string gjson/parse gobject/getValues first)
-        result (.validateMultiple js/tv4 body-object (clj->js action-schema) false true)]
+        result (.validateMultiple js/tv4 body-object (clj->js combined-schema) false true)]
     (update (js->clj result :keywordize-keys true) :errors #(map error->map %))))
 
 (defn validate-request [schema resource action request-string]
