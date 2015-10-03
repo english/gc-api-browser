@@ -13,7 +13,9 @@
             [gc-api-browser.tabbed-request :as tabbed-request])
   (:import [goog.ui IdGenerator]))
 
-(def default-headers {"Authorization"      "FILL ME IN"
+(def read-only-sandbox-access-token "1eb-rgt9ybRrS4Olqf6aJcfN5dwNJvKHhUvHabeE")
+
+(def default-headers {"Authorization"      (str "Bearer " read-only-sandbox-access-token)
                       "GoCardless-Version" "2015-07-06"
                       "Accept"             "application/json"
                       "Content-Type"       "application/json"})
@@ -62,9 +64,14 @@
 (defn fetch-schema! [app]
   (om/update! app :downloading-schema true)
   (go
-    (let [schema (async/<! (http/get "https://api.gocardless.com/schema.json"))]
-      (om/update! app :downloading-schema false)
-      (schema-select/set-schema! app (:body schema)))))
+    (try
+      (let [resp (async/<! (http/get "https://api.gocardless.com/schema.json"))]
+        (when (:success resp)
+          (schema-select/set-schema! app (:body resp))))
+      (catch js/Object e
+        nil)
+      (finally
+        (om/update! app :downloading-schema false)))))
 
 (defn main []
   (let [app-state-chan (async/chan (async/sliding-buffer 1))]

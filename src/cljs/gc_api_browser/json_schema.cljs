@@ -44,7 +44,8 @@
      :body   (when (not= method "GET") example)}))
 
 (defn schema->domain [schema]
-  (get-in schema [:links 0 :href]))
+  ;; use sandbox url
+  (get-in schema [:links 1 :href]))
 
 (defn resource->actions [schema resource]
   (->> (schema->resource-node schema resource)
