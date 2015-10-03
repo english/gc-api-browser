@@ -9,9 +9,14 @@
 
 (def ENTER 13)
 
+(defn handle-paste [e]
+  (let [text (.getData (.-clipboardData e) "text/plain")]
+    (.execCommand js/document "insertText", false text))
+  (.preventDefault e))
+
 (defn handle-key-down [e]
   (when (= (.-keyCode e) ENTER)
-    (.execCommand js/document "insertHTML" false "\n")
+    (.execCommand js/document "insertText" false "\n")
     (.preventDefault e)))
 
 (defn content-editable [cursor owner]
@@ -21,6 +26,7 @@
       (dom/code #js {:contentEditable         true
                      :dangerouslySetInnerHTML #js {:__html (:body cursor)}
                      :onKeyDown               handle-key-down
+                     :onPaste                 handle-paste
                      :onInput                 (fn [_]
                                                 (let [html (.-innerHTML (om/get-node owner))]
                                                   (om/transact! cursor :body (fn [_] html))))}))))
