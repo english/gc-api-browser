@@ -29,12 +29,10 @@
   (om/update! app :selected-resource resource)
   (set-selected-action! app schema resource (first (json-schema/resource->actions schema resource))))
 
-(defn set-schema! [app json]
-  (let [sub-schema #js {:definitions (.-definitions json)
-                        :links       (.-links json)}
-        schema (js->clj sub-schema :keywordize-keys true)]
+(defn set-schema! [app schema]
+  (let [sub-schema (select-keys schema [:definitions :links])]
     (doto app
-      (om/update! :schema schema)
+      (om/update! :schema sub-schema)
       (set-selected-resource! schema (first (json-schema/schema->resources schema))))))
 
 (defn- read-as-text [file c]
@@ -48,7 +46,7 @@
     (go
      (let [text (<! (read-as-text file (chan)))
            json (gjson/parse text)]
-       (set-schema! app json)))))
+       (set-schema! app (js->clj json :keywordize-keys true))))))
 
 (defn handle-resource-change [app e]
   (set-selected-resource! app (:schema app) (.. e -target -value)))
