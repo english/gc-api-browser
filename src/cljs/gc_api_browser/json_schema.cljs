@@ -65,13 +65,27 @@
       false)))
 
 (defn error->map [error]
-  {:message (.-message error)})
+  {
+   :message (.-message error)
+   :schema-path (.-schemaPath error)
+   :data-path (.-dataPath error)})
+
+(defn json-error [string]
+  (try
+    (js/JSON.parse string)
+    (catch js/Object e
+      {:valid false
+       :errors [{:message (str (.-name e) ": " (.-message e))
+                 :schema-path ""
+                 :data-path ""}]})))
+
+(defn validate-against-schema [schema resource action request-string]
+  (let [action-schema (:schema (schema->action-node schema resource action))
+        body-object (-> request-string gjson/parse gobject/getValues first)
+        result (.validateMultiple js/tv4 body-object (clj->js action-schema) false true)]
+    (update (js->clj result :keywordize-keys true) :errors #(map error->map %))))
 
 (defn validate-request [schema resource action request-string]
   (if (valid-json? request-string)
-    (let [action-schema (:schema (schema->action-node schema resource action))
-          body-object (-> request-string gjson/parse gobject/getValues first)
-          result (.validateMultiple js/tv4 body-object (clj->js action-schema) false true)]
-      (update (js->clj result :keywordize-keys true) :errors #(map error->map %)))
-    {:valid false
-     :errors [{:message "invalid json"}]}))
+    (validate-against-schema schema resource action request-string)
+    (json-error request-string)))

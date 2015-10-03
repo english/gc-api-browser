@@ -1,6 +1,7 @@
 (ns gc-api-browser.tabbed-request
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [clojure.string :as str]
             [goog.json :as gjson]
             [gc-api-browser.utils :refer [log]]
             [gc-api-browser.json-schema :as json-schema]
@@ -24,19 +25,10 @@
                                                 (let [html (.-innerHTML (om/get-node owner))]
                                                   (om/transact! cursor :body (fn [_] html))))}))))
 
-(defn valid-json? [string]
-  (try
-    (gjson/parse string)
-    true
-    (catch :default e
-      false)))
-
 (defn validate-request [cursor]
-  (let [request-string (get-in cursor [:request :body])]
-    (json-schema/validate-request (:schema cursor)
-                                  (:selected-resource cursor)
-                                  (:selected-action cursor)
-                                  request-string)))
+  (let [{:keys [schema selected-resource selected-action request]} cursor
+        request-string (:body request)]
+    (json-schema/validate-request schema selected-resource selected-action request-string)))
 
 (defn edit-body [cursor]
   (let [validation-result (validate-request cursor)
@@ -46,9 +38,20 @@
              (dom/pre #js {:className class-name}
                       (om/build content-editable (:request cursor)))
              (when (seq (:errors validation-result))
-               (dom/ul nil
-                       (for [error (:errors validation-result)]
-                         (dom/li nil (:message error))))))))
+               (dom/div
+                 nil
+                 "Errors:"
+                 (dom/ul nil
+                         (for [error (:errors validation-result)]
+                           (dom/li
+                             nil
+                             (dom/ul
+                               nil
+                               (dom/li nil (str "message: " (:message error)))
+                               (when-not (str/blank? (:data-path error))
+                                 (dom/li nil (str "data path: " (:data-path error))))
+                               (when-not (str/blank? (:schema-path error))
+                                 (dom/li nil (str "schema path: " (:schema-path error)))))))))))))
 
 (defn get? [request]
   (= "GET" (:method request)))
