@@ -61,11 +61,13 @@
         (dom/h2 #js {:className "header__title u-type-mono"} "Explore"))
       (render-schema-select app))))
 
+(def schema-url "https://api.gocardless.com/schema.json")
+
 (defn fetch-schema! [app]
   (om/update! app :downloading-schema true)
   (go
     (try
-      (let [resp (async/<! (http/get "https://api.gocardless.com/schema.json"))]
+      (let [resp (async/<! (http/get schema-url))]
         (when (:success resp)
           (schema-select/set-schema! app (:body resp))))
       (catch js/Object e

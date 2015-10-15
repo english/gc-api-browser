@@ -66,8 +66,7 @@
       false)))
 
 (defn error->map [error]
-  {
-   :message (.-message error)
+  {:message (.-message error)
    :schema-path (.-schemaPath error)
    :data-path (.-dataPath error)})
 
