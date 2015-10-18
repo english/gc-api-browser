@@ -69,17 +69,19 @@
       (let [showing-body? (om/get-state owner :showing-body?)
             request-cursor (:request app-cursor)]
         (dom/div #js {:className "tabbed-request"}
-                 (dom/span nil
-                           (if (get? request-cursor)
-                             (dom/div #js {:className "tabs"}
-                                      (dom/button #js {:className "tab-item tab-item--active tab-item--only"} "Headers"))
-                             (dom/div #js {:className "tabs"}
-                                      (dom/button #js {:className (str "tab-item" (when showing-body? " tab-item--active"))
-                                                       :onClick   #(om/set-state! owner :showing-body? true)}
-                                                  "Body")
-                                      (dom/button #js {:className (str "tab-item" (when-not showing-body? " tab-item--active"))
-                                                       :onClick   #(om/set-state! owner :showing-body? false)} "Headers"))))
-                 (if (and showing-body?
-                          (not (get? request-cursor)))
-                   (edit-body app-cursor)
-                   (om/build headers/component (:headers request-cursor))))))))
+                 (dom/h2 #js {:className "tabbed-request__header"} "Request")
+                 (dom/div #js {:className "tabbed-request__inner"}
+                          (dom/span nil
+                                    (if (get? request-cursor)
+                                      (dom/div #js {:className "tabs"}
+                                               (dom/button #js {:className "tab-item tab-item--active tab-item--only"} "Headers"))
+                                      (dom/div #js {:className "tabs"}
+                                               (dom/button #js {:className (str "tab-item" (when showing-body? " tab-item--active"))
+                                                                :onClick   #(om/set-state! owner :showing-body? true)}
+                                                           "Body")
+                                               (dom/button #js {:className (str "tab-item" (when-not showing-body? " tab-item--active"))
+                                                                :onClick   #(om/set-state! owner :showing-body? false)} "Headers"))))
+                          (if (and showing-body?
+                                   (not (get? request-cursor)))
+                            (edit-body app-cursor)
+                            (om/build headers/component (:headers request-cursor)))))))))
