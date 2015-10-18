@@ -244,6 +244,10 @@ code {
   flex: 1 1 auto;
 }
 
+.tab-item:disabled {
+  color: transparent;
+}
+
 .tab-item:first-child {
   border-right: 2px solid #B1B1B1;
 }

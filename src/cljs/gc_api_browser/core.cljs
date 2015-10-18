@@ -30,6 +30,8 @@
    :response          {}
    :selected-resource nil
    :selected-action   nil
+   :showing-request-body? true
+   :showing-response-body? true
    :schema            nil})
 
 (defonce app-state
@@ -48,7 +50,7 @@
              (om/build url-bar/component app)
              (dom/div #js {:className "flex-container u-direction-row request-response"}
                       (om/build tabbed-request/component app)
-                      (om/build tabbed-response/component response))
+                      (om/build tabbed-response/component app))
              (render-schema-select app))))
 
 (defn render-init-app [app]

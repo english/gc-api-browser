@@ -23,22 +23,22 @@
     (dom/pre #js {:className "tabbed-response__body"}
              (dom/code nil json-string))))
 
-(defn component [cursor owner]
+(defn component [app-cursor owner]
   (reify
     om/IRender
     (render [_]
-      (let [showing-headers? (om/get-state owner :showing-headers?)
-            {:keys [headers body]} cursor]
+      (let [{:keys [response showing-response-body?]} app-cursor
+            {:keys [headers body]} response]
         (dom/div #js {:className "tabbed-response"}
                  (dom/h2 #js {:className "tabbed-response__header"} "Response")
                  (dom/div #js {:className "tabbed-response__inner"}
                           (dom/div #js {:className "tabs"}
-                                   (dom/button #js {:className (str "tab-item" (when-not showing-headers? " tab-item--active"))
-                                                    :onClick   #(om/set-state! owner :showing-headers? false)}
+                                   (dom/button #js {:className (str "tab-item" (when showing-response-body? " tab-item--active"))
+                                                    :onClick   #(om/update! app-cursor :showing-response-body? true)}
                                                "Body")
-                                   (dom/button #js {:className (str "tab-item" (when showing-headers? " tab-item--active"))
-                                                    :onClick   #(om/set-state! owner :showing-headers? true)}
+                                   (dom/button #js {:className (str "tab-item" (when-not showing-response-body? " tab-item--active"))
+                                                    :onClick   #(om/update! app-cursor :showing-response-body? false)}
                                                "Headers"))
-                          (if showing-headers?
+                          (if showing-response-body?
                             (render-headers headers)
                             (render-body body))))))))

@@ -66,22 +66,21 @@
   (reify
     om/IRender
     (render [_]
-      (let [showing-body? (om/get-state owner :showing-body?)
+      (let [{:keys [showing-request-body?]} app-cursor
             request-cursor (:request app-cursor)]
         (dom/div #js {:className "tabbed-request"}
                  (dom/h2 #js {:className "tabbed-request__header"} "Request")
                  (dom/div #js {:className "tabbed-request__inner"}
-                          (dom/span nil
-                                    (if (get? request-cursor)
-                                      (dom/div #js {:className "tabs"}
-                                               (dom/button #js {:className "tab-item tab-item--active tab-item--only"} "Headers"))
-                                      (dom/div #js {:className "tabs"}
-                                               (dom/button #js {:className (str "tab-item" (when showing-body? " tab-item--active"))
-                                                                :onClick   #(om/set-state! owner :showing-body? true)}
-                                                           "Body")
-                                               (dom/button #js {:className (str "tab-item" (when-not showing-body? " tab-item--active"))
-                                                                :onClick   #(om/set-state! owner :showing-body? false)} "Headers"))))
-                          (if (and showing-body?
+                          (dom/span
+                            nil
+                            (dom/div #js {:className "tabs"}
+                                     (dom/button #js {:className (str "tab-item" (when showing-request-body? " tab-item--active"))
+                                                      :onClick   #(om/update! app-cursor :showing-request-body? true)
+                                                      :disabled  (get? request-cursor)}
+                                                 "Body")
+                                     (dom/button #js {:className (str "tab-item" (when-not showing-request-body? " tab-item--active"))
+                                                      :onClick   #(om/update! app-cursor :showing-request-body? false)} "Headers")))
+                          (if (and showing-request-body?
                                    (not (get? request-cursor)))
                             (edit-body app-cursor)
                             (om/build headers/component (:headers request-cursor)))))))))
