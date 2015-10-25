@@ -27,7 +27,7 @@
            (json-schema/expand-href "/creditors" fixture)))))
 
 (deftest test-schema->domain
-  (is (= "https://api.gocardless.com"
+  (is (= "https://api-sandbox.gocardless.com"
          (json-schema/schema->domain fixture))))
 
 (deftest schema->request
