@@ -3,14 +3,15 @@
             [gc-api-browser.schema-select :refer [get-domain]]))
 
 (def schema
-  {:links [{:href "http://gocardless.com"}]})
+  {:links [{:href "http://api.gocardless.com"}
+           {:href "http://sandbox-api.gocardless.com"}]})
 
 (deftest test-get-domain
   (testing "with an existing url set"
     (is (= "http://example.com"
            (get-domain schema {:url "http://example.com/foobar"}))))
   (testing "with no existing url set"
-    (is (= "http://gocardless.com"
+    (is (= "http://sandbox-api.gocardless.com"
            (get-domain schema {:url nil})))))
 
 (comment
