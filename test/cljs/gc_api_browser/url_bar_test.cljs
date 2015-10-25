@@ -6,17 +6,15 @@
   (let [old-state {:request {:foo "bar"}
                    :response nil
                    :history []}
-        request {:req "uest"}
         response {:resp "onse"}
-        new-state (url-bar/handle-response request response old-state)]
-
+        new-state (url-bar/handle-response response old-state old-state)]
     (is (instance? UUID (:history-id new-state)))
     (is (= {:foo "bar"} (:request new-state)))
     (is (= {:resp "onse"} (:response new-state)))
     (is (= 1 (count (:history new-state))))
 
     (let [{:keys [request response id]} (first (:history new-state))]
-      (is (= {:req "uest"} request))
+      (is (= {:foo "bar"} request))
       (is (= {:resp "onse"} response))
       (is (instance? UUID id)))))
 
