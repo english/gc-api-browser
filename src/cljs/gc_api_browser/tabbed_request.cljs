@@ -25,6 +25,8 @@
     (render [_]
       (dom/code #js {:contentEditable         true
                      :dangerouslySetInnerHTML #js {:__html (:body cursor)}
+                     :className               "tabbed-request__content"
+                     :data-placeholder        "Type JSON here..."
                      :onKeyDown               handle-key-down
                      :onPaste                 handle-paste
                      :onInput                 (fn [_]

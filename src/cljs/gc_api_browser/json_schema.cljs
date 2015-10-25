@@ -2,6 +2,7 @@
   (:require [clojure.set :refer [project]]
             [goog.json :as gjson]
             [goog.object :as gobject]
+            [clojure.string :as str]
             [gc-api-browser.utils :refer [log]]
             [gc-api-browser.json-pointer :as json-pointer]
             [gc-api-browser.schema-example :as schema-example]))
@@ -87,6 +88,7 @@
     (update (js->clj result :keywordize-keys true) :errors #(map error->map %))))
 
 (defn validate-request [schema resource action request-string]
-  (if (valid-json? request-string)
-    (validate-against-schema schema resource action request-string)
-    (json-error request-string)))
+  (cond
+    (str/blank? request-string) {:valid true}
+    (valid-json? request-string) (validate-against-schema schema resource action request-string)
+    :else (json-error request-string)))

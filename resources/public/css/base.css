@@ -112,8 +112,12 @@ code {
   margin-top: 70px;
 }
 
-.tabbed-request code {
+.tabbed-request__content {
   outline: none;
+}
+
+.tabbed-request__content:empty:not(:focus):before {
+  content: attr(data-placeholder);
 }
 
 .tabbed-request__body,
