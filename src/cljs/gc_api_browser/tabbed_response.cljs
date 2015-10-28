@@ -40,5 +40,5 @@
                                                     :onClick   #(om/update! app-cursor :showing-response-body? false)}
                                                "Headers"))
                           (if showing-response-body?
-                            (render-headers headers)
-                            (render-body body))))))))
+                            (render-body body)
+                            (render-headers headers))))))))
