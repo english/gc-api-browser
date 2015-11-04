@@ -53,13 +53,13 @@
                          (for [error (:errors validation-result)]
                            (dom/li
                              nil
+                             (:message error)
                              (dom/ul
                                nil
-                               (dom/li nil (str "message: " (:message error)))
                                (when-not (str/blank? (:data-path error))
-                                 (dom/li nil (str "data path: " (:data-path error))))
+                                 (dom/li nil (str "Data path: " (:data-path error))))
                                (when-not (str/blank? (:schema-path error))
-                                 (dom/li nil (str "schema path: " (:schema-path error)))))))))))))
+                                 (dom/li nil (str "Schema path: " (:schema-path error)))))))))))))
 
 (defn get? [request]
   (= "GET" (:method request)))
