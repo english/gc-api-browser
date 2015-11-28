@@ -19,7 +19,7 @@ Run `lein repl`, then eval all of script/repl.clj.
 This will compile ClojureScript and CSS and live update the browser when these change.
 It will also serve these static files (and index.html) in development..
 
-Visit `http://gocardless.dev:3010/`
+Visit [http://gocardless.dev:3010/](http://gocardless.dev:3010/)
 
 ### ClojureScript REPL
 
